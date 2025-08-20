@@ -2,6 +2,9 @@
   "name": "iliad-ambassador-web",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=18.17 <23"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -20,15 +23,12 @@
     "react-big-calendar": "^1.11.2",
     "date-fns": "^3.6.0"
   },
- "devDependencies": {
+  "devDependencies": {
     "typescript": "^5.5.4",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.5",
     "tailwindcss": "^3.4.9",
     "postcss": "^8.4.41",
     "autoprefixer": "^10.4.19"
-  }
-    "engines": {
-    "node": ">=18.17 <23"
   }
 }
