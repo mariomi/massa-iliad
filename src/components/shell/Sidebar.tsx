@@ -1,14 +1,17 @@
 "use client";
+
+// 1. L'import di React è ancora FONDAMENTALE. Assicurati che sia presente.
+import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-// 1. L'import per il tipo 'Route' è già presente, ottimo.
 import type { Route } from 'next';
 import { LayoutDashboard, Store, Calendar, Users } from "lucide-react";
 
 export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => void; }) {
-  // 2. Definiamo esplicitamente il tipo per l'array 'items'.
-  //    Specifichiamo che 'href' è di tipo 'Route', 'label' è 'string' e 'icon' è 'JSX.Element'.
-  const items: { href: Route; label: string; icon: JSX.Element }[] = [
+  
+  // 2. MODIFICA: Ho cambiato 'JSX.Element' con 'React.ReactNode'.
+  // Questo tipo è più flessibile e non dovrebbe causare l'errore del namespace.
+  const items: { href: Route; label: string; icon: React.ReactNode }[] = [
     { href: "/dashboard", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
     { href: "/stores", icon: <Store size={20} />, label: "Punti vendita" },
     { href: "/reports/hours", icon: <Calendar size={20} />, label: "Report ore" },
@@ -27,7 +30,6 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
       </div>
       <nav className="space-y-1 px-2">
         {items.map((it) => (
-          // 3. Rimuoviamo 'as `/${string}`'. Ora non serve più perché 'it.href' ha già il tipo corretto (Route).
           <Link key={it.href} href={it.href} className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-50">
             {it.icon}
             <motion.span animate={{ opacity: open ? 1 : 0 }} className="text-sm">{it.label}</motion.span>
