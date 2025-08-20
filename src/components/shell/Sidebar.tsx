@@ -17,7 +17,7 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
       </div>
       <nav className="space-y-1 px-2">
         {items.map((it) => (
-          <Link key={it.href} href={it.href} className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-50">
+          <Link key={it.href} href={it.href as `/${string}`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-50">
             {it.icon}
             <motion.span animate={{ opacity: open ? 1 : 0 }} className="text-sm">{it.label}</motion.span>
           </Link>
