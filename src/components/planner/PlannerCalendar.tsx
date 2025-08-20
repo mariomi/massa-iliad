@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { Calendar, dateFnsLocalizer, View, SlotInfo } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
-import it from "date-fns/locale/it";
+import { it } from "date-fns/locale/it";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 1 }), getDay, locales: { it } });
 export function PlannerCalendar({ storeId, canEdit = false }: { storeId: string; canEdit?: boolean; }) {
