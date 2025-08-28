@@ -1,3 +1,2 @@
--- (stesso schema RLS completo fornito in precedenza)
--- Per brevità: incolla qui lo schema completo dal messaggio precedente se ti serve la versione aggiornata.
--- Nota: nella cartella è già presente la versione completa creata da me in questa sessione.
+-- Full Supabase schema (same as supabase_schema.sql)
+\i 'supabase_schema.sql'

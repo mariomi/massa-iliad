@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -19,9 +20,14 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password: pwd }),
       });
       const data = await res.json();
-      setLoading(false);
-      if (!res.ok) return alert(data.error || "Login fallito");
-      // Login ok — redirect
+      if (!res.ok) { setLoading(false); return alert(data.error || "Login fallito"); }
+      // For non-admin users, also sign into Supabase Auth to enable RLS
+      try {
+        if (data?.user?.role === "user") {
+          const { error } = await supabase.auth.signInWithPassword({ email, password: pwd });
+          if (error) console.warn("Supabase sign-in failed:", error.message);
+        }
+      } catch {}
       window.location.href = "/dashboard";
     } catch (err: any) {
       setLoading(false);
@@ -48,3 +54,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
