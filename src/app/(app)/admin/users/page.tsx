@@ -44,12 +44,27 @@ export default function AdminUsersPage() {
           <div className="font-medium mb-2">Elenco</div>
           <div className="divide-y">
             {rows.map(u => (
-              <div key={u.id} className="flex items-center justify-between py-2">
-                <div>
-                  <div className="font-medium">{u.full_name || u.email}</div>
-                  <div className="text-xs text-neutral-500">{u.email}</div>
+              <div key={u.id}>
+                <div className="flex items-center justify-between py-2">
+                  <div>
+                    <div className="font-medium">{u.full_name || u.email}</div>
+                    <div className="text-xs text-neutral-500">{u.email}</div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="uppercase text-xs px-2 py-1 rounded-md bg-neutral-100 border">{u.role}</div>
+                    {u.email && (
+                      <button
+                        onClick={() => {
+                          const link = `${window.location.origin}/login?email=${encodeURIComponent(u.email!)}&r=${encodeURIComponent(u.role)}`;
+                          navigator.clipboard.writeText(link);
+                          alert("Link di login copiato");
+                        }}
+                        className="text-xs px-2 py-1 rounded-md border hover:bg-neutral-50"
+                      >Copia login</button>
+                    )}
+                  </div>
                 </div>
-                <div className="uppercase text-xs px-2 py-1 rounded-md bg-neutral-100 border">{u.role}</div>
+                <div className="pl-2 pb-2 text-xs text-neutral-500">Landing consigliata: {u.role === 'admin' ? '/admin/stores' : (u.role === 'manager' ? '/stores/[storeId]/planner' : '/stores/[storeId]/time')}</div>
               </div>
             ))}
             {rows.length === 0 && <div className="text-sm text-neutral-500">Nessun utente</div>}
@@ -85,4 +100,3 @@ export default function AdminUsersPage() {
     </>
   );
 }
-

@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { verifySessionToken } from "@/lib/auth/session";
 import { adminClient } from "@/lib/supabase/admin";
 
+export const runtime = "nodejs";
+
 async function requireAdmin() {
   const token = cookies().get("app_session")?.value;
   if (!token) return false;
@@ -43,4 +45,3 @@ export async function POST(req: Request) {
   await supabase.from("profiles").upsert({ id: userId, email, full_name, app_role }, { onConflict: 'id' });
   return NextResponse.json({ id: userId, email, full_name, app_role }, { status: 201 });
 }
-

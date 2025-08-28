@@ -1,7 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body { @apply bg-gradient-to-b from-neutral-50 to-neutral-100 text-neutral-900; }
+body { @apply text-neutral-900; }
+body {
+  background: radial-gradient(1200px 600px at 20% -10%, rgba(99,102,241,0.15), transparent 60%),
+              radial-gradient(800px 500px at 80% 0%, rgba(16,185,129,0.12), transparent 60%),
+              linear-gradient(to bottom, #fafafa, #f5f5f5);
+}
 .rbc-calendar { @apply bg-white rounded-2xl shadow-sm p-2; }
 .rbc-event { @apply rounded-md border border-neutral-200 !important; }
 .rbc-toolbar button { @apply rounded-lg px-3 py-1.5 border border-neutral-200 hover:bg-neutral-50; }

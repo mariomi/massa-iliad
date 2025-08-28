@@ -35,6 +35,10 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
     })();
   }, []);
 
+  const core = items.filter(i => !i.adminOnly);
+  const admin = items.filter(i => i.adminOnly);
+  const [adminOpen, setAdminOpen] = useState(true);
+
   return (
     <motion.aside
       animate={{ width: open ? 256 : 80 }}
@@ -45,13 +49,32 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
         <div className="font-semibold">Iliad</div>
         <button onClick={onToggle} className="text-sm opacity-60 hover:opacity-100">⇔</button>
       </div>
-      <nav className="space-y-1 px-2">
-        {items.filter(it => !it.adminOnly || isAdmin).map((it) => (
+      <nav className="space-y-2 px-2">
+        {core.map((it) => (
           <Link key={it.href} href={it.href} className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-50">
             {it.icon}
             <motion.span animate={{ opacity: open ? 1 : 0 }} className="text-sm">{it.label}</motion.span>
           </Link>
         ))}
+
+        {isAdmin && (
+          <div className="mt-2">
+            <button onClick={() => setAdminOpen(v=>!v)} className="w-full flex items-center justify-between px-3 py-2 text-xs uppercase tracking-wide text-neutral-500">
+              <span>Admin</span>
+              <span>{adminOpen ? "▴" : "▾"}</span>
+            </button>
+            {adminOpen && (
+              <div className="space-y-1">
+                {admin.map((it) => (
+                  <Link key={it.href} href={it.href} className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-50">
+                    {it.icon}
+                    <motion.span animate={{ opacity: open ? 1 : 0 }} className="text-sm">{it.label}</motion.span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </nav>
     </motion.aside>
   );

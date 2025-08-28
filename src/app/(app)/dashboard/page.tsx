@@ -5,21 +5,34 @@ import { KpiCard } from "@/components/ui/KpiCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { AnimatedList, AnimatedItem } from "@/components/ui/AnimatedList";
 import { Card } from "@/components/ui/card";
+import Link from "next/link";
+import { useStoreSelector } from "@/lib/store/StoreContext";
 export default function Dashboard() {
   const [shifts, setShifts] = useState<any[]>([]);
   const [sales, setSales] = useState<any[]>([]);
+  const { selected } = useStoreSelector();
   useEffect(() => {
     (async () => {
-      const { data: s1 } = await supabase.from("shifts").select("id,start_at,end_at").eq("published", true).gte("start_at", new Date().toISOString()).order("start_at").limit(5);
+      let q = supabase.from("shifts").select("id,store_id,start_at,end_at").eq("published", true).gte("start_at", new Date().toISOString()).order("start_at").limit(5);
+      if (selected) q = q.eq("store_id", selected.id);
+      const { data: s1 } = await q;
       setShifts(s1 || []);
       const user = (await supabase.auth.getUser()).data.user;
-      const { data: s2 } = await supabase.from("sales").select("id,sold_at").eq("user_id", user?.id).order("sold_at", { ascending: false }).limit(5);
+      let q2 = supabase.from("sales").select("id,store_id,sold_at").eq("user_id", user?.id).order("sold_at", { ascending: false }).limit(5);
+      if (selected) q2 = q2.eq("store_id", selected.id);
+      const { data: s2 } = await q2;
       setSales(s2 || []);
     })();
-  }, []);
+  }, [selected?.id]);
   return (
     <>
-      <PageHeader title="Dashboard" desc="Panoramica turni & vendite" />
+      <PageHeader title="Dashboard" desc={selected ? `Negozio: ${selected.name}` : "Panoramica turni & vendite"} right={selected ? (
+        <div className="flex gap-2">
+          <Link href={`/stores/${selected.id}/planner`} className="px-3 py-2 border rounded-lg hover:bg-neutral-50 text-sm">Planner</Link>
+          <Link href={`/stores/${selected.id}/sales`} className="px-3 py-2 border rounded-lg hover:bg-neutral-50 text-sm">Vendite</Link>
+          <Link href={`/stores/${selected.id}/time`} className="px-3 py-2 border rounded-lg hover:bg-neutral-50 text-sm">Presenze</Link>
+        </div>
+      ) : undefined} />
       <div className="grid gap-4 md:grid-cols-4">
         <KpiCard title="Turni prossimi 7g" value={String(shifts.length)} />
         <KpiCard title="Vendite oggi" value="—" subtitle="Aggiungi KPI in R2" />

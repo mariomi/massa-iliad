@@ -2,6 +2,7 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Bell } from "lucide-react";
+import { StoreSelector } from "@/components/StoreSelector";
 export function Topbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   return (
     <div className="sticky top-0 z-30 bg-white/70 backdrop-blur border-b border-neutral-200">
@@ -11,6 +12,7 @@ export function Topbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
           <span className="font-medium hidden md:block">Ambassador Console</span>
         </div>
         <div className="flex items-center gap-4">
+          <StoreSelector />
           <button className="relative p-2 rounded-lg hover:bg-neutral-50">
             <Bell size={18} />
             <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />

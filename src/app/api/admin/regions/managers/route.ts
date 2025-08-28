@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { verifySessionToken } from "@/lib/auth/session";
 import { adminClient } from "@/lib/supabase/admin";
 
+export const runtime = "nodejs";
+
 async function requireAdmin() {
   const token = cookies().get("app_session")?.value;
   if (!token) return false;
@@ -32,4 +34,3 @@ export async function DELETE(req: Request) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
 }
-

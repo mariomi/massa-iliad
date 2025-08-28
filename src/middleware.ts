@@ -38,7 +38,7 @@ export async function middleware(req: Request) {
   const isAuthPage = url.pathname.startsWith("/login");
   const isAuthed = Boolean(session) || Boolean(jwt);
   if (!isAuthed && !isAuthPage) { url.pathname = "/login"; return NextResponse.redirect(url); }
-  if (isAuthed && isAuthPage) { url.pathname = "/dashboard"; return NextResponse.redirect(url); }
+  if (isAuthed && isAuthPage) { url.pathname = "/home"; return NextResponse.redirect(url); }
 
   // Enforce admin-only routes
   if (url.pathname.startsWith("/admin") && (!jwt || jwt.role !== "admin")) {

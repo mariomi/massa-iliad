@@ -1,14 +1,21 @@
 "use client";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase/client";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
   const [loading, setLoading] = useState(false);
+  const params = useSearchParams();
+  const roleHint = params.get("r") || "";
+  const prefill = params.get("email") || "";
+  
+  // Prefill email if provided
+  useEffect(() => { if (prefill) setEmail(prefill); }, [prefill]);
 
   const login = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +35,7 @@ export default function LoginPage() {
           if (error) console.warn("Supabase sign-in failed:", error.message);
         }
       } catch {}
-      window.location.href = "/dashboard";
+      window.location.href = "/home";
     } catch (err: any) {
       setLoading(false);
       alert(err?.message ?? String(err));
@@ -38,7 +45,8 @@ export default function LoginPage() {
   return (
     <div className="grid place-items-center min-h-screen px-4">
       <div className="w-full max-w-sm bg-white p-6 rounded-2xl shadow-sm border border-neutral-200">
-        <h1 className="text-xl font-semibold mb-4">Accedi</h1>
+        <h1 className="text-xl font-semibold mb-1">Accedi</h1>
+        {roleHint && <p className="text-xs text-neutral-500 mb-3">Accesso area: {roleHint}</p>}
         <form onSubmit={login} className="space-y-3">
           <div>
             <Label>Email</Label>
@@ -54,4 +62,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
