@@ -29,31 +29,6 @@ export default function LoginPage() {
     }
   };
 
-  const adminLogin = async () => {
-    setLoading(true);
-    const email = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-    const password = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
-    if (!email || !password) {
-      alert("Admin credentials not configured");
-      setLoading(false);
-      return;
-    }
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      setLoading(false);
-      if (!res.ok) return alert(data.error || "Login fallito");
-      window.location.href = "/dashboard";
-    } catch (err: any) {
-      setLoading(false);
-      alert(err?.message ?? String(err));
-    }
-  };
-
   return (
     <div className="grid place-items-center min-h-screen px-4">
       <div className="w-full max-w-sm bg-white p-6 rounded-2xl shadow-sm border border-neutral-200">
@@ -68,7 +43,6 @@ export default function LoginPage() {
             <Input value={pwd} onChange={(e) => setPwd(e.target.value)} type="password" required />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>{loading ? "..." : "Entra"}</Button>
-          <Button type="button" className="w-full" variant="outline" onClick={adminLogin} disabled={loading}>Entra come Admin</Button>
         </form>
       </div>
     </div>
