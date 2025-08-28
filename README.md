@@ -8,7 +8,7 @@ App web per gestione turni, conteggio ore e vendite dei Brand Ambassador.
 3. Installa e avvia:
    ```bash
    npm install
-   npm run dev
+   npm run dev 
    ```
 
 ## Rotte

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { clearSessionCookie } from "@/lib/auth/session";
 
+const isProd = process.env.NODE_ENV === "production";
+
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
@@ -14,6 +16,6 @@ export async function OPTIONS() {
 export async function POST() {
   clearSessionCookie();
   const res = new NextResponse(null, { status: 204, headers: CORS_HEADERS });
-  res.cookies.set("app_session", "", { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 0 });
+  res.cookies.set("app_session", "", { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 0 });
   return res;
 }

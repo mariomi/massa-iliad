@@ -2,6 +2,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 const COOKIE_NAME = "app_session";
+const isProd = process.env.NODE_ENV === "production";
 
 function getSecret() {
   const secret = process.env.AUTH_SECRET;
@@ -34,7 +35,7 @@ export function setSessionCookie(token: string, maxAgeSec = 60 * 60 * 24 * 7) {
   const store = cookies();
   store.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: true,
+    secure: isProd,
     sameSite: "lax",
     path: "/",
     maxAge: maxAgeSec,
@@ -43,7 +44,7 @@ export function setSessionCookie(token: string, maxAgeSec = 60 * 60 * 24 * 7) {
 
 export function clearSessionCookie() {
   const store = cookies();
-  store.set(COOKIE_NAME, "", { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 0 });
+  store.set(COOKIE_NAME, "", { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 0 });
 }
 
 export function readSessionCookie() {
@@ -52,4 +53,3 @@ export function readSessionCookie() {
 }
 
 export const AuthCookie = { name: COOKIE_NAME };
-

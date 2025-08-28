@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { serverClient } from "@/lib/supabase/server";
 import { createSessionToken, setSessionCookie } from "@/lib/auth/session";
 
+const isProd = process.env.NODE_ENV === "production";
+
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
@@ -30,7 +32,7 @@ export async function POST(req: Request) {
       const token = await createSessionToken({ sub: email, role: "admin", email });
       // Set cookie on response explicitly for reliability in all runtimes
       const res = NextResponse.json({ user: { email, role: "admin" } }, { status: 200, headers: CORS_HEADERS });
-      res.cookies.set("app_session", token, { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 7 });
+      res.cookies.set("app_session", token, { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 7 });
       // Also set via helper (no-op if not needed)
       setSessionCookie(token);
       return res;
@@ -48,7 +50,7 @@ export async function POST(req: Request) {
     const name = user?.name ?? user?.full_name ?? undefined;
     const token = await createSessionToken({ sub: email, role: "user", email, name });
     const res = NextResponse.json({ user: { email, role: "user", name } }, { status: 200, headers: CORS_HEADERS });
-    res.cookies.set("app_session", token, { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 7 });
+    res.cookies.set("app_session", token, { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 7 });
     setSessionCookie(token);
     return res;
   } catch (err: any) {
