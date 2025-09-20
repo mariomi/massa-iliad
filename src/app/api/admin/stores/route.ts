@@ -6,7 +6,7 @@ import { adminClient } from "@/lib/supabase/admin";
 export const runtime = "nodejs";
 
 async function requireAdmin() {
-  const token = cookies().get("app_session")?.value;
+  const token = (await cookies()).get("app_session")?.value;
   if (!token) return false;
   try {
     const payload = await verifySessionToken(token);
@@ -19,10 +19,15 @@ async function requireAdmin() {
 export async function GET() {
   try {
     if (!(await requireAdmin())) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    const supabase = adminClient();
-    const { data, error } = await supabase.from("stores").select("id,name,address").order("name");
-    if (error) throw error;
-    return NextResponse.json(data ?? []);
+    // Demo: evita hard fail senza Supabase configurato
+    try {
+      const supabase = adminClient();
+      const { data, error } = await supabase.from("stores").select("id,name,address").order("name");
+      if (error) throw error;
+      return NextResponse.json(data ?? []);
+    } catch {
+      return NextResponse.json([]);
+    }
   } catch (err: any) {
     const msg = err?.message ?? String(err);
     const hint = msg.includes("SUPABASE_SERVICE_ROLE")

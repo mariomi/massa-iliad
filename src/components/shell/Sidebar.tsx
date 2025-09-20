@@ -22,20 +22,31 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
     { href: "/admin/regions", icon: <Store size={20} />, label: "Admin Regions", adminOnly: true }
   ];
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
   useEffect(() => {
     (async () => {
       try {
         const res = await fetch("/api/auth/me", { credentials: "include" });
         const data = await res.json();
-        setIsAdmin(data?.role === "admin");
+        setUserRole(data?.role || null);
       } catch {
-        setIsAdmin(false);
+        setUserRole(null);
       }
     })();
   }, []);
 
-  const core = items.filter(i => !i.adminOnly);
+  const isAdmin = userRole === "admin";
+  const isWorkforce = userRole === "workforce";
+
+  // Filter items based on user role
+  const core = items.filter(i => {
+    if (i.adminOnly) return false;
+    if (isWorkforce) {
+      // Workforce can only see dashboard, stores, and reports/hours
+      return i.href === "/dashboard" || i.href === "/stores" || i.href === "/reports/hours";
+    }
+    return true;
+  });
   const admin = items.filter(i => i.adminOnly);
   const [adminOpen, setAdminOpen] = useState(true);
 

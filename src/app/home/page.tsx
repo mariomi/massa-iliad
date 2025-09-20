@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMe } from "@/lib/auth/useMe";
 import { useStoreSelector } from "@/lib/store/StoreContext";
-import { supabase } from "@/lib/supabase/client";
+// import { supabase } from "@/lib/supabase/client";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/card";
 
@@ -17,28 +17,16 @@ export default function HomeRouter() {
     if (!me) { router.replace("/login"); return; }
     const go = async () => {
       if (me.role === "admin") { router.replace("/admin/stores"); return; }
-      if (me.role === "user") {
-        const user = (await supabase.auth.getUser()).data.user;
-        // Determine if user is manager of any store
-        let isManager = false;
-        let firstStore: string | null = null;
-        if (user) {
-          const { data: mm } = await supabase.from("store_memberships").select("store_id, role").eq("user_id", user.id).limit(50);
-          const m = (mm || []);
-          isManager = m.some(r => r.role === 'manager');
-          firstStore = m[0]?.store_id ?? null;
-        }
-        if (selected) {
-          router.replace(`/stores/${selected.id}/${isManager ? 'planner' : 'time'}`);
-          return;
-        }
-        if (firstStore) {
-          router.replace(`/stores/${firstStore}/${isManager ? 'planner' : 'time'}`);
-          return;
-        }
-        // Fallback: go to stores list to pick
-        router.replace("/stores");
+      if (me.role === "workforce") { 
+        // Workforce goes directly to dashboard
+        router.replace("/dashboard"); 
+        return; 
       }
+          if (me.role === "user") {
+            // Demo: non usiamo più supabase qui. Rimanda alla lista negozi
+            if (selected) { router.replace(`/stores/${selected.id}/time`); return; }
+            router.replace("/stores");
+          }
     };
     go();
   }, [me?.role, selected?.id, loading, stores.length]);

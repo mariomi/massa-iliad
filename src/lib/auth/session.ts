@@ -12,7 +12,7 @@ function getSecret() {
 
 export type SessionPayload = {
   sub: string; // subject (email or user id)
-  role: "admin" | "user";
+  role: "admin" | "user" | "workforce";
   name?: string;
   email?: string;
 };
