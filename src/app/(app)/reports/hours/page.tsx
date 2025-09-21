@@ -115,11 +115,11 @@ export default function HoursReport() {
         onShiftCreate={canEdit ? handleShiftCreate : undefined}
         onShiftEdit={canEdit ? handleShiftEdit : undefined}
         onShiftDelete={canEdit ? handleShiftDelete : undefined}
-        onShowFilters={() => setShowFilters(true)}
+        onShowFilters={me?.role !== "workforce" ? () => setShowFilters(true) : undefined}
         refreshTrigger={refreshTrigger}
       />
 
-      {showFilters && (
+      {showFilters && me?.role !== "workforce" && (
         <CalendarFiltersPanel
           filters={filters}
           onFiltersChange={handleFiltersChange}

@@ -357,13 +357,20 @@ export function AdvancedCalendar({
         const end = filters.period ? new Date(Math.min(viewEnd.getTime(), filters.period.to.getTime())) : viewEnd;
 
         // Get filtered shifts from demo data
-        const filteredShifts = demoDataService.filterShifts({
+        let filterOptions = {
           stores: filters.stores.length > 0 ? filters.stores : undefined,
           teams: filters.teams.length > 0 ? filters.teams : undefined,
           persons: filters.persons.length > 0 ? filters.persons : undefined,
           roles: filters.roles.length > 0 ? filters.roles : undefined,
           period: { from: start, to: end }
-        });
+        };
+
+        // If user is workforce, only show their own shifts
+        if (me?.role === "workforce" && me?.id) {
+          filterOptions.persons = [me.id];
+        }
+
+        const filteredShifts = demoDataService.filterShifts(filterOptions);
 
         // Convert to calendar events
         const calendarEvents: ShiftEvent[] = filteredShifts.map(shift => ({
@@ -394,7 +401,7 @@ export function AdvancedCalendar({
     };
 
     loadEvents();
-  }, [filters, refreshTrigger, date, view]);
+  }, [filters, refreshTrigger, date, view, me]);
 
   const handleSelectSlot = (slot: SlotInfo) => {
     if (canEdit && onShiftCreate) {
@@ -482,15 +489,18 @@ export function AdvancedCalendar({
 
         {/* Pulsanti semplificati */}
         <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onShowFilters}
-            className="flex items-center gap-2"
-          >
-            <Filter size={16} />
-            <span className="hidden sm:inline">Filtri</span>
-          </Button>
+          {/* Only show filters button for non-workforce users */}
+          {me?.role !== "workforce" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onShowFilters}
+              className="flex items-center gap-2"
+            >
+              <Filter size={16} />
+              <span className="hidden sm:inline">Filtri</span>
+            </Button>
+          )}
           {canEdit && (
             <Button
               size="sm"

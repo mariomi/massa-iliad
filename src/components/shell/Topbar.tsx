@@ -11,10 +11,13 @@ export function Topbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
+      // Clear demo user from sessionStorage
+      sessionStorage.removeItem('demo_user');
       window.location.href = "/login";
     } catch (error) {
       console.error("Logout failed:", error);
-      // Fallback: redirect anyway
+      // Fallback: clear sessionStorage and redirect anyway
+      sessionStorage.removeItem('demo_user');
       window.location.href = "/login";
     }
   };

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// Removed Supabase dependency for demo
+import { supabase } from "@/lib/supabase/client";
 import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
@@ -29,7 +29,16 @@ export default function LoginPage() {
       const data = await res.json();
       if (!res.ok) { setLoading(false); return alert(data.error || "Login fallito"); }
       
-      // Redirect to home page after successful login
+      // Save user to sessionStorage for demo
+      sessionStorage.setItem('demo_user', JSON.stringify(data.user));
+      
+      // For non-admin users, also sign into Supabase Auth to enable RLS
+      try {
+        if (data?.user?.role === "user") {
+          const { error } = await supabase.auth.signInWithPassword({ email, password: pwd });
+          if (error) console.warn("Supabase sign-in failed:", error.message);
+        }
+      } catch {}
       window.location.href = "/home";
     } catch (err: any) {
       setLoading(false);

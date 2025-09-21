@@ -5,17 +5,18 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Route } from 'next';
-import { LayoutDashboard, Store, Calendar, Users } from "lucide-react";
+import { LayoutDashboard, Store, Calendar, Users, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => void; }) {
   
   // 2. MODIFICA: Ho cambiato 'JSX.Element' con 'React.ReactNode'.
   // Questo tipo è più flessibile e non dovrebbe causare l'errore del namespace.
-  const items: { href: Route; label: string; icon: React.ReactNode; adminOnly?: boolean }[] = [
+  const items: { href: Route; label: string; icon: React.ReactNode; adminOnly?: boolean; workforceOnly?: boolean }[] = [
     { href: "/dashboard", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
     { href: "/stores", icon: <Store size={20} />, label: "Punti vendita" },
     { href: "/reports/hours", icon: <Calendar size={20} />, label: "Report ore" },
+    { href: "/reports/timesheet", icon: <Clock size={20} />, label: "Timesheet", workforceOnly: true },
     { href: "/admin/members", icon: <Users size={20} />, label: "Members", adminOnly: true },
     { href: "/admin/stores", icon: <Store size={20} />, label: "Admin Stores", adminOnly: true },
     { href: "/admin/users", icon: <Users size={20} />, label: "Admin Users", adminOnly: true },
@@ -41,9 +42,10 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
   // Filter items based on user role
   const core = items.filter(i => {
     if (i.adminOnly) return false;
+    if (i.workforceOnly) return isWorkforce;
     if (isWorkforce) {
-      // Workforce can only see dashboard, stores, and reports/hours
-      return i.href === "/dashboard" || i.href === "/stores" || i.href === "/reports/hours";
+      // Workforce can only see dashboard, stores, reports/hours, and timesheet
+      return i.href === "/dashboard" || i.href === "/stores" || i.href === "/reports/hours" || i.href === "/reports/timesheet";
     }
     return true;
   });

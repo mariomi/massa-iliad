@@ -22,7 +22,15 @@ export async function GET() {
       }
     }
     // For demo, avoid hard dependency on Supabase
-    return NextResponse.json({ role, email, name, supabaseUserId: null });
+    // Map email to user ID for demo purposes
+    let id: string | undefined;
+    if (email === "admin@demo.com") {
+      id = "admin_user";
+    } else if (email === "workforce@demo.com") {
+      id = "workforce_user";
+    }
+    
+    return NextResponse.json({ id, role, email, name, supabaseUserId: null });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message ?? String(err) }, { status: 500 });
   }

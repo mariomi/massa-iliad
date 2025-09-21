@@ -104,6 +104,62 @@ const demoDatabase = {
       "description": "Team dedicato alla forza lavoro e gestione turni"
     }
   ],
+  "leave_balances": [
+    {
+      "user_id": "workforce_user",
+      "annual_leave_days": 26,
+      "used_leave_days": 5,
+      "sick_leave_days": 5,
+      "used_sick_days": 2,
+      "remaining_leave_days": 21,
+      "carry_over_days": 2
+    },
+    {
+      "user_id": "user_1",
+      "annual_leave_days": 26,
+      "used_leave_days": 8,
+      "sick_leave_days": 5,
+      "used_sick_days": 1,
+      "remaining_leave_days": 18,
+      "carry_over_days": 1
+    },
+    {
+      "user_id": "user_2",
+      "annual_leave_days": 26,
+      "used_leave_days": 12,
+      "sick_leave_days": 5,
+      "used_sick_days": 0,
+      "remaining_leave_days": 14,
+      "carry_over_days": 3
+    },
+    {
+      "user_id": "user_3",
+      "annual_leave_days": 26,
+      "used_leave_days": 6,
+      "sick_leave_days": 5,
+      "used_sick_days": 3,
+      "remaining_leave_days": 20,
+      "carry_over_days": 0
+    },
+    {
+      "user_id": "user_4",
+      "annual_leave_days": 26,
+      "used_leave_days": 9,
+      "sick_leave_days": 5,
+      "used_sick_days": 0,
+      "remaining_leave_days": 17,
+      "carry_over_days": 1
+    },
+    {
+      "user_id": "user_5",
+      "annual_leave_days": 26,
+      "used_leave_days": 4,
+      "sick_leave_days": 5,
+      "used_sick_days": 2,
+      "remaining_leave_days": 22,
+      "carry_over_days": 0
+    }
+  ],
   "shifts": [
     {
       "id": "shift_1",
@@ -309,9 +365,45 @@ export interface DemoShiftWithDetails extends DemoShift {
   hours: number;
 }
 
+export interface DemoLeaveBalance {
+  user_id: string;
+  annual_leave_days: number;
+  used_leave_days: number;
+  sick_leave_days: number;
+  used_sick_days: number;
+  remaining_leave_days: number;
+  carry_over_days: number;
+}
+
+export interface PersonalTimesheetStats {
+  user: DemoUser;
+  totalHours: number;
+  regularHours: number;
+  overtimeHours: number;
+  weeklyHours: number;
+  weeklyHoursRemaining: number;
+  shiftsCount: number;
+  publishedShiftsCount: number;
+  draftShiftsCount: number;
+  leaveBalance: DemoLeaveBalance | null;
+  recentShifts: DemoShiftWithDetails[];
+}
+
 class DemoDataService {
-  private data = { ...demoDatabase };
-  private readonly initial = { ...demoDatabase };
+  private data: {
+    stores: DemoStore[];
+    users: DemoUser[];
+    teams: DemoTeam[];
+    leave_balances: DemoLeaveBalance[];
+    shifts: DemoShift[];
+  } = { ...demoDatabase };
+  private readonly initial: {
+    stores: DemoStore[];
+    users: DemoUser[];
+    teams: DemoTeam[];
+    leave_balances: DemoLeaveBalance[];
+    shifts: DemoShift[];
+  } = { ...demoDatabase };
 
   // Reset to initial demo dataset (useful after edits during dev)
   resetData() {
@@ -503,6 +595,146 @@ class DemoDataService {
 
   getDraftShifts(): number {
     return this.data.shifts.filter(shift => !shift.published).length;
+  }
+
+  // Leave Balances
+  getLeaveBalances(): DemoLeaveBalance[] {
+    return this.data.leave_balances || [];
+  }
+
+  getLeaveBalanceByUserId(userId: string): DemoLeaveBalance | null {
+    return this.data.leave_balances?.find(balance => balance.user_id === userId) || null;
+  }
+
+  // Personal Timesheet Statistics
+  getPersonalTimesheetStats(userId: string, period?: { from: Date; to: Date }): PersonalTimesheetStats {
+    const user = this.getUserById(userId);
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+
+    // Get shifts for this user within the specified period
+    let userShifts = this.getShiftsByUser(userId);
+
+    if (period) {
+      userShifts = userShifts.filter(shift => {
+        const shiftStart = new Date(shift.start_at);
+        const shiftEnd = new Date(shift.end_at);
+        return shiftEnd >= period.from && shiftStart <= period.to;
+      });
+    }
+
+    // Calculate hours and overtime
+    let totalHours = 0;
+    let regularHours = 0;
+    let overtimeHours = 0;
+
+    userShifts.forEach(shift => {
+      const hours = (new Date(shift.end_at).getTime() - new Date(shift.start_at).getTime()) / (1000 * 60 * 60);
+      totalHours += hours;
+
+      // Assuming 8 hours is regular workday
+      if (hours <= 8) {
+        regularHours += hours;
+      } else {
+        regularHours += 8;
+        overtimeHours += hours - 8;
+      }
+    });
+
+    // Calculate weekly hours (from Monday of current week to today)
+    const now = new Date();
+    const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay; // Adjust for Sunday
+    const mondayOfWeek = new Date(now);
+    mondayOfWeek.setDate(now.getDate() + mondayOffset);
+    mondayOfWeek.setHours(0, 0, 0, 0);
+    
+    const endOfToday = new Date(now);
+    endOfToday.setHours(23, 59, 59, 999);
+
+    // Get shifts from Monday to today (completed shifts)
+    const completedWeeklyShifts = userShifts.filter(shift => {
+      const shiftDate = new Date(shift.start_at);
+      return shiftDate >= mondayOfWeek && shiftDate <= endOfToday;
+    });
+
+    const weeklyHours = completedWeeklyShifts.reduce((total, shift) => {
+      const hours = (new Date(shift.end_at).getTime() - new Date(shift.start_at).getTime()) / (1000 * 60 * 60);
+      return total + hours;
+    }, 0);
+
+    // Get shifts from tomorrow to end of week (remaining shifts)
+    const tomorrow = new Date(now);
+    tomorrow.setDate(now.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    
+    const sundayOfWeek = new Date(mondayOfWeek);
+    sundayOfWeek.setDate(mondayOfWeek.getDate() + 6);
+    sundayOfWeek.setHours(23, 59, 59, 999);
+
+    const remainingWeeklyShifts = userShifts.filter(shift => {
+      const shiftDate = new Date(shift.start_at);
+      return shiftDate >= tomorrow && shiftDate <= sundayOfWeek;
+    });
+
+    const weeklyHoursRemaining = remainingWeeklyShifts.reduce((total, shift) => {
+      const hours = (new Date(shift.end_at).getTime() - new Date(shift.start_at).getTime()) / (1000 * 60 * 60);
+      return total + hours;
+    }, 0);
+
+    // Get shifts with details for recent shifts (sort by date descending, take first 10)
+    const shiftsWithDetails = this.getShiftsWithDetails()
+      .filter(shift => shift.user_id === userId)
+      .sort((a, b) => new Date(b.start_at).getTime() - new Date(a.start_at).getTime())
+      .slice(0, 10);
+
+    // Get leave balance
+    const leaveBalance = this.getLeaveBalanceByUserId(userId);
+
+    return {
+      user,
+      totalHours: Math.round(totalHours * 100) / 100,
+      regularHours: Math.round(regularHours * 100) / 100,
+      overtimeHours: Math.round(overtimeHours * 100) / 100,
+      weeklyHours: Math.round(weeklyHours * 100) / 100,
+      weeklyHoursRemaining: Math.round(weeklyHoursRemaining * 100) / 100,
+      shiftsCount: userShifts.length,
+      publishedShiftsCount: userShifts.filter(s => s.published).length,
+      draftShiftsCount: userShifts.filter(s => !s.published).length,
+      leaveBalance,
+      recentShifts: shiftsWithDetails
+    };
+  }
+
+  // CSV Export for Personal Timesheet
+  exportPersonalTimesheetToCSV(userId: string, period?: { from: Date; to: Date }): string {
+    const stats = this.getPersonalTimesheetStats(userId, period);
+
+    // CSV Header
+    let csv = 'Data,Orario Inizio,Orario Fine,Ore,Negozio,Note,Pubblicato\n';
+
+    // Add shifts data
+    stats.recentShifts.forEach(shift => {
+      const startDate = new Date(shift.start_at);
+      const endDate = new Date(shift.end_at);
+      const date = startDate.toLocaleDateString('it-IT');
+      const startTime = startDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+      const endTime = endDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+
+      csv += `"${date}","${startTime}","${endTime}","${shift.hours}","${shift.store.name}","${shift.note || ''}","${shift.published ? 'Si' : 'No'}"\n`;
+    });
+
+    // Add summary at the end
+    csv += '\n';
+    csv += `"Riepilogo","Ore Totali: ${stats.totalHours}","Ore Settimanali: ${stats.weeklyHours}","Ore Rimanenti: ${stats.weeklyHoursRemaining}","Turni: ${stats.shiftsCount}"\n`;
+
+    if (stats.leaveBalance) {
+      csv += `"Ferie","Totale: ${stats.leaveBalance.annual_leave_days}","Usate: ${stats.leaveBalance.used_leave_days}","Rimanenti: ${stats.leaveBalance.remaining_leave_days}"\n`;
+      csv += `"Permessi Malattia","Totale: ${stats.leaveBalance.sick_leave_days}","Usati: ${stats.leaveBalance.used_sick_days}"\n`;
+    }
+
+    return csv;
   }
 }
 
