@@ -5,7 +5,7 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Route } from 'next';
-import { LayoutDashboard, Store, Calendar, Users, Clock } from "lucide-react";
+import { LayoutDashboard, Store, Calendar, Users, Clock, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => void; }) {
@@ -15,6 +15,7 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
   const items: { href: Route; label: string; icon: React.ReactNode; adminOnly?: boolean; workforceOnly?: boolean }[] = [
     { href: "/dashboard", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
     { href: "/stores", icon: <Store size={20} />, label: "Punti vendita" },
+    { href: "/sales", icon: <ShoppingCart size={20} />, label: "Vendite", adminOnly: true },
     { href: "/reports/hours", icon: <Calendar size={20} />, label: "Report ore" },
     { href: "/reports/timesheet", icon: <Clock size={20} />, label: "Timesheet", workforceOnly: true },
     { href: "/admin/members", icon: <Users size={20} />, label: "Members", adminOnly: true },

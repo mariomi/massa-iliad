@@ -1,29 +1,156 @@
+// Sales interfaces
+export interface DemoSale {
+  id: string;
+  store_id: string;
+  user_id: string;
+  product_name: string;
+  category: string;
+  quantity: number;
+  unit_price: number;
+  total_amount: number;
+  sale_date: string;
+  payment_method: 'cash' | 'card' | 'digital';
+  created_at: string;
+}
+
+export interface SalesStats {
+  totalSales: number;
+  totalRevenue: number;
+  averageOrderValue: number;
+  salesByCategory: { [category: string]: number };
+  salesByStore: { [storeId: string]: { name: string; sales: number; revenue: number } };
+  salesByPaymentMethod: { [method: string]: number };
+  dailySales: { [date: string]: number };
+  topProducts: { name: string; quantity: number; revenue: number }[];
+}
+
 // Import demo data directly as a constant
 const demoDatabase = {
   "stores": [
     {
       "id": "store_1",
-      "name": "Negozio Centro",
+      "name": "Iliad Store Centro",
       "address": "Via Roma 123, Milano",
       "region": "Lombardia",
+      "city": "Milano",
+      "postal_code": "20100",
+      "phone": "+39 02 1234567",
+      "email": "centro@iliad.it",
       "manager": "user_2",
+      "status": "active",
+      "opening_hours": {
+        "monday": "09:00-19:00",
+        "tuesday": "09:00-19:00", 
+        "wednesday": "09:00-19:00",
+        "thursday": "09:00-19:00",
+        "friday": "09:00-19:00",
+        "saturday": "09:00-18:00",
+        "sunday": "10:00-17:00"
+      },
+      "services": ["Vendita", "Assistenza", "Ricarica", "Portabilità"],
+      "square_meters": 120,
+      "employees_count": 8,
       "created_at": "2024-01-15T09:00:00Z"
     },
     {
       "id": "store_2", 
-      "name": "Negozio Periferia",
+      "name": "Iliad Store Periferia",
       "address": "Corso Italia 456, Milano",
       "region": "Lombardia",
+      "city": "Milano",
+      "postal_code": "20122",
+      "phone": "+39 02 2345678",
+      "email": "periferia@iliad.it",
       "manager": "user_4",
+      "status": "active",
+      "opening_hours": {
+        "monday": "09:00-19:00",
+        "tuesday": "09:00-19:00",
+        "wednesday": "09:00-19:00", 
+        "thursday": "09:00-19:00",
+        "friday": "09:00-19:00",
+        "saturday": "09:00-18:00",
+        "sunday": "10:00-17:00"
+      },
+      "services": ["Vendita", "Assistenza", "Ricarica"],
+      "square_meters": 95,
+      "employees_count": 6,
       "created_at": "2024-02-01T10:00:00Z"
     },
     {
       "id": "store_3",
-      "name": "Negozio Mall",
+      "name": "Iliad Store Mall",
       "address": "Galleria del Corso 789, Milano",
-      "region": "Lombardia", 
+      "region": "Lombardia",
+      "city": "Milano", 
+      "postal_code": "20121",
+      "phone": "+39 02 3456789",
+      "email": "mall@iliad.it",
       "manager": "user_2",
+      "status": "active",
+      "opening_hours": {
+        "monday": "10:00-21:00",
+        "tuesday": "10:00-21:00",
+        "wednesday": "10:00-21:00",
+        "thursday": "10:00-21:00", 
+        "friday": "10:00-21:00",
+        "saturday": "10:00-21:00",
+        "sunday": "10:00-20:00"
+      },
+      "services": ["Vendita", "Assistenza", "Ricarica", "Portabilità", "Demo"],
+      "square_meters": 150,
+      "employees_count": 10,
       "created_at": "2024-02-15T11:00:00Z"
+    },
+    {
+      "id": "store_4",
+      "name": "Iliad Store Navigli",
+      "address": "Corso di Porta Ticinese 12, Milano",
+      "region": "Lombardia",
+      "city": "Milano",
+      "postal_code": "20143",
+      "phone": "+39 02 4567890",
+      "email": "navigli@iliad.it",
+      "manager": "user_6",
+      "status": "active",
+      "opening_hours": {
+        "monday": "09:00-19:00",
+        "tuesday": "09:00-19:00",
+        "wednesday": "09:00-19:00",
+        "thursday": "09:00-19:00",
+        "friday": "09:00-19:00", 
+        "saturday": "09:00-18:00",
+        "sunday": "10:00-17:00"
+      },
+      "services": ["Vendita", "Assistenza", "Ricarica"],
+      "square_meters": 80,
+      "employees_count": 5,
+      "created_at": "2024-03-01T09:00:00Z"
+    },
+    {
+      "id": "store_5",
+      "name": "Iliad Store Brera",
+      "address": "Via Brera 8, Milano",
+      "region": "Lombardia",
+      "city": "Milano",
+      "postal_code": "20121",
+      "phone": "+39 02 5678901",
+      "email": "brera@iliad.it",
+      "manager": "user_7",
+      "status": "active",
+      "opening_hours": {
+        "monday": "09:00-19:00",
+        "tuesday": "09:00-19:00",
+        "wednesday": "09:00-19:00",
+        "thursday": "09:00-19:00",
+        "friday": "09:00-19:00",
+        "saturday": "09:00-18:00",
+        "sunday": "10:00-17:00"
+      },
+      "services": ["Vendita", "Assistenza", "Ricarica", "Portabilità"],
+      "square_meters": 110,
+      "employees_count": 7,
+      "created_at": "2024-03-15T10:00:00Z"
     }
   ],
   "users": [
@@ -73,11 +200,56 @@ const demoDatabase = {
       "created_at": "2024-01-20T12:00:00Z"
     },
     {
+      "id": "user_6",
+      "name": "Francesco Bianchi",
+      "email": "francesco.bianchi@demo.com",
+      "role": "manager",
+      "store_id": "store_4",
+      "team": "team_manager",
+      "created_at": "2024-02-20T09:00:00Z"
+    },
+    {
+      "id": "user_7",
+      "name": "Sofia Rossi",
+      "email": "sofia.rossi@demo.com",
+      "role": "manager",
+      "store_id": "store_5",
+      "team": "team_manager",
+      "created_at": "2024-03-01T10:00:00Z"
+    },
+    {
+      "id": "user_8",
+      "name": "Alessandro Verde",
+      "email": "alessandro.verde@demo.com",
+      "role": "staff",
+      "store_id": "store_4",
+      "team": "team_vendite",
+      "created_at": "2024-03-05T11:00:00Z"
+    },
+    {
+      "id": "user_9",
+      "name": "Chiara Gialli",
+      "email": "chiara.gialli@demo.com",
+      "role": "staff",
+      "store_id": "store_5",
+      "team": "team_vendite",
+      "created_at": "2024-03-10T12:00:00Z"
+    },
+    {
+      "id": "user_10",
+      "name": "Roberto Marrone",
+      "email": "roberto.marrone@demo.com",
+      "role": "staff",
+      "store_id": "store_1",
+      "team": "team_supporto",
+      "created_at": "2024-03-15T13:00:00Z"
+    },
+    {
       "id": "workforce_user",
       "name": "Forza Lavoro Demo",
       "email": "workforce@demo.com",
       "role": "workforce",
-      "store_id": "store_1",
+      "store_id": null,
       "team": "team_workforce",
       "created_at": "2024-01-25T08:00:00Z"
     }
@@ -158,6 +330,242 @@ const demoDatabase = {
       "used_sick_days": 2,
       "remaining_leave_days": 22,
       "carry_over_days": 0
+    }
+  ],
+  "sales": [
+    {
+      "id": "sale_1",
+      "store_id": "store_1",
+      "user_id": "user_1",
+      "product_name": "iPhone 15 Pro",
+      "category": "Smartphone",
+      "quantity": 1,
+      "unit_price": 1199.00,
+      "total_amount": 1199.00,
+      "sale_date": "2024-12-20T10:30:00Z",
+      "payment_method": "card",
+      "created_at": "2024-12-20T10:30:00Z"
+    },
+    {
+      "id": "sale_2",
+      "store_id": "store_1",
+      "user_id": "user_2",
+      "product_name": "Samsung Galaxy S24",
+      "category": "Smartphone",
+      "quantity": 1,
+      "unit_price": 999.00,
+      "total_amount": 999.00,
+      "sale_date": "2024-12-20T11:15:00Z",
+      "payment_method": "digital",
+      "created_at": "2024-12-20T11:15:00Z"
+    },
+    {
+      "id": "sale_3",
+      "store_id": "store_1",
+      "user_id": "user_1",
+      "product_name": "AirPods Pro",
+      "category": "Accessori",
+      "quantity": 2,
+      "unit_price": 279.00,
+      "total_amount": 558.00,
+      "sale_date": "2024-12-20T14:20:00Z",
+      "payment_method": "cash",
+      "created_at": "2024-12-20T14:20:00Z"
+    },
+    {
+      "id": "sale_4",
+      "store_id": "store_2",
+      "user_id": "user_3",
+      "product_name": "iPad Air",
+      "category": "Tablet",
+      "quantity": 1,
+      "unit_price": 649.00,
+      "total_amount": 649.00,
+      "sale_date": "2024-12-20T15:45:00Z",
+      "payment_method": "card",
+      "created_at": "2024-12-20T15:45:00Z"
+    },
+    {
+      "id": "sale_5",
+      "store_id": "store_2",
+      "user_id": "user_4",
+      "product_name": "MacBook Air M3",
+      "category": "Laptop",
+      "quantity": 1,
+      "unit_price": 1299.00,
+      "total_amount": 1299.00,
+      "sale_date": "2024-12-20T16:30:00Z",
+      "payment_method": "digital",
+      "created_at": "2024-12-20T16:30:00Z"
+    },
+    {
+      "id": "sale_6",
+      "store_id": "store_3",
+      "user_id": "user_5",
+      "product_name": "Apple Watch Series 9",
+      "category": "Smartwatch",
+      "quantity": 1,
+      "unit_price": 449.00,
+      "total_amount": 449.00,
+      "sale_date": "2024-12-20T17:10:00Z",
+      "payment_method": "card",
+      "created_at": "2024-12-20T17:10:00Z"
+    },
+    {
+      "id": "sale_7",
+      "store_id": "store_1",
+      "user_id": "user_1",
+      "product_name": "Custodia iPhone 15",
+      "category": "Accessori",
+      "quantity": 3,
+      "unit_price": 49.00,
+      "total_amount": 147.00,
+      "sale_date": "2024-12-19T09:15:00Z",
+      "payment_method": "cash",
+      "created_at": "2024-12-19T09:15:00Z"
+    },
+    {
+      "id": "sale_8",
+      "store_id": "store_2",
+      "user_id": "user_3",
+      "product_name": "Samsung Galaxy Tab S9",
+      "category": "Tablet",
+      "quantity": 1,
+      "unit_price": 799.00,
+      "total_amount": 799.00,
+      "sale_date": "2024-12-19T11:30:00Z",
+      "payment_method": "digital",
+      "created_at": "2024-12-19T11:30:00Z"
+    },
+    {
+      "id": "sale_9",
+      "store_id": "store_3",
+      "user_id": "user_5",
+      "product_name": "iPhone 15",
+      "category": "Smartphone",
+      "quantity": 1,
+      "unit_price": 899.00,
+      "total_amount": 899.00,
+      "sale_date": "2024-12-19T13:45:00Z",
+      "payment_method": "card",
+      "created_at": "2024-12-19T13:45:00Z"
+    },
+    {
+      "id": "sale_10",
+      "store_id": "store_1",
+      "user_id": "user_2",
+      "product_name": "Cavo Lightning",
+      "category": "Accessori",
+      "quantity": 5,
+      "unit_price": 29.00,
+      "total_amount": 145.00,
+      "sale_date": "2024-12-19T15:20:00Z",
+      "payment_method": "cash",
+      "created_at": "2024-12-19T15:20:00Z"
+    },
+    {
+      "id": "sale_11",
+      "store_id": "store_2",
+      "user_id": "user_4",
+      "product_name": "Dell XPS 13",
+      "category": "Laptop",
+      "quantity": 1,
+      "unit_price": 1199.00,
+      "total_amount": 1199.00,
+      "sale_date": "2024-12-18T10:00:00Z",
+      "payment_method": "digital",
+      "created_at": "2024-12-18T10:00:00Z"
+    },
+    {
+      "id": "sale_12",
+      "store_id": "store_3",
+      "user_id": "user_5",
+      "product_name": "Samsung Galaxy Watch 6",
+      "category": "Smartwatch",
+      "quantity": 1,
+      "unit_price": 329.00,
+      "total_amount": 329.00,
+      "sale_date": "2024-12-18T12:15:00Z",
+      "payment_method": "card",
+      "created_at": "2024-12-18T12:15:00Z"
+    },
+    {
+      "id": "sale_13",
+      "store_id": "store_4",
+      "user_id": "user_8",
+      "product_name": "iPhone 14 Pro",
+      "category": "Smartphone",
+      "quantity": 1,
+      "unit_price": 1099.00,
+      "total_amount": 1099.00,
+      "sale_date": "2024-12-21T10:30:00Z",
+      "payment_method": "card",
+      "created_at": "2024-12-21T10:30:00Z"
+    },
+    {
+      "id": "sale_14",
+      "store_id": "store_4",
+      "user_id": "user_6",
+      "product_name": "AirPods Max",
+      "category": "Accessori",
+      "quantity": 1,
+      "unit_price": 599.00,
+      "total_amount": 599.00,
+      "sale_date": "2024-12-21T14:20:00Z",
+      "payment_method": "digital",
+      "created_at": "2024-12-21T14:20:00Z"
+    },
+    {
+      "id": "sale_15",
+      "store_id": "store_5",
+      "user_id": "user_9",
+      "product_name": "MacBook Pro M3",
+      "category": "Laptop",
+      "quantity": 1,
+      "unit_price": 1999.00,
+      "total_amount": 1999.00,
+      "sale_date": "2024-12-21T16:45:00Z",
+      "payment_method": "card",
+      "created_at": "2024-12-21T16:45:00Z"
+    },
+    {
+      "id": "sale_16",
+      "store_id": "store_5",
+      "user_id": "user_7",
+      "product_name": "iPad Pro 12.9",
+      "category": "Tablet",
+      "quantity": 1,
+      "unit_price": 1199.00,
+      "total_amount": 1199.00,
+      "sale_date": "2024-12-21T18:10:00Z",
+      "payment_method": "digital",
+      "created_at": "2024-12-21T18:10:00Z"
+    },
+    {
+      "id": "sale_17",
+      "store_id": "store_1",
+      "user_id": "user_10",
+      "product_name": "Samsung Galaxy S24 Ultra",
+      "category": "Smartphone",
+      "quantity": 1,
+      "unit_price": 1299.00,
+      "total_amount": 1299.00,
+      "sale_date": "2024-12-22T11:00:00Z",
+      "payment_method": "card",
+      "created_at": "2024-12-22T11:00:00Z"
+    },
+    {
+      "id": "sale_18",
+      "store_id": "store_2",
+      "user_id": "user_3",
+      "product_name": "Apple Watch Ultra 2",
+      "category": "Smartwatch",
+      "quantity": 1,
+      "unit_price": 899.00,
+      "total_amount": 899.00,
+      "sale_date": "2024-12-22T13:30:00Z",
+      "payment_method": "digital",
+      "created_at": "2024-12-22T13:30:00Z"
     }
   ],
   "shifts": [
@@ -415,12 +823,20 @@ class DemoDataService {
     return this.data.stores;
   }
 
+  getAllStores(): DemoStore[] {
+    return this.data.stores;
+  }
+
   getStoreById(id: string): DemoStore | undefined {
     return this.data.stores.find(store => store.id === id);
   }
 
   // Users
   getUsers(): DemoUser[] {
+    return this.data.users;
+  }
+
+  getAllUsers(): DemoUser[] {
     return this.data.users;
   }
 
@@ -604,6 +1020,116 @@ class DemoDataService {
 
   getLeaveBalanceByUserId(userId: string): DemoLeaveBalance | null {
     return this.data.leave_balances?.find(balance => balance.user_id === userId) || null;
+  }
+
+  // Sales Management
+  getAllSales(): DemoSale[] {
+    return this.data.sales || [];
+  }
+
+  getSalesByStore(storeId: string): DemoSale[] {
+    return this.data.sales?.filter(sale => sale.store_id === storeId) || [];
+  }
+
+  getSalesByUser(userId: string): DemoSale[] {
+    return this.data.sales?.filter(sale => sale.user_id === userId) || [];
+  }
+
+  getSalesByDateRange(from: Date, to: Date): DemoSale[] {
+    return this.data.sales?.filter(sale => {
+      const saleDate = new Date(sale.sale_date);
+      return saleDate >= from && saleDate <= to;
+    }) || [];
+  }
+
+  addSale(sale: Omit<DemoSale, 'id' | 'created_at'>): DemoSale {
+    const newSale: DemoSale = {
+      ...sale,
+      id: `sale_${Date.now()}`,
+      created_at: new Date().toISOString()
+    };
+    
+    if (!this.data.sales) {
+      this.data.sales = [];
+    }
+    
+    this.data.sales.push(newSale);
+    return newSale;
+  }
+
+  getSalesStats(period?: { from: Date; to: Date }): SalesStats {
+    let sales = this.data.sales || [];
+    
+    if (period) {
+      sales = sales.filter(sale => {
+        const saleDate = new Date(sale.sale_date);
+        return saleDate >= period.from && saleDate <= period.to;
+      });
+    }
+
+    const totalSales = sales.length;
+    const totalRevenue = sales.reduce((sum, sale) => sum + sale.total_amount, 0);
+    const averageOrderValue = totalSales > 0 ? totalRevenue / totalSales : 0;
+
+    // Sales by category
+    const salesByCategory: { [category: string]: number } = {};
+    sales.forEach(sale => {
+      salesByCategory[sale.category] = (salesByCategory[sale.category] || 0) + sale.total_amount;
+    });
+
+    // Sales by store
+    const salesByStore: { [storeId: string]: { name: string; sales: number; revenue: number } } = {};
+    sales.forEach(sale => {
+      const store = this.getStoreById(sale.store_id);
+      if (!salesByStore[sale.store_id]) {
+        salesByStore[sale.store_id] = {
+          name: store?.name || 'Store Unknown',
+          sales: 0,
+          revenue: 0
+        };
+      }
+      salesByStore[sale.store_id].sales += 1;
+      salesByStore[sale.store_id].revenue += sale.total_amount;
+    });
+
+    // Sales by payment method
+    const salesByPaymentMethod: { [method: string]: number } = {};
+    sales.forEach(sale => {
+      salesByPaymentMethod[sale.payment_method] = (salesByPaymentMethod[sale.payment_method] || 0) + sale.total_amount;
+    });
+
+    // Daily sales
+    const dailySales: { [date: string]: number } = {};
+    sales.forEach(sale => {
+      const date = new Date(sale.sale_date).toISOString().split('T')[0];
+      dailySales[date] = (dailySales[date] || 0) + sale.total_amount;
+    });
+
+    // Top products
+    const productStats: { [name: string]: { quantity: number; revenue: number } } = {};
+    sales.forEach(sale => {
+      if (!productStats[sale.product_name]) {
+        productStats[sale.product_name] = { quantity: 0, revenue: 0 };
+      }
+      productStats[sale.product_name].quantity += sale.quantity;
+      productStats[sale.product_name].revenue += sale.total_amount;
+    });
+
+    const topProducts = Object.entries(productStats)
+      .map(([name, stats]) => ({ name, ...stats }))
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 10);
+
+    return {
+      totalSales,
+      totalRevenue,
+      averageOrderValue,
+      salesByCategory,
+      salesByStore,
+      salesByPaymentMethod,
+      dailySales,
+      topProducts
+    };
   }
 
   // Personal Timesheet Statistics
