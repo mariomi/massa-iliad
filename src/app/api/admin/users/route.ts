@@ -6,7 +6,8 @@ import { adminClient } from "@/lib/supabase/admin";
 export const runtime = "nodejs";
 
 async function requireAdmin() {
-  const token = cookies().get("app_session")?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("app_session")?.value;
   if (!token) return false;
   try { return (await verifySessionToken(token)).role === "admin"; } catch { return false; }
 }

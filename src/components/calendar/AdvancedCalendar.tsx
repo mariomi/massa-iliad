@@ -26,8 +26,18 @@ const customCalendarStyles = `
     color: #374151;
   }
 
+  .dark .rbc-header {
+    background: #1f2937 !important;
+    border-bottom: 2px solid #374151 !important;
+    color: #f9fafb !important;
+  }
+
   .rbc-month-view {
     background: transparent;
+  }
+
+  .dark .rbc-month-view {
+    background: #111827 !important;
   }
 
   .rbc-date-cell {
@@ -35,10 +45,21 @@ const customCalendarStyles = `
     border: 1px solid #e5e7eb;
     padding: 4px;
     transition: background-color 0.2s;
+    color: #111827;
+  }
+
+  .dark .rbc-date-cell {
+    background: #111827 !important;
+    border: 1px solid #374151 !important;
+    color: #f9fafb !important;
   }
 
   .rbc-date-cell:hover {
     background: #f3f4f6;
+  }
+
+  .dark .rbc-date-cell:hover {
+    background: #1f2937 !important;
   }
 
   .rbc-date-cell.rbc-now {
@@ -46,16 +67,33 @@ const customCalendarStyles = `
     border-color: #3b82f6;
   }
 
+  .dark .rbc-date-cell.rbc-now {
+    background: #1e3a8a !important;
+    border-color: #60a5fa !important;
+  }
+
   .rbc-week-view, .rbc-time-view {
     background: transparent;
+  }
+
+  .dark .rbc-week-view, .dark .rbc-time-view {
+    background: #111827 !important;
   }
 
   .rbc-time-header {
     background: #f9fafb;
   }
 
+  .dark .rbc-time-header {
+    background: #1f2937 !important;
+  }
+
   .rbc-time-content {
     background: transparent;
+  }
+
+  .dark .rbc-time-content {
+    background: #111827 !important;
   }
 
   .rbc-time-gutter {
@@ -63,18 +101,36 @@ const customCalendarStyles = `
     border-right: 1px solid #e5e7eb;
   }
 
+  .dark .rbc-time-gutter {
+    background: #1f2937 !important;
+    border-right: 1px solid #374151 !important;
+  }
+
   .rbc-day-bg {
     background: #ffffff;
+  }
+
+  .dark .rbc-day-bg {
+    background: #111827 !important;
   }
 
   .rbc-agenda-view {
     background: transparent;
   }
 
+  .dark .rbc-agenda-view {
+    background: #111827 !important;
+  }
+
   .rbc-agenda-table {
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
+  }
+
+  .dark .rbc-agenda-table {
+    background: #111827 !important;
+    border: 1px solid #374151 !important;
   }
 
   .rbc-agenda-view table {
@@ -89,14 +145,29 @@ const customCalendarStyles = `
     color: #374151;
   }
 
+  .dark .rbc-agenda-view th {
+    background: #1f2937 !important;
+    border-bottom: 2px solid #374151 !important;
+    color: #f9fafb !important;
+  }
+
   .rbc-agenda-view td {
     padding: 8px 12px;
     border-bottom: 1px solid #f3f4f6;
   }
 
+  .dark .rbc-agenda-view td {
+    border-bottom: 1px solid #374151 !important;
+    color: #f9fafb !important;
+  }
+
   .rbc-agenda-view .rbc-agenda-time-cell {
     font-weight: 500;
     color: #6b7280;
+  }
+
+  .dark .rbc-agenda-view .rbc-agenda-time-cell {
+    color: #9ca3af !important;
   }
 
   .rbc-event {
@@ -108,14 +179,26 @@ const customCalendarStyles = `
     transition: all 0.2s ease;
   }
 
+  .dark .rbc-event {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+  }
+
   .rbc-event:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
   }
 
+  .dark .rbc-event:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4) !important;
+  }
+
   .rbc-event.rbc-selected {
     outline: 2px solid #3b82f6;
     outline-offset: 2px;
+  }
+
+  .dark .rbc-event.rbc-selected {
+    outline: 2px solid #60a5fa !important;
   }
 
   .rbc-show-more {
@@ -131,6 +214,10 @@ const customCalendarStyles = `
     background: #dbeafe !important;
   }
 
+  .dark .rbc-today {
+    background: #1e3a8a !important;
+  }
+
   .rbc-toolbar {
     background: #f9fafb;
     border-radius: 12px;
@@ -139,8 +226,294 @@ const customCalendarStyles = `
     display: none; /* Nasconde la toolbar di default */
   }
 
+  .dark .rbc-toolbar {
+    background: #1f2937 !important;
+  }
+
   .rbc-time-slot {
     border-top: 1px solid #f3f4f6;
+  }
+
+  .dark .rbc-time-slot {
+    border-top: 1px solid #374151 !important;
+  }
+
+  /* Additional dark mode styles */
+  .dark .rbc-header {
+    background: #1f2937 !important;
+    color: #f9fafb !important;
+    border-bottom: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-header + .rbc-header {
+    border-left: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-month-row + .rbc-month-row {
+    border-top: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-date-cell + .rbc-date-cell {
+    border-left: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-off-range {
+    color: #6b7280 !important;
+  }
+
+  .dark .rbc-off-range-bg {
+    background: #1f2937 !important;
+  }
+
+  /* Calendar numbers */
+  .dark .rbc-date-cell > a {
+    color: #f9fafb !important;
+  }
+
+  .dark .rbc-off-range > a {
+    color: #6b7280 !important;
+  }
+
+  /* Time view specific */
+  .dark .rbc-time-header-gutter {
+    background: #1f2937 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark .rbc-time-slot {
+    color: #9ca3af !important;
+  }
+
+  .dark .rbc-timeslot-group {
+    border-bottom: 1px solid #374151 !important;
+  }
+
+  /* Agenda view improvements */
+  .dark .rbc-agenda-view .rbc-agenda-event-cell {
+    color: #f9fafb !important;
+  }
+
+  .dark .rbc-agenda-view .rbc-agenda-date-cell {
+    color: #f9fafb !important;
+    font-weight: 600 !important;
+  }
+
+  .dark .rbc-agenda-view .rbc-agenda-time-cell {
+    color: #9ca3af !important;
+  }
+
+  /* Event improvements */
+  .dark .rbc-event-content {
+    color: #ffffff !important;
+  }
+
+  .dark .rbc-event-label {
+    color: #ffffff !important;
+  }
+
+  /* Calendar outline and borders */
+  .rbc-calendar {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .dark .rbc-calendar {
+    border: 1px solid #374151 !important;
+  }
+
+  .rbc-month-view {
+    border: none;
+  }
+
+  .dark .rbc-month-view {
+    border: none !important;
+  }
+
+  .rbc-month-row {
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .dark .rbc-month-row {
+    border-bottom: 1px solid #374151 !important;
+  }
+
+  .rbc-date-cell {
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .dark .rbc-date-cell {
+    border-right: 1px solid #374151 !important;
+    border-bottom: 1px solid #374151 !important;
+  }
+
+  .rbc-date-cell:last-child {
+    border-right: none;
+  }
+
+  /* Week and day view borders */
+  .rbc-time-view {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+  }
+
+  .dark .rbc-time-view {
+    border: 1px solid #374151 !important;
+  }
+
+  .rbc-time-header {
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .dark .rbc-time-header {
+    border-bottom: 2px solid #374151 !important;
+  }
+
+  /* Agenda view borders */
+  .rbc-agenda-view {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+  }
+
+  .dark .rbc-agenda-view {
+    border: 1px solid #374151 !important;
+  }
+
+  /* Fix for white vertical lines in dark mode */
+  .dark .rbc-month-view .rbc-date-cell {
+    border-right: 1px solid #374151 !important;
+    border-left: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-month-view .rbc-row {
+    border-right: 1px solid #374151 !important;
+    border-left: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-month-view .rbc-row-content {
+    border-right: 1px solid #374151 !important;
+    border-left: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-month-view .rbc-row-segment {
+    border-right: 1px solid #374151 !important;
+    border-left: 1px solid #374151 !important;
+  }
+
+  /* More specific selectors for vertical lines */
+  .dark .rbc-calendar .rbc-month-view .rbc-date-cell {
+    border-right: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-calendar .rbc-month-view .rbc-row {
+    border-right: 1px solid #374151 !important;
+  }
+
+  /* Override any white borders */
+  .dark .rbc-month-view * {
+    border-color: #374151 !important;
+  }
+
+  /* Specific fix for the grid lines */
+  .dark .rbc-month-view .rbc-date-cell + .rbc-date-cell {
+    border-left: 1px solid #374151 !important;
+  }
+
+  /* Ultra-specific selectors to override react-big-calendar defaults */
+  .dark .rbc-calendar .rbc-month-view .rbc-date-cell,
+  .dark .rbc-calendar .rbc-month-view .rbc-row,
+  .dark .rbc-calendar .rbc-month-view .rbc-row-content,
+  .dark .rbc-calendar .rbc-month-view .rbc-row-segment {
+    border-right: 1px solid #374151 !important;
+    border-left: 1px solid #374151 !important;
+    border-color: #374151 !important;
+  }
+
+  /* Force all borders to be dark gray */
+  .dark .rbc-month-view *[style*="border"] {
+    border-color: #374151 !important;
+  }
+
+  /* Target specific react-big-calendar classes */
+  .dark .rbc-month-view .rbc-date-cell[style*="border"] {
+    border-color: #374151 !important;
+  }
+
+  /* Use CSS custom properties if available */
+  .dark .rbc-calendar {
+    --rbc-border-color: #374151;
+  }
+
+  .dark .rbc-month-view {
+    --rbc-border-color: #374151;
+  }
+
+  /* Fix for all calendar views - Week, Day, Agenda */
+  .dark .rbc-time-view .rbc-time-gutter {
+    border-right: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-time-view .rbc-time-content {
+    border-left: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-time-view .rbc-time-slot {
+    border-top: 1px solid #374151 !important;
+    border-bottom: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-time-view .rbc-day-slot {
+    border-right: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-time-view .rbc-timeslot-group {
+    border-bottom: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-time-view .rbc-time-header {
+    border-bottom: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-time-view .rbc-time-header-content {
+    border-right: 1px solid #374151 !important;
+  }
+
+  /* Week view specific */
+  .dark .rbc-week-view .rbc-day-slot {
+    border-right: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-week-view .rbc-time-slot {
+    border-top: 1px solid #374151 !important;
+  }
+
+  /* Day view specific */
+  .dark .rbc-day-view .rbc-time-slot {
+    border-top: 1px solid #374151 !important;
+  }
+
+  /* Agenda/List view specific */
+  .dark .rbc-agenda-view .rbc-agenda-table {
+    border: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-agenda-view .rbc-agenda-table th {
+    border-bottom: 1px solid #374151 !important;
+    border-right: 1px solid #374151 !important;
+  }
+
+  .dark .rbc-agenda-view .rbc-agenda-table td {
+    border-bottom: 1px solid #374151 !important;
+    border-right: 1px solid #374151 !important;
+  }
+
+  /* Override any remaining white borders in all views */
+  .dark .rbc-time-view *,
+  .dark .rbc-week-view *,
+  .dark .rbc-day-view *,
+  .dark .rbc-agenda-view * {
+    border-color: #374151 !important;
   }
 
   .rbc-current-time-indicator {
@@ -423,16 +796,16 @@ export function AdvancedCalendar({
     let backgroundColor, borderColor;
     
     if (!isPublished) {
-      backgroundColor = "#fef3c7"; // Giallo chiaro
+      backgroundColor = "#92400e"; // Giallo scuro per dark mode
       borderColor = "#f59e0b";
     } else if (isManager) {
-      backgroundColor = "#dbeafe"; // Blu chiaro
+      backgroundColor = "#1e3a8a"; // Blu scuro
       borderColor = "#3b82f6";
     } else if (isWorkforce) {
-      backgroundColor = "#ede9fe"; // Viola chiaro
+      backgroundColor = "#581c87"; // Viola scuro
       borderColor = "#8b5cf6";
     } else {
-      backgroundColor = "#d1fae5"; // Verde chiaro
+      backgroundColor = "#065f46"; // Verde scuro
       borderColor = "#10b981";
     }
     
@@ -440,7 +813,7 @@ export function AdvancedCalendar({
       style: {
         backgroundColor,
         borderColor,
-        color: "#111827",
+        color: "#ffffff",
         borderRadius: "6px",
         border: `1px solid ${borderColor}`,
         fontSize: "14px",
@@ -473,9 +846,9 @@ export function AdvancedCalendar({
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <CalendarIcon size={24} className="text-blue-600" />
-            <h1 className="text-2xl font-bold text-gray-900">Calendario Turni</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Calendario Turni</h1>
           </div>
-          <div className="flex items-center gap-4 text-sm text-gray-600">
+          <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-1">
               <Clock size={16} />
               <span>{weeklyHours.toFixed(1)}h questa settimana</span>
@@ -515,7 +888,7 @@ export function AdvancedCalendar({
       </div>
 
       {/* Controlli navigazione e vista */}
-      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+      <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
         {/* Controlli navigazione */}
         <div className="flex items-center gap-2">
           <Button
@@ -571,7 +944,7 @@ export function AdvancedCalendar({
 
         {/* Selettore vista */}
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700 hidden sm:inline">Vista:</span>
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:inline">Vista:</span>
           <div className="flex items-center gap-1">
             <Button
               variant={view === "month" ? "default" : "outline"}
@@ -610,7 +983,9 @@ export function AdvancedCalendar({
       </div>
 
       {/* Calendar con stile pulito */}
-      <div className="bg-transparent rounded-xl overflow-hidden">
+      <div className="bg-transparent rounded-xl overflow-hidden" style={{
+        '--rbc-border-color': '#374151'
+      } as React.CSSProperties}>
         <Calendar
           culture="it"
           localizer={localizer}
@@ -641,9 +1016,9 @@ export function AdvancedCalendar({
               const title = event?.title ?? "";
               return (
                 <div className="font-medium truncate flex items-center justify-between">
-                  <span className="truncate flex-1">{title}</span>
+                  <span className="truncate flex-1 text-white">{title}</span>
                   {event?.resource?.hours ? (
-                    <span className="text-xs font-bold ml-1 opacity-90">{event.resource.hours}h</span>
+                    <span className="text-xs font-bold ml-1 opacity-90 text-white">{event.resource.hours}h</span>
                   ) : null}
                 </div>
               );
@@ -661,24 +1036,24 @@ export function AdvancedCalendar({
                 return (
                   <div className="flex items-center justify-between w-full py-3 px-2">
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-base truncate">{title}</div>
-                      <div className="text-sm text-gray-600 mt-1 flex items-center gap-1">
+                      <div className="font-medium text-base truncate text-gray-900 dark:text-gray-100">{title}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1 flex items-center gap-1">
                         <span>📍</span>
                         <span className="truncate">{storeName}</span>
                       </div>
-                      <div className="text-sm text-gray-600 mt-1 flex items-center gap-1">
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1 flex items-center gap-1">
                         <span>👤</span>
                         <span className="truncate">{person}{role ? ` • ${role}` : ''}</span>
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-1 ml-4">
                       {hours && (
-                        <div className="text-sm font-bold bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                        <div className="text-sm font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 px-2 py-1 rounded">
                           {hours}h
                         </div>
                       )}
                       {!isPublished && (
-                        <div className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                        <div className="text-xs bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded">
                           Bozza
                         </div>
                       )}
@@ -706,7 +1081,7 @@ export function AdvancedCalendar({
                     minute: '2-digit'
                   });
 
-                  return <span className="font-medium">{startStr} - {endStr}</span>;
+                  return <span className="font-medium text-gray-900 dark:text-gray-100">{startStr} - {endStr}</span>;
                 } catch (error) {
                   return <span>--:--</span>;
                 }
@@ -725,7 +1100,7 @@ export function AdvancedCalendar({
                   const month = (eventDate.getMonth() + 1).toString().padStart(2, '0');
                   const year = eventDate.getFullYear();
 
-                  return <span className="font-medium">{day}/{month}/{year}</span>;
+                  return <span className="font-medium text-gray-900 dark:text-gray-100">{day}/{month}/{year}</span>;
                 } catch (error) {
                   return <span>--/--/----</span>;
                 }
@@ -735,9 +1110,9 @@ export function AdvancedCalendar({
               event: ({ event }) => (
                 <div className="text-xs font-medium truncate px-1 py-0.5">
                   <div className="flex items-center justify-between">
-                    <span className="truncate flex-1">{event.title}</span>
+                    <span className="truncate flex-1 text-white">{event.title}</span>
                     {event.resource?.hours && (
-                      <span className="text-xs opacity-75 ml-1">{event.resource.hours}h</span>
+                      <span className="text-xs opacity-75 ml-1 text-white">{event.resource.hours}h</span>
                     )}
                   </div>
                 </div>
@@ -746,9 +1121,9 @@ export function AdvancedCalendar({
             week: {
               event: ({ event }) => (
                 <div className="font-medium truncate flex items-center justify-between px-2">
-                  <span className="truncate flex-1">{event.title}</span>
+                  <span className="truncate flex-1 text-white">{event.title}</span>
                   {event.resource?.hours && (
-                    <span className="text-xs font-bold ml-1 opacity-90">
+                    <span className="text-xs font-bold ml-1 opacity-90 text-white">
                       {event.resource.hours}h
                     </span>
                   )}
@@ -758,9 +1133,9 @@ export function AdvancedCalendar({
             day: {
               event: ({ event }) => (
                 <div className="font-medium flex items-center justify-between px-2">
-                  <span className="truncate flex-1">{event.title}</span>
+                  <span className="truncate flex-1 text-white">{event.title}</span>
                   {event.resource?.hours && (
-                    <span className="text-xs font-bold ml-1 opacity-90">
+                    <span className="text-xs font-bold ml-1 opacity-90 text-white">
                       {event.resource.hours}h
                     </span>
                   )}
@@ -800,22 +1175,22 @@ export function AdvancedCalendar({
       </div>
 
       {/* Legenda semplificata */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <div className="flex items-center gap-6 text-sm">
+      <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+        <div className="flex items-center gap-6 text-sm text-gray-900 dark:text-gray-100">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-green-500"></div>
+            <div className="w-4 h-4 rounded" style={{backgroundColor: "#065f46"}}></div>
             <span>Staff</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-blue-500"></div>
+            <div className="w-4 h-4 rounded" style={{backgroundColor: "#1e3a8a"}}></div>
             <span>Manager</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-purple-500"></div>
+            <div className="w-4 h-4 rounded" style={{backgroundColor: "#581c87"}}></div>
             <span>Forza Lavoro</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-yellow-500"></div>
+            <div className="w-4 h-4 rounded" style={{backgroundColor: "#92400e"}}></div>
             <span>Bozza</span>
           </div>
         </div>

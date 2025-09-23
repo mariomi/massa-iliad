@@ -75,18 +75,18 @@ export function SalesCharts({ stats }: SalesChartsProps) {
                   <div key={category} className="space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Package className="h-4 w-4 text-gray-600" />
-                        <span className="font-medium">{category}</span>
+                        <Package className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                        <span className="font-medium text-gray-900 dark:text-gray-100">{category}</span>
                       </div>
-                      <span className="font-bold">{formatCurrency(revenue)}</span>
+                      <span className="font-bold text-gray-900 dark:text-gray-100">{formatCurrency(revenue)}</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                       <div 
                         className={`h-2 rounded-full ${getCategoryColor(index)}`}
                         style={{ width: `${percentage}%` }}
                       ></div>
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
                       {percentage.toFixed(1)}% del totale
                     </div>
                   </div>
@@ -115,21 +115,21 @@ export function SalesCharts({ stats }: SalesChartsProps) {
                   <div key={storeId} className="space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Store className="h-4 w-4 text-gray-600" />
-                        <span className="font-medium">{storeData.name}</span>
+                        <Store className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                        <span className="font-medium text-gray-900 dark:text-gray-100">{storeData.name}</span>
                       </div>
                       <div className="text-right">
-                        <div className="font-bold">{formatCurrency(storeData.revenue)}</div>
-                        <div className="text-sm text-gray-600">{storeData.sales} vendite</div>
+                        <div className="font-bold text-gray-900 dark:text-gray-100">{formatCurrency(storeData.revenue)}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">{storeData.sales} vendite</div>
                       </div>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                       <div 
                         className={`h-2 rounded-full ${getCategoryColor(index)}`}
                         style={{ width: `${percentage}%` }}
                       ></div>
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
                       {percentage.toFixed(1)}% del totale
                     </div>
                   </div>
@@ -161,15 +161,15 @@ export function SalesCharts({ stats }: SalesChartsProps) {
                   <div key={method} className="space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <CreditCard className="h-4 w-4 text-gray-600" />
-                        <span className="font-medium capitalize">{method}</span>
+                        <CreditCard className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                        <span className="font-medium capitalize text-gray-900 dark:text-gray-100">{method}</span>
                       </div>
                       <div className="text-right">
-                        <div className="font-bold">{formatCurrency(amount)}</div>
-                        <div className="text-sm text-gray-600">{methodPercentage.toFixed(1)}%</div>
+                        <div className="font-bold text-gray-900 dark:text-gray-100">{formatCurrency(amount)}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">{methodPercentage.toFixed(1)}%</div>
                       </div>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                       <div 
                         className={`h-2 rounded-full ${getPaymentMethodColor(method)}`}
                         style={{ width: `${percentage}%` }}
@@ -201,21 +201,21 @@ export function SalesCharts({ stats }: SalesChartsProps) {
                 <div key={product.name} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-gray-500">#{index + 1}</span>
-                      <span className="font-medium">{product.name}</span>
+                      <span className="text-sm font-bold text-gray-500 dark:text-gray-400">#{index + 1}</span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">{product.name}</span>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold">{formatCurrency(product.revenue)}</div>
-                      <div className="text-sm text-gray-600">{product.quantity} pz</div>
+                      <div className="font-bold text-gray-900 dark:text-gray-100">{formatCurrency(product.revenue)}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">{product.quantity} pz</div>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div 
                       className={`h-2 rounded-full ${getCategoryColor(index)}`}
                       style={{ width: `${percentage}%` }}
                     ></div>
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
                     {percentage.toFixed(1)}% del top prodotto
                   </div>
                 </div>

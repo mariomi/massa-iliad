@@ -7,7 +7,7 @@ export async function GET() {
   // Prefer custom app_session for role; also include Supabase user id if present
   try {
     const store = await cookies();
-    const token = store.get("app_session")?.value || readSessionCookie();
+    const token = store.get("app_session")?.value || await readSessionCookie();
     let role: "admin" | "user" = "user";
     let email: string | undefined;
     let name: string | undefined;

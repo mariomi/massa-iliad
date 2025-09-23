@@ -91,13 +91,13 @@ export default function SalesPage() {
   const getPaymentMethodColor = (method: string) => {
     switch (method) {
       case 'cash':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300';
       case 'card':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300';
       case 'digital':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300';
     }
   };
 
@@ -106,7 +106,7 @@ export default function SalesPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Caricamento vendite...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Caricamento vendite...</p>
         </div>
       </div>
     );
@@ -207,14 +207,14 @@ export default function SalesPage() {
               const user = demoDataService.getUserById(sale.user_id);
               
               return (
-                <div key={sale.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div key={sale.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                   <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 text-gray-600">
+                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                       {getCategoryIcon(sale.category)}
                     </div>
                     <div>
-                      <h3 className="font-medium">{sale.product_name}</h3>
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100">{sale.product_name}</h3>
+                      <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                         <span className="flex items-center gap-1">
                           <Store className="h-3 w-3" />
                           {store?.name || 'Store Unknown'}
@@ -230,8 +230,8 @@ export default function SalesPage() {
                       {sale.payment_method.toUpperCase()}
                     </Badge>
                     <div className="text-right">
-                      <div className="font-bold text-lg">{formatCurrency(sale.total_amount)}</div>
-                      <div className="text-sm text-gray-600">{formatDate(sale.sale_date)}</div>
+                      <div className="font-bold text-lg text-gray-900 dark:text-gray-100">{formatCurrency(sale.total_amount)}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">{formatDate(sale.sale_date)}</div>
                     </div>
                   </div>
                 </div>

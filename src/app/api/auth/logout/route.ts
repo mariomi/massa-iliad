@@ -14,7 +14,7 @@ export async function OPTIONS() {
 }
 
 export async function POST() {
-  clearSessionCookie();
+  await clearSessionCookie();
   const res = new NextResponse(null, { status: 204, headers: CORS_HEADERS });
   res.cookies.set("app_session", "", { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 0 });
   return res;

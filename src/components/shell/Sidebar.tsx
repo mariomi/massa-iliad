@@ -5,7 +5,7 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Route } from 'next';
-import { LayoutDashboard, Store, Calendar, Users, Clock, ShoppingCart } from "lucide-react";
+import { LayoutDashboard, Store, Calendar, Users, Clock, ShoppingCart, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => void; }) {
@@ -18,6 +18,7 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
     { href: "/sales", icon: <ShoppingCart size={20} />, label: "Vendite", adminOnly: true },
     { href: "/reports/hours", icon: <Calendar size={20} />, label: "Report ore" },
     { href: "/reports/timesheet", icon: <Clock size={20} />, label: "Timesheet", workforceOnly: true },
+    { href: "/settings", icon: <Settings size={20} />, label: "Impostazioni" },
     { href: "/admin/members", icon: <Users size={20} />, label: "Members", adminOnly: true },
     { href: "/admin/stores", icon: <Store size={20} />, label: "Admin Stores", adminOnly: true },
     { href: "/admin/users", icon: <Users size={20} />, label: "Admin Users", adminOnly: true },
@@ -56,16 +57,16 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
   return (
     <motion.aside
       animate={{ width: open ? 256 : 80 }}
-      className="fixed left-0 top-0 bottom-0 z-40 bg-white border-r border-neutral-200 shadow-sm overflow-hidden"
+      className="fixed left-0 top-0 bottom-0 z-40 bg-white dark:bg-gray-900 border-r border-neutral-200 dark:border-gray-800 shadow-sm dark:shadow-gray-950/30 overflow-hidden"
       transition={{ type: "spring", stiffness: 220, damping: 24 }}
     >
       <div className="h-16 flex items-center justify-between px-4">
-        <div className="font-semibold">Iliad</div>
-        <button onClick={onToggle} className="text-sm opacity-60 hover:opacity-100">⇔</button>
+        <div className="font-semibold text-gray-900 dark:text-gray-100">Iliad</div>
+        <button onClick={onToggle} className="text-sm opacity-60 hover:opacity-100 text-gray-600 dark:text-gray-400">⇔</button>
       </div>
       <nav className="space-y-2 px-2">
         {core.map((it) => (
-          <Link key={it.href} href={it.href} className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-50">
+          <Link key={it.href} href={it.href} className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200">
             {it.icon}
             <motion.span animate={{ opacity: open ? 1 : 0 }} className="text-sm">{it.label}</motion.span>
           </Link>
@@ -73,14 +74,14 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
 
         {isAdmin && (
           <div className="mt-2">
-            <button onClick={() => setAdminOpen(v=>!v)} className="w-full flex items-center justify-between px-3 py-2 text-xs uppercase tracking-wide text-neutral-500">
+            <button onClick={() => setAdminOpen(v=>!v)} className="w-full flex items-center justify-between px-3 py-2 text-xs uppercase tracking-wide text-neutral-500 dark:text-gray-400">
               <span>Admin</span>
               <span>{adminOpen ? "▴" : "▾"}</span>
             </button>
             {adminOpen && (
               <div className="space-y-1">
                 {admin.map((it) => (
-                  <Link key={it.href} href={it.href} className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-50">
+                  <Link key={it.href} href={it.href} className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200">
                     {it.icon}
                     <motion.span animate={{ opacity: open ? 1 : 0 }} className="text-sm">{it.label}</motion.span>
                   </Link>

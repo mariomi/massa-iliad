@@ -31,8 +31,8 @@ export async function verifySessionToken(token: string) {
   return payload as unknown as SessionPayload & { iat: number; exp: number };
 }
 
-export function setSessionCookie(token: string, maxAgeSec = 60 * 60 * 24 * 7) {
-  const store = cookies();
+export async function setSessionCookie(token: string, maxAgeSec = 60 * 60 * 24 * 7) {
+  const store = await cookies();
   store.set(COOKIE_NAME, token, {
     httpOnly: true,
     secure: isProd,
@@ -42,13 +42,13 @@ export function setSessionCookie(token: string, maxAgeSec = 60 * 60 * 24 * 7) {
   });
 }
 
-export function clearSessionCookie() {
-  const store = cookies();
+export async function clearSessionCookie() {
+  const store = await cookies();
   store.set(COOKIE_NAME, "", { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 0 });
 }
 
-export function readSessionCookie() {
-  const store = cookies();
+export async function readSessionCookie() {
+  const store = await cookies();
   return store.get(COOKIE_NAME)?.value;
 }
 

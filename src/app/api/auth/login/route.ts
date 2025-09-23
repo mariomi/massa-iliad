@@ -56,7 +56,7 @@ export async function POST(req: Request) {
       maxAge: 60 * 60 * 24 * 7 
     });
     
-    setSessionCookie(token);
+    await setSessionCookie(token);
     return res;
   } catch (err: any) {
     return NextResponse.json({ error: err?.message ?? String(err) }, { status: 500, headers: CORS_HEADERS });
