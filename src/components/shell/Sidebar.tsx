@@ -20,9 +20,9 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
     { href: "/reports/timesheet", icon: <Clock size={20} />, label: "Timesheet", workforceOnly: true },
     { href: "/settings", icon: <Settings size={20} />, label: "Impostazioni" },
     { href: "/admin/members", icon: <Users size={20} />, label: "Members", adminOnly: true },
-    { href: "/admin/stores", icon: <Store size={20} />, label: "Admin Stores", adminOnly: true },
-    { href: "/admin/users", icon: <Users size={20} />, label: "Admin Users", adminOnly: true },
-    { href: "/admin/regions", icon: <Store size={20} />, label: "Admin Regions", adminOnly: true }
+    { href: "/admin/stores", icon: <Store size={20} />, label: "Stores", adminOnly: true },
+    { href: "/admin/users", icon: <Users size={20} />, label: "Users", adminOnly: true },
+    { href: "/admin/regions", icon: <Store size={20} />, label: "Regions", adminOnly: true }
   ];
 
   const [userRole, setUserRole] = useState<string | null>(null);

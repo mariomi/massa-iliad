@@ -1,12 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { AdvancedCalendar, CalendarFilters, ShiftEvent } from "@/components/calendar/AdvancedCalendar";
-import { CalendarFiltersPanel } from "@/components/calendar/CalendarFilters";
-import { ShiftModal } from "@/components/calendar/ShiftModal";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { CalendarFilters, ShiftEvent } from "@/components/calendar/AdvancedCalendar";
 import { useMe } from "@/lib/auth/useMe";
 import { canEditPlanner } from "@/lib/auth/rbac";
 import { demoDataService } from "@/lib/demo-data/demo-service";
+
+// Lazy load heavy components
+const AdvancedCalendar = lazy(() => import("@/components/calendar/AdvancedCalendar").then(module => ({ default: module.AdvancedCalendar })));
+const CalendarFiltersPanel = lazy(() => import("@/components/calendar/CalendarFilters").then(module => ({ default: module.CalendarFiltersPanel })));
+const ShiftModal = lazy(() => import("@/components/calendar/ShiftModal").then(module => ({ default: module.ShiftModal })));
 
 export default function HoursReport() {
   const { me } = useMe();
@@ -109,33 +113,39 @@ export default function HoursReport() {
         desc="Calendario avanzato per la gestione dei turni e il conteggio delle ore" 
       />
       
-      <AdvancedCalendar
-        filters={filters}
-        onFiltersChange={handleFiltersChange}
-        onShiftCreate={canEdit ? handleShiftCreate : undefined}
-        onShiftEdit={canEdit ? handleShiftEdit : undefined}
-        onShiftDelete={canEdit ? handleShiftDelete : undefined}
-        onShowFilters={me?.role !== "workforce" ? () => setShowFilters(true) : undefined}
-        refreshTrigger={refreshTrigger}
-      />
-
-      {showFilters && me?.role !== "workforce" && (
-        <CalendarFiltersPanel
+      <Suspense fallback={<LoadingSpinner size="lg" className="h-96" />}>
+        <AdvancedCalendar
           filters={filters}
           onFiltersChange={handleFiltersChange}
-          onClose={() => setShowFilters(false)}
+          onShiftCreate={canEdit ? handleShiftCreate : undefined}
+          onShiftEdit={canEdit ? handleShiftEdit : undefined}
+          onShiftDelete={canEdit ? handleShiftDelete : undefined}
+          onShowFilters={me?.role !== "workforce" ? () => setShowFilters(true) : undefined}
+          refreshTrigger={refreshTrigger}
         />
+      </Suspense>
+
+      {showFilters && me?.role !== "workforce" && (
+        <Suspense fallback={<LoadingSpinner size="md" className="h-32" />}>
+          <CalendarFiltersPanel
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+            onClose={() => setShowFilters(false)}
+          />
+        </Suspense>
       )}
 
       {showShiftModal && (
-        <ShiftModal
-          isOpen={showShiftModal}
-          onClose={() => setShowShiftModal(false)}
-          onSave={handleShiftSave}
-          onDelete={canEdit ? handleShiftDelete : undefined}
-          shift={editingShift}
-          isEdit={isEditMode}
-        />
+        <Suspense fallback={<LoadingSpinner size="md" className="h-32" />}>
+          <ShiftModal
+            isOpen={showShiftModal}
+            onClose={() => setShowShiftModal(false)}
+            onSave={handleShiftSave}
+            onDelete={canEdit ? handleShiftDelete : undefined}
+            shift={editingShift}
+            isEdit={isEditMode}
+          />
+        </Suspense>
       )}
     </>
   );

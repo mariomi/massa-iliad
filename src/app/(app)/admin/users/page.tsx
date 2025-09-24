@@ -4,36 +4,52 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-type UserRow = { id: string; email: string | null; full_name?: string | null; role: string };
+import { demoDataService, DemoUser } from "@/lib/demo-data/demo-service";
 
 export default function AdminUsersPage() {
-  const [rows, setRows] = useState<UserRow[]>([]);
+  const [rows, setRows] = useState<DemoUser[]>([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [role, setRole] = useState("agent");
+  const [role, setRole] = useState("staff");
   const [loading, setLoading] = useState(false);
 
-  const load = async () => {
-    const res = await fetch("/api/admin/users", { credentials: "include" });
-    if (res.ok) setRows(await res.json());
+  const load = () => {
+    const users = demoDataService.getAllUsers();
+    setRows(users);
   };
+  
   useEffect(() => { load(); }, []);
 
   const onCreate = async (e: React.FormEvent) => {
-    e.preventDefault(); setLoading(true);
+    e.preventDefault(); 
+    setLoading(true);
     try {
-      const res = await fetch("/api/admin/users", {
-        method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
-        body: JSON.stringify({ email, password, full_name: fullName, app_role: role })
+      // Create new user using demo service
+      const newUser = demoDataService.addUser({
+        name: fullName || email,
+        email: email,
+        role: role as "admin" | "manager" | "staff" | "workforce",
+        store_id: null, // Will be assigned later
+        team: null,
+        phone: "",
+        address: "",
+        hire_date: new Date().toISOString(),
+        status: "active"
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Errore creazione utente");
-      setEmail(""); setPassword(""); setFullName(""); setRole("agent");
-      await load();
-    } catch (err: any) { alert(err?.message ?? String(err)); }
-    finally { setLoading(false); }
+      
+      alert(`Utente "${newUser.name}" creato con successo!`);
+      setEmail(""); 
+      setPassword(""); 
+      setFullName(""); 
+      setRole("staff");
+      load();
+    } catch (err: any) { 
+      alert(err?.message ?? String(err)); 
+    }
+    finally { 
+      setLoading(false); 
+    }
   };
 
   return (
@@ -47,7 +63,7 @@ export default function AdminUsersPage() {
               <div key={u.id}>
                 <div className="flex items-center justify-between py-2">
                   <div>
-                    <div className="font-medium">{u.full_name || u.email}</div>
+                    <div className="font-medium">{u.name}</div>
                     <div className="text-xs text-neutral-500">{u.email}</div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -88,9 +104,10 @@ export default function AdminUsersPage() {
             <div>
               <label className="text-sm">Ruolo app</label>
               <select value={role} onChange={(e)=>setRole(e.target.value)} className="border rounded-lg px-2 py-2 text-sm">
-                <option value="agent">agent</option>
+                <option value="staff">staff</option>
                 <option value="manager">manager</option>
                 <option value="admin">admin</option>
+                <option value="workforce">workforce</option>
               </select>
             </div>
             <Button type="submit" disabled={loading} className="w-full">{loading ? "Creo..." : "Crea utente"}</Button>

@@ -725,7 +725,84 @@ const demoDatabase = {
       "created_at": "2024-12-14T19:00:00Z",
       "updated_at": "2024-12-14T19:00:00Z"
     }
+  ],
+  "sales": [
+    {
+      "id": "sale_1",
+      "store_id": "store_1",
+      "user_id": "user_1",
+      "product_name": "iPhone 15 Pro",
+      "category": "Smartphone",
+      "quantity": 1,
+      "unit_price": 1199.00,
+      "total_amount": 1199.00,
+      "sale_date": "2024-12-20T10:30:00Z",
+      "payment_method": "card",
+      "created_at": "2024-12-20T10:30:00Z"
+    },
+    {
+      "id": "sale_2",
+      "store_id": "store_1",
+      "user_id": "user_2",
+      "product_name": "Samsung Galaxy S24",
+      "category": "Smartphone",
+      "quantity": 1,
+      "unit_price": 1099.00,
+      "total_amount": 1099.00,
+      "sale_date": "2024-12-20T09:15:00Z",
+      "payment_method": "digital",
+      "created_at": "2024-12-20T09:15:00Z"
+    },
+    {
+      "id": "sale_3",
+      "store_id": "store_2",
+      "user_id": "user_3",
+      "product_name": "MacBook Pro 14\"",
+      "category": "Laptop",
+      "quantity": 1,
+      "unit_price": 2199.00,
+      "total_amount": 2199.00,
+      "sale_date": "2024-12-19T14:20:00Z",
+      "payment_method": "card",
+      "created_at": "2024-12-19T14:20:00Z"
+    },
+    {
+      "id": "sale_4",
+      "store_id": "store_3",
+      "user_id": "user_5",
+      "product_name": "iPad Air",
+      "category": "Tablet",
+      "quantity": 2,
+      "unit_price": 599.00,
+      "total_amount": 1198.00,
+      "sale_date": "2024-12-19T11:45:00Z",
+      "payment_method": "cash",
+      "created_at": "2024-12-19T11:45:00Z"
+    },
+    {
+      "id": "sale_5",
+      "store_id": "store_1",
+      "user_id": "user_1",
+      "product_name": "AirPods Pro",
+      "category": "Accessori",
+      "quantity": 3,
+      "unit_price": 249.00,
+      "total_amount": 747.00,
+      "sale_date": "2024-12-18T16:30:00Z",
+      "payment_method": "card",
+      "created_at": "2024-12-18T16:30:00Z"
+    }
   ]
+};
+
+// Define the database type
+type DemoDatabase = {
+  stores: DemoStore[];
+  users: DemoUser[];
+  teams: DemoTeam[];
+  leave_balances: DemoLeaveBalance[];
+  shifts: DemoShift[];
+  sales: DemoSale[];
 };
 
 export interface DemoStore {
@@ -798,24 +875,57 @@ export interface PersonalTimesheetStats {
 }
 
 class DemoDataService {
-  private data: {
-    stores: DemoStore[];
-    users: DemoUser[];
-    teams: DemoTeam[];
-    leave_balances: DemoLeaveBalance[];
-    shifts: DemoShift[];
-  } = { ...demoDatabase };
-  private readonly initial: {
-    stores: DemoStore[];
-    users: DemoUser[];
-    teams: DemoTeam[];
-    leave_balances: DemoLeaveBalance[];
-    shifts: DemoShift[];
-  } = { ...demoDatabase };
+  private data: DemoDatabase = { ...demoDatabase };
+  private readonly initial: DemoDatabase = { ...demoDatabase };
+  private storageKey = 'iliad_demo_database';
+
+  constructor() {
+    this.data = this.loadFromStorage() || { ...demoDatabase };
+    
+    // Ensure sales field exists
+    if (!this.data.sales) {
+      this.data.sales = [];
+    }
+  }
+
+  private loadFromStorage(): DemoDatabase | null {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+    
+    try {
+      const stored = localStorage.getItem(this.storageKey);
+      
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        
+        // Ensure all required fields exist
+        if (!parsed.sales) {
+          parsed.sales = [];
+        }
+        return parsed;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error loading from localStorage:', error);
+      return null;
+    }
+  }
+
+  private saveToStorage(): void {
+    if (typeof window === 'undefined') return;
+    
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+    } catch (error) {
+      console.error('Error saving to localStorage:', error);
+    }
+  }
 
   // Reset to initial demo dataset (useful after edits during dev)
   resetData() {
     this.data = JSON.parse(JSON.stringify(this.initial));
+    this.saveToStorage();
   }
 
   // Stores
@@ -829,6 +939,35 @@ class DemoDataService {
 
   getStoreById(id: string): DemoStore | undefined {
     return this.data.stores.find(store => store.id === id);
+  }
+
+  addStore(store: Omit<DemoStore, 'id'>): DemoStore {
+    const newStore: DemoStore = {
+      ...store,
+      id: `store_${Date.now()}`
+    };
+    
+    this.data.stores.push(newStore);
+    this.saveToStorage();
+    return newStore;
+  }
+
+  updateStore(id: string, updates: Partial<DemoStore>): DemoStore | null {
+    const storeIndex = this.data.stores.findIndex(store => store.id === id);
+    if (storeIndex === -1) return null;
+    
+    this.data.stores[storeIndex] = { ...this.data.stores[storeIndex], ...updates };
+    this.saveToStorage();
+    return this.data.stores[storeIndex];
+  }
+
+  deleteStore(id: string): boolean {
+    const storeIndex = this.data.stores.findIndex(store => store.id === id);
+    if (storeIndex === -1) return false;
+    
+    this.data.stores.splice(storeIndex, 1);
+    this.saveToStorage();
+    return true;
   }
 
   // Users
@@ -854,6 +993,75 @@ class DemoDataService {
 
   getUsersByTeam(teamId: string): DemoUser[] {
     return this.data.users.filter(user => user.team === teamId);
+  }
+
+  addUser(user: Omit<DemoUser, 'id'>): DemoUser {
+    const newUser: DemoUser = {
+      ...user,
+      id: `user_${Date.now()}`
+    };
+    
+    this.data.users.push(newUser);
+    this.saveToStorage();
+    return newUser;
+  }
+
+  updateUser(id: string, updates: Partial<DemoUser>): DemoUser | null {
+    const userIndex = this.data.users.findIndex(user => user.id === id);
+    if (userIndex === -1) return null;
+    
+    this.data.users[userIndex] = { ...this.data.users[userIndex], ...updates };
+    this.saveToStorage();
+    return this.data.users[userIndex];
+  }
+
+  deleteUser(id: string): boolean {
+    const userIndex = this.data.users.findIndex(user => user.id === id);
+    if (userIndex === -1) return false;
+    
+    this.data.users.splice(userIndex, 1);
+    this.saveToStorage();
+    return true;
+  }
+
+  // Regions (simple list based on unique regions from stores)
+  getRegions(): string[] {
+    const regions = new Set(this.data.stores.map(store => store.region));
+    return Array.from(regions).sort();
+  }
+
+  addRegion(name: string): boolean {
+    const regions = this.getRegions();
+    if (regions.includes(name)) {
+      return false; // Region already exists
+    }
+    
+    // Create a default store for the new region
+    const newStore = this.addStore({
+      name: `Store ${name}`,
+      address: `Via Roma 1, ${name}`,
+      region: name,
+      city: name,
+      postal_code: "00000",
+      phone: "+39 000 0000000",
+      email: `store@${name.toLowerCase()}.it`,
+      manager: this.data.users.find(u => u.role === "manager")?.id || "",
+      status: "active",
+      opening_hours: {
+        monday: "09:00-19:00",
+        tuesday: "09:00-19:00",
+        wednesday: "09:00-19:00",
+        thursday: "09:00-19:00",
+        friday: "09:00-19:00",
+        saturday: "09:00-18:00",
+        sunday: "10:00-17:00"
+      },
+      services: ["Vendita", "Assistenza", "Ricarica"],
+      square_meters: 100,
+      employees_count: 5
+    });
+    
+    return true;
   }
 
   // Teams
@@ -931,6 +1139,7 @@ class DemoDataService {
     };
 
     this.data.shifts.push(newShift);
+    this.saveToStorage();
     return newShift;
   }
 
@@ -944,6 +1153,7 @@ class DemoDataService {
       updated_at: new Date().toISOString()
     };
 
+    this.saveToStorage();
     return this.data.shifts[shiftIndex];
   }
 
@@ -952,6 +1162,7 @@ class DemoDataService {
     if (shiftIndex === -1) return false;
 
     this.data.shifts.splice(shiftIndex, 1);
+    this.saveToStorage();
     return true;
   }
 
@@ -1024,7 +1235,9 @@ class DemoDataService {
 
   // Sales Management
   getAllSales(): DemoSale[] {
-    return this.data.sales || [];
+    const sales = this.data.sales || [];
+    // Sort by sale_date descending (most recent first)
+    return sales.sort((a, b) => new Date(b.sale_date).getTime() - new Date(a.sale_date).getTime());
   }
 
   getSalesByStore(storeId: string): DemoSale[] {
@@ -1054,6 +1267,7 @@ class DemoDataService {
     }
     
     this.data.sales.push(newSale);
+    this.saveToStorage();
     return newSale;
   }
 
@@ -1130,6 +1344,90 @@ class DemoDataService {
       dailySales,
       topProducts
     };
+  }
+
+  // Get sales data for line charts
+  getSalesByStoreOverTime(storeIds?: string[], days: number = 30): { [storeId: string]: { [date: string]: number } } {
+    const sales = this.data.sales || [];
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - days);
+    
+    const result: { [storeId: string]: { [date: string]: number } } = {};
+    
+    // Initialize all dates with 0
+    const allDates: string[] = [];
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+      allDates.push(d.toISOString().split('T')[0]);
+    }
+    
+    // Get all stores or filter by storeIds
+    const stores = storeIds ? 
+      this.data.stores.filter(store => storeIds.includes(store.id)) :
+      this.data.stores;
+    
+    stores.forEach(store => {
+      result[store.id] = {};
+      allDates.forEach(date => {
+        result[store.id][date] = 0;
+      });
+    });
+    
+    // Fill with actual sales data
+    sales.forEach(sale => {
+      const saleDate = new Date(sale.sale_date).toISOString().split('T')[0];
+      if (saleDate >= allDates[0] && saleDate <= allDates[allDates.length - 1]) {
+        if (!storeIds || storeIds.includes(sale.store_id)) {
+          if (result[sale.store_id]) {
+            result[sale.store_id][saleDate] = (result[sale.store_id][saleDate] || 0) + sale.total_amount;
+          }
+        }
+      }
+    });
+    
+    return result;
+  }
+
+  getSalesByProductOverTime(productNames?: string[], days: number = 30): { [productName: string]: { [date: string]: number } } {
+    const sales = this.data.sales || [];
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - days);
+    
+    const result: { [productName: string]: { [date: string]: number } } = {};
+    
+    // Initialize all dates with 0
+    const allDates: string[] = [];
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+      allDates.push(d.toISOString().split('T')[0]);
+    }
+    
+    // Get all products or filter by productNames
+    const allProducts = [...new Set(sales.map(sale => sale.product_name))];
+    const products = productNames ? 
+      allProducts.filter(product => productNames.includes(product)) :
+      allProducts;
+    
+    products.forEach(product => {
+      result[product] = {};
+      allDates.forEach(date => {
+        result[product][date] = 0;
+      });
+    });
+    
+    // Fill with actual sales data
+    sales.forEach(sale => {
+      const saleDate = new Date(sale.sale_date).toISOString().split('T')[0];
+      if (saleDate >= allDates[0] && saleDate <= allDates[allDates.length - 1]) {
+        if (!productNames || productNames.includes(sale.product_name)) {
+          if (result[sale.product_name]) {
+            result[sale.product_name][saleDate] = (result[sale.product_name][saleDate] || 0) + sale.total_amount;
+          }
+        }
+      }
+    });
+    
+    return result;
   }
 
   // Personal Timesheet Statistics

@@ -1,14 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, lazy, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useMe } from '@/lib/auth/useMe';
-import { demoDataService, DemoSale, SalesStats } from '@/lib/demo-data/demo-service';
+import { DemoSale, SalesStats } from '@/lib/demo-data/demo-service';
+import { useDemoData } from '@/lib/demo-data/useDemoData';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { SalesCharts } from '@/components/sales/SalesCharts';
+
+// Lazy load heavy components
+const SalesCharts = lazy(() => import('@/components/sales/SalesCharts').then(module => ({ default: module.SalesCharts })));
 import { 
   ShoppingCart, 
   TrendingUp, 
@@ -21,18 +25,21 @@ import {
   Smartphone,
   Laptop,
   Headphones,
-  Watch
+  Watch,
+  RefreshCw
 } from 'lucide-react';
 
 export default function SalesPage() {
   const { me, loading } = useMe();
+  const { isInitialized, demoDataService } = useDemoData();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [sales, setSales] = useState<DemoSale[]>([]);
   const [stats, setStats] = useState<SalesStats | null>(null);
   const [loadingData, setLoadingData] = useState(true);
 
   useEffect(() => {
-    if (!loading && me) {
+    if (!loading && me && isInitialized) {
       if (me.role !== 'admin') {
         router.push('/dashboard');
         return;
@@ -40,9 +47,57 @@ export default function SalesPage() {
 
       loadSalesData();
     }
-  }, [me, loading, router]);
+  }, [me, loading, isInitialized, router]);
 
-  const loadSalesData = () => {
+  // Reload data when page becomes visible (e.g., when returning from new sale page)
+  useEffect(() => {
+    if (!isInitialized) return;
+    
+    const handleVisibilityChange = () => {
+      if (!document.hidden && me?.role === 'admin') {
+        loadSalesData();
+      }
+    };
+
+    const handleFocus = () => {
+      if (me?.role === 'admin') {
+        loadSalesData();
+      }
+    };
+
+    const handlePageShow = () => {
+      if (me?.role === 'admin') {
+        loadSalesData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('pageshow', handlePageShow);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, [me, isInitialized]);
+
+  // Check for refresh parameter from new sale page
+  useEffect(() => {
+    if (searchParams.get('refresh') === 'true' && me?.role === 'admin' && isInitialized) {
+      loadSalesData(true);
+      // Remove the refresh parameter from URL
+      router.replace('/sales');
+    }
+  }, [searchParams, me, isInitialized, router]);
+
+  const loadSalesData = (showLoading = false) => {
+    if (!demoDataService) return;
+    
+    if (showLoading) {
+      setLoadingData(true);
+    }
+    
     try {
       const allSales = demoDataService.getAllSales();
       const salesStats = demoDataService.getSalesStats();
@@ -186,9 +241,14 @@ export default function SalesPage() {
           <Plus className="h-4 w-4" />
           Nuova Vendita
         </Button>
-        <Button variant="outline" onClick={loadSalesData} className="flex items-center gap-2">
-          <Calendar className="h-4 w-4" />
-          Aggiorna Dati
+        <Button 
+          variant="outline" 
+          onClick={() => loadSalesData(true)} 
+          disabled={loadingData}
+          className="flex items-center gap-2"
+        >
+          <RefreshCw className={`h-4 w-4 ${loadingData ? 'animate-spin' : ''}`} />
+          {loadingData ? 'Aggiornando...' : 'Aggiorna Dati'}
         </Button>
       </div>
 
@@ -242,7 +302,11 @@ export default function SalesPage() {
       </Card>
 
       {/* Charts Section */}
-      {stats && <SalesCharts stats={stats} />}
+      {stats && (
+        <Suspense fallback={<LoadingSpinner size="lg" className="h-96" />}>
+          <SalesCharts stats={stats} refreshTrigger={sales.length} />
+        </Suspense>
+      )}
     </div>
   );
 }

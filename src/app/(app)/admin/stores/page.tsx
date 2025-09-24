@@ -113,9 +113,32 @@ export default function AdminStoresPage() {
     setLoading(true);
     
     try {
-      // In a real app, this would call an API
-      // For demo, we'll just show a success message
-      alert('Negozio creato con successo! (Demo)');
+      // Create new store using demo service
+      const newStore = demoDataService.addStore({
+        name: formData.name,
+        address: formData.address,
+        region: formData.region,
+        city: formData.city,
+        postal_code: formData.postal_code,
+        phone: formData.phone,
+        email: formData.email,
+        manager: formData.manager,
+        status: formData.status as "active" | "inactive" | "maintenance",
+        opening_hours: {
+          monday: "09:00-19:00",
+          tuesday: "09:00-19:00",
+          wednesday: "09:00-19:00",
+          thursday: "09:00-19:00",
+          friday: "09:00-19:00",
+          saturday: "09:00-18:00",
+          sunday: "10:00-17:00"
+        },
+        services: formData.services,
+        square_meters: formData.square_meters,
+        employees_count: formData.employees_count
+      });
+      
+      alert(`Negozio "${newStore.name}" creato con successo!`);
       setFormData({
         name: "",
         address: "",

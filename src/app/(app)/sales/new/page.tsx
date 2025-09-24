@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMe } from '@/lib/auth/useMe';
-import { demoDataService, DemoSale } from '@/lib/demo-data/demo-service';
+import { DemoSale } from '@/lib/demo-data/demo-service';
+import { useDemoData } from '@/lib/demo-data/useDemoData';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ import { ArrowLeft, Save, Calculator } from 'lucide-react';
 
 export default function NewSalePage() {
   const { me, loading } = useMe();
+  const { isInitialized, demoDataService } = useDemoData();
   const router = useRouter();
   const [formData, setFormData] = useState({
     store_id: '',
@@ -54,15 +56,20 @@ export default function NewSalePage() {
     setSaving(true);
 
     try {
+      if (!demoDataService) {
+        alert('Servizio non disponibile');
+        return;
+      }
+
       const newSale: Omit<DemoSale, 'id' | 'created_at'> = {
         ...formData,
         sale_date: new Date(formData.sale_date).toISOString()
       };
 
-      demoDataService.addSale(newSale);
+      const result = demoDataService.addSale(newSale);
       
-      // Redirect to sales page
-      router.push('/sales');
+      // Redirect to sales page with refresh parameter
+      router.push('/sales?refresh=true');
     } catch (error) {
       console.error('Error saving sale:', error);
       alert('Errore nel salvare la vendita');
@@ -82,7 +89,7 @@ export default function NewSalePage() {
     );
   }
 
-  if (!me || me.role !== 'admin') {
+  if (!me || me.role !== 'admin' || !demoDataService) {
     return null;
   }
 

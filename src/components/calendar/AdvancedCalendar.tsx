@@ -866,9 +866,8 @@ export function AdvancedCalendar({
           {me?.role !== "workforce" && (
             <Button
               variant="outline"
-              size="sm"
               onClick={onShowFilters}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm"
             >
               <Filter size={16} />
               <span className="hidden sm:inline">Filtri</span>
@@ -876,9 +875,8 @@ export function AdvancedCalendar({
           )}
           {canEdit && (
             <Button
-              size="sm"
-              onClick={() => onShiftCreate && onShiftCreate({ start: new Date(), end: new Date(), slots: [new Date()] })}
-              className="flex items-center gap-2"
+              onClick={() => onShiftCreate && onShiftCreate({ start: new Date(), end: new Date(), slots: [new Date()], action: 'select' })}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm"
             >
               <Plus size={16} />
               <span className="hidden sm:inline">Nuovo Turno</span>
@@ -893,7 +891,6 @@ export function AdvancedCalendar({
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            size="sm"
             onClick={() => {
               const newDate = new Date(date);
               if (view === "month") {
@@ -905,7 +902,7 @@ export function AdvancedCalendar({
               }
               setDate(newDate);
             }}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 px-3 py-1.5 text-sm"
           >
             <span className="text-lg">⬅️</span>
             <span className="hidden sm:inline">Precedente</span>
@@ -913,9 +910,8 @@ export function AdvancedCalendar({
 
           <Button
             variant="outline"
-            size="sm"
             onClick={() => setDate(new Date())}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 px-3 py-1.5 text-sm"
           >
             <span className="text-sm">📅</span>
             <span className="hidden sm:inline">Oggi</span>
@@ -923,7 +919,6 @@ export function AdvancedCalendar({
 
           <Button
             variant="outline"
-            size="sm"
             onClick={() => {
               const newDate = new Date(date);
               if (view === "month") {
@@ -935,7 +930,7 @@ export function AdvancedCalendar({
               }
               setDate(newDate);
             }}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 px-3 py-1.5 text-sm"
           >
             <span className="hidden sm:inline">Successivo</span>
             <span className="text-lg">➡️</span>
@@ -948,33 +943,29 @@ export function AdvancedCalendar({
           <div className="flex items-center gap-1">
             <Button
               variant={view === "month" ? "default" : "outline"}
-              size="sm"
               onClick={() => setView("month")}
-              className="text-xs"
+              className="text-xs px-3 py-1.5"
             >
               📅 Mese
             </Button>
             <Button
               variant={view === "week" ? "default" : "outline"}
-              size="sm"
               onClick={() => setView("week")}
-              className="text-xs"
+              className="text-xs px-3 py-1.5"
             >
               📊 Settimana
             </Button>
             <Button
               variant={view === "day" ? "default" : "outline"}
-              size="sm"
               onClick={() => setView("day")}
-              className="text-xs"
+              className="text-xs px-3 py-1.5"
             >
               📆 Giorno
             </Button>
             <Button
               variant={view === "agenda" ? "default" : "outline"}
-              size="sm"
               onClick={() => setView("agenda")}
-              className="text-xs"
+              className="text-xs px-3 py-1.5"
             >
               📋 Lista
             </Button>
@@ -1008,7 +999,6 @@ export function AdvancedCalendar({
           }}
           step={30}
           showMultiDayTimes={true}
-          resizable={false}
           popup={true}
           popupOffset={{ x: 30, y: 20 }}
           components={{
@@ -1086,25 +1076,6 @@ export function AdvancedCalendar({
                   return <span>--:--</span>;
                 }
               },
-              date: ({ event }) => {
-                if (!event) return <span>--/--/----</span>;
-
-                try {
-                  const eventDate = event.start ? new Date(event.start) : null;
-
-                  if (!eventDate) {
-                    return <span>--/--/----</span>;
-                  }
-
-                  const day = eventDate.getDate().toString().padStart(2, '0');
-                  const month = (eventDate.getMonth() + 1).toString().padStart(2, '0');
-                  const year = eventDate.getFullYear();
-
-                  return <span className="font-medium text-gray-900 dark:text-gray-100">{day}/{month}/{year}</span>;
-                } catch (error) {
-                  return <span>--/--/----</span>;
-                }
-              }
             },
             month: {
               event: ({ event }) => (
