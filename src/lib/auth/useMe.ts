@@ -4,7 +4,7 @@ import { findUserByEmail } from "./demo-db";
 
 export type Me = { 
   id?: string; 
-  role: "admin" | "user" | "workforce"; 
+  role: "admin" | "user" | "workforce" | "dipendente" | "agente"; 
   email?: string; 
   name?: string; 
   supabaseUserId?: string | null 

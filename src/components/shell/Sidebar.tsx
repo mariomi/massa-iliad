@@ -49,6 +49,10 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
       // Workforce can only see dashboard, stores, reports/hours, and timesheet
       return i.href === "/dashboard" || i.href === "/stores" || i.href === "/reports/hours" || i.href === "/reports/timesheet";
     }
+    if (isAdmin) {
+      // Admin doesn't see "Punti vendita" since they have "Stores" with CRUD operations
+      return i.href !== "/stores";
+    }
     return true;
   });
   const admin = items.filter(i => i.adminOnly);

@@ -738,8 +738,8 @@ export function AdvancedCalendar({
           period: { from: start, to: end }
         };
 
-        // If user is workforce, only show their own shifts
-        if (me?.role === "workforce" && me?.id) {
+        // If user is workforce, dipendente, or agente, only show their own shifts
+        if ((me?.role === "workforce" || me?.role === "dipendente" || me?.role === "agente") && me?.id) {
           filterOptions.persons = [me.id];
         }
 
@@ -792,6 +792,8 @@ export function AdvancedCalendar({
     const isPublished = event.resource.published;
     const isManager = event.resource.role === "manager";
     const isWorkforce = event.resource.role === "workforce";
+    const isDipendente = event.resource.role === "dipendente";
+    const isAgente = event.resource.role === "agente";
     
     let backgroundColor, borderColor;
     
@@ -804,6 +806,12 @@ export function AdvancedCalendar({
     } else if (isWorkforce) {
       backgroundColor = "#581c87"; // Viola scuro
       borderColor = "#8b5cf6";
+    } else if (isDipendente) {
+      backgroundColor = "#7c2d12"; // Arancione scuro
+      borderColor = "#ea580c";
+    } else if (isAgente) {
+      backgroundColor = "#be185d"; // Rosa scuro
+      borderColor = "#ec4899";
     } else {
       backgroundColor = "#065f46"; // Verde scuro
       borderColor = "#10b981";
@@ -862,8 +870,8 @@ export function AdvancedCalendar({
 
         {/* Pulsanti semplificati */}
         <div className="flex items-center gap-3">
-          {/* Only show filters button for non-workforce users */}
-          {me?.role !== "workforce" && (
+          {/* Only show filters button for non-workforce, non-dipendente, non-agente users */}
+          {me?.role !== "workforce" && me?.role !== "dipendente" && me?.role !== "agente" && (
             <Button
               variant="outline"
               onClick={onShowFilters}
@@ -1147,7 +1155,7 @@ export function AdvancedCalendar({
 
       {/* Legenda semplificata */}
       <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-        <div className="flex items-center gap-6 text-sm text-gray-900 dark:text-gray-100">
+        <div className="flex items-center gap-4 text-sm text-gray-900 dark:text-gray-100 flex-wrap">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded" style={{backgroundColor: "#065f46"}}></div>
             <span>Staff</span>
@@ -1159,6 +1167,14 @@ export function AdvancedCalendar({
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded" style={{backgroundColor: "#581c87"}}></div>
             <span>Forza Lavoro</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded" style={{backgroundColor: "#7c2d12"}}></div>
+            <span>Dipendente</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded" style={{backgroundColor: "#be185d"}}></div>
+            <span>Agente</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded" style={{backgroundColor: "#92400e"}}></div>

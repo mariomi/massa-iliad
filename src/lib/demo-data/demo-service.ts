@@ -818,7 +818,7 @@ export interface DemoUser {
   id: string;
   name: string;
   email: string;
-  role: 'manager' | 'staff' | 'viewer' | 'workforce';
+  role: 'manager' | 'staff' | 'viewer' | 'workforce' | 'dipendente' | 'agente';
   store_id: string;
   team: string;
   created_at: string;
@@ -1022,6 +1022,199 @@ class DemoDataService {
     this.data.users.splice(userIndex, 1);
     this.saveToStorage();
     return true;
+  }
+
+  // CSV Import functionality
+  parseCSVUsers(csvContent: string): { users: Omit<DemoUser, 'id'>[], errors: string[] } {
+    const lines = csvContent.split('\n').filter(line => line.trim());
+    const errors: string[] = [];
+    const users: Omit<DemoUser, 'id'>[] = [];
+
+    // Skip header row
+    const dataLines = lines.slice(1);
+
+    dataLines.forEach((line, index) => {
+      const rowNumber = index + 2; // +2 because we skip header and arrays are 0-indexed
+      const columns = this.parseCSVLine(line);
+      
+      if (columns.length < 4) {
+        errors.push(`Riga ${rowNumber}: Numero insufficiente di colonne (minimo 4 richieste)`);
+        return;
+      }
+
+      const [name, email, role, password] = columns;
+      
+      // Validate required fields
+      if (!name?.trim()) {
+        errors.push(`Riga ${rowNumber}: Nome è obbligatorio`);
+        return;
+      }
+      
+      if (!email?.trim()) {
+        errors.push(`Riga ${rowNumber}: Email è obbligatoria`);
+        return;
+      }
+      
+      if (!this.isValidEmail(email.trim())) {
+        errors.push(`Riga ${rowNumber}: Email non valida: ${email}`);
+        return;
+      }
+      
+      if (!role?.trim()) {
+        errors.push(`Riga ${rowNumber}: Ruolo è obbligatorio`);
+        return;
+      }
+      
+      const validRoles = ['admin', 'manager', 'staff', 'workforce', 'dipendente', 'agente'];
+      if (!validRoles.includes(role.trim().toLowerCase())) {
+        errors.push(`Riga ${rowNumber}: Ruolo non valido: ${role}. Ruoli validi: ${validRoles.join(', ')}`);
+        return;
+      }
+      
+      if (!password?.trim()) {
+        errors.push(`Riga ${rowNumber}: Password è obbligatoria`);
+        return;
+      }
+
+      // Check for duplicate email
+      if (this.data.users.some(user => user.email.toLowerCase() === email.trim().toLowerCase())) {
+        errors.push(`Riga ${rowNumber}: Email già esistente: ${email}`);
+        return;
+      }
+
+      // Check for duplicate in current batch
+      if (users.some(user => user.email.toLowerCase() === email.trim().toLowerCase())) {
+        errors.push(`Riga ${rowNumber}: Email duplicata nel file: ${email}`);
+        return;
+      }
+
+      users.push({
+        name: name.trim(),
+        email: email.trim(),
+        role: role.trim().toLowerCase() as 'admin' | 'manager' | 'staff' | 'workforce' | 'dipendente' | 'agente',
+        store_id: null,
+        team: null,
+        created_at: new Date().toISOString()
+      });
+    });
+
+    return { users, errors };
+  }
+
+  private parseCSVLine(line: string): string[] {
+    const result: string[] = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    
+    result.push(current.trim());
+    return result;
+  }
+
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  bulkCreateUsers(users: Omit<DemoUser, 'id'>[]): DemoUser[] {
+    const createdUsers: DemoUser[] = [];
+    
+    users.forEach(user => {
+      const newUser = this.addUser(user);
+      createdUsers.push(newUser);
+    });
+    
+    return createdUsers;
+  }
+
+  generateCSVTemplate(): string {
+    const header = 'Nome,Email,Ruolo,Password';
+    const examples = [
+      'Mario Rossi,mario.rossi@example.com,staff,password123',
+      'Giulia Bianchi,giulia.bianchi@example.com,manager,password123',
+      'Luca Verdi,luca.verdi@example.com,dipendente,password123',
+      'Anna Neri,anna.neri@example.com,agente,password123'
+    ];
+    
+    return [header, ...examples].join('\n');
+  }
+
+  // Region Manager functionality
+  getManagers(): DemoUser[] {
+    return this.data.users.filter(user => user.role === 'manager');
+  }
+
+  searchManagers(query: string): DemoUser[] {
+    if (!query.trim()) return this.getManagers();
+    
+    const lowercaseQuery = query.toLowerCase();
+    return this.getManagers().filter(manager => 
+      manager.name.toLowerCase().includes(lowercaseQuery) ||
+      manager.email.toLowerCase().includes(lowercaseQuery)
+    );
+  }
+
+  getRegionManager(regionName: string): DemoUser | null {
+    // For demo purposes, we'll store region-manager mappings in localStorage
+    const regionManagers = this.getRegionManagers();
+    const managerId = regionManagers[regionName];
+    if (!managerId) return null;
+    
+    return this.getUserById(managerId) || null;
+  }
+
+  assignManagerToRegion(regionName: string, managerId: string): boolean {
+    try {
+      const regionManagers = this.getRegionManagers();
+      regionManagers[regionName] = managerId;
+      localStorage.setItem('demo_region_managers', JSON.stringify(regionManagers));
+      return true;
+    } catch (error) {
+      console.error('Error assigning manager to region:', error);
+      return false;
+    }
+  }
+
+  removeManagerFromRegion(regionName: string): boolean {
+    try {
+      const regionManagers = this.getRegionManagers();
+      delete regionManagers[regionName];
+      localStorage.setItem('demo_region_managers', JSON.stringify(regionManagers));
+      return true;
+    } catch (error) {
+      console.error('Error removing manager from region:', error);
+      return false;
+    }
+  }
+
+  private getRegionManagers(): Record<string, string> {
+    try {
+      const stored = localStorage.getItem('demo_region_managers');
+      return stored ? JSON.parse(stored) : {};
+    } catch (error) {
+      console.error('Error loading region managers:', error);
+      return {};
+    }
+  }
+
+  getRegionsWithManagers(): Array<{ region: string; manager: DemoUser | null }> {
+    const regions = this.getRegions();
+    return regions.map(region => ({
+      region,
+      manager: this.getRegionManager(region)
+    }));
   }
 
   // Regions (simple list based on unique regions from stores)
