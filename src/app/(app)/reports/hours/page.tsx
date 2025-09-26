@@ -21,10 +21,10 @@ export default function HoursReport() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   
   const [filters, setFilters] = useState<CalendarFilters>({
-    stores: [],
-    teams: [],
-    persons: [],
-    roles: [],
+    store: null,
+    team: null,
+    person: null,
+    role: null,
     period: {
       // default to current month range for better visibility on first load
       from: new Date(new Date().getFullYear(), new Date().getMonth(), 1, 0, 0, 0, 0),

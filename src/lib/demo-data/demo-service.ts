@@ -1,4 +1,4 @@
-// Sales interfaces
+﻿// Sales interfaces
 export interface DemoSale {
   id: string;
   store_id: string;
@@ -47,7 +47,7 @@ const demoDatabase = {
         "saturday": "09:00-18:00",
         "sunday": "10:00-17:00"
       },
-      "services": ["Vendita", "Assistenza", "Ricarica", "Portabilità"],
+      "services": ["Vendita", "Assistenza", "Ricarica", "PortabilitÃ "],
       "square_meters": 120,
       "employees_count": 8,
       "created_at": "2024-01-15T09:00:00Z"
@@ -97,7 +97,7 @@ const demoDatabase = {
         "saturday": "10:00-21:00",
         "sunday": "10:00-20:00"
       },
-      "services": ["Vendita", "Assistenza", "Ricarica", "Portabilità", "Demo"],
+      "services": ["Vendita", "Assistenza", "Ricarica", "PortabilitÃ ", "Demo"],
       "square_meters": 150,
       "employees_count": 10,
       "created_at": "2024-02-15T11:00:00Z"
@@ -147,7 +147,7 @@ const demoDatabase = {
         "saturday": "09:00-18:00",
         "sunday": "10:00-17:00"
       },
-      "services": ["Vendita", "Assistenza", "Ricarica", "Portabilità"],
+      "services": ["Vendita", "Assistenza", "Ricarica", "PortabilitÃ "],
       "square_meters": 110,
       "employees_count": 7,
       "created_at": "2024-03-15T10:00:00Z"
@@ -158,7 +158,7 @@ const demoDatabase = {
       "id": "user_1",
       "name": "Mario Rossi",
       "email": "mario.rossi@demo.com",
-      "role": "staff",
+      "role": "staff" as const,
       "store_id": "store_1",
       "team": "team_vendite",
       "created_at": "2024-01-10T08:00:00Z"
@@ -167,7 +167,7 @@ const demoDatabase = {
       "id": "user_2", 
       "name": "Anna Bianchi",
       "email": "anna.bianchi@demo.com",
-      "role": "manager",
+      "role": "manager" as const,
       "store_id": "store_1",
       "team": "team_manager",
       "created_at": "2024-01-05T09:00:00Z"
@@ -176,7 +176,7 @@ const demoDatabase = {
       "id": "user_3",
       "name": "Luca Verdi", 
       "email": "luca.verdi@demo.com",
-      "role": "staff",
+      "role": "staff" as const,
       "store_id": "store_2",
       "team": "team_vendite",
       "created_at": "2024-01-12T10:00:00Z"
@@ -185,7 +185,7 @@ const demoDatabase = {
       "id": "user_4",
       "name": "Giulia Neri",
       "email": "giulia.neri@demo.com", 
-      "role": "manager",
+      "role": "manager" as const,
       "store_id": "store_2",
       "team": "team_manager",
       "created_at": "2024-01-08T11:00:00Z"
@@ -194,7 +194,7 @@ const demoDatabase = {
       "id": "user_5",
       "name": "Marco Blu",
       "email": "marco.blu@demo.com",
-      "role": "staff", 
+      "role": "staff" as const, 
       "store_id": "store_3",
       "team": "team_supporto",
       "created_at": "2024-01-20T12:00:00Z"
@@ -203,7 +203,7 @@ const demoDatabase = {
       "id": "user_6",
       "name": "Francesco Bianchi",
       "email": "francesco.bianchi@demo.com",
-      "role": "manager",
+      "role": "manager" as const,
       "store_id": "store_4",
       "team": "team_manager",
       "created_at": "2024-02-20T09:00:00Z"
@@ -212,7 +212,7 @@ const demoDatabase = {
       "id": "user_7",
       "name": "Sofia Rossi",
       "email": "sofia.rossi@demo.com",
-      "role": "manager",
+      "role": "manager" as const,
       "store_id": "store_5",
       "team": "team_manager",
       "created_at": "2024-03-01T10:00:00Z"
@@ -221,7 +221,7 @@ const demoDatabase = {
       "id": "user_8",
       "name": "Alessandro Verde",
       "email": "alessandro.verde@demo.com",
-      "role": "staff",
+      "role": "staff" as const,
       "store_id": "store_4",
       "team": "team_vendite",
       "created_at": "2024-03-05T11:00:00Z"
@@ -230,7 +230,7 @@ const demoDatabase = {
       "id": "user_9",
       "name": "Chiara Gialli",
       "email": "chiara.gialli@demo.com",
-      "role": "staff",
+      "role": "staff" as const,
       "store_id": "store_5",
       "team": "team_vendite",
       "created_at": "2024-03-10T12:00:00Z"
@@ -239,7 +239,7 @@ const demoDatabase = {
       "id": "user_10",
       "name": "Roberto Marrone",
       "email": "roberto.marrone@demo.com",
-      "role": "staff",
+      "role": "staff" as const,
       "store_id": "store_1",
       "team": "team_supporto",
       "created_at": "2024-03-15T13:00:00Z"
@@ -248,7 +248,7 @@ const demoDatabase = {
       "id": "workforce_user",
       "name": "Forza Lavoro Demo",
       "email": "workforce@demo.com",
-      "role": "workforce",
+      "role": "workforce" as const,
       "store_id": null,
       "team": "team_workforce",
       "created_at": "2024-01-25T08:00:00Z"
@@ -330,242 +330,6 @@ const demoDatabase = {
       "used_sick_days": 2,
       "remaining_leave_days": 22,
       "carry_over_days": 0
-    }
-  ],
-  "sales": [
-    {
-      "id": "sale_1",
-      "store_id": "store_1",
-      "user_id": "user_1",
-      "product_name": "iPhone 15 Pro",
-      "category": "Smartphone",
-      "quantity": 1,
-      "unit_price": 1199.00,
-      "total_amount": 1199.00,
-      "sale_date": "2024-12-20T10:30:00Z",
-      "payment_method": "card",
-      "created_at": "2024-12-20T10:30:00Z"
-    },
-    {
-      "id": "sale_2",
-      "store_id": "store_1",
-      "user_id": "user_2",
-      "product_name": "Samsung Galaxy S24",
-      "category": "Smartphone",
-      "quantity": 1,
-      "unit_price": 999.00,
-      "total_amount": 999.00,
-      "sale_date": "2024-12-20T11:15:00Z",
-      "payment_method": "digital",
-      "created_at": "2024-12-20T11:15:00Z"
-    },
-    {
-      "id": "sale_3",
-      "store_id": "store_1",
-      "user_id": "user_1",
-      "product_name": "AirPods Pro",
-      "category": "Accessori",
-      "quantity": 2,
-      "unit_price": 279.00,
-      "total_amount": 558.00,
-      "sale_date": "2024-12-20T14:20:00Z",
-      "payment_method": "cash",
-      "created_at": "2024-12-20T14:20:00Z"
-    },
-    {
-      "id": "sale_4",
-      "store_id": "store_2",
-      "user_id": "user_3",
-      "product_name": "iPad Air",
-      "category": "Tablet",
-      "quantity": 1,
-      "unit_price": 649.00,
-      "total_amount": 649.00,
-      "sale_date": "2024-12-20T15:45:00Z",
-      "payment_method": "card",
-      "created_at": "2024-12-20T15:45:00Z"
-    },
-    {
-      "id": "sale_5",
-      "store_id": "store_2",
-      "user_id": "user_4",
-      "product_name": "MacBook Air M3",
-      "category": "Laptop",
-      "quantity": 1,
-      "unit_price": 1299.00,
-      "total_amount": 1299.00,
-      "sale_date": "2024-12-20T16:30:00Z",
-      "payment_method": "digital",
-      "created_at": "2024-12-20T16:30:00Z"
-    },
-    {
-      "id": "sale_6",
-      "store_id": "store_3",
-      "user_id": "user_5",
-      "product_name": "Apple Watch Series 9",
-      "category": "Smartwatch",
-      "quantity": 1,
-      "unit_price": 449.00,
-      "total_amount": 449.00,
-      "sale_date": "2024-12-20T17:10:00Z",
-      "payment_method": "card",
-      "created_at": "2024-12-20T17:10:00Z"
-    },
-    {
-      "id": "sale_7",
-      "store_id": "store_1",
-      "user_id": "user_1",
-      "product_name": "Custodia iPhone 15",
-      "category": "Accessori",
-      "quantity": 3,
-      "unit_price": 49.00,
-      "total_amount": 147.00,
-      "sale_date": "2024-12-19T09:15:00Z",
-      "payment_method": "cash",
-      "created_at": "2024-12-19T09:15:00Z"
-    },
-    {
-      "id": "sale_8",
-      "store_id": "store_2",
-      "user_id": "user_3",
-      "product_name": "Samsung Galaxy Tab S9",
-      "category": "Tablet",
-      "quantity": 1,
-      "unit_price": 799.00,
-      "total_amount": 799.00,
-      "sale_date": "2024-12-19T11:30:00Z",
-      "payment_method": "digital",
-      "created_at": "2024-12-19T11:30:00Z"
-    },
-    {
-      "id": "sale_9",
-      "store_id": "store_3",
-      "user_id": "user_5",
-      "product_name": "iPhone 15",
-      "category": "Smartphone",
-      "quantity": 1,
-      "unit_price": 899.00,
-      "total_amount": 899.00,
-      "sale_date": "2024-12-19T13:45:00Z",
-      "payment_method": "card",
-      "created_at": "2024-12-19T13:45:00Z"
-    },
-    {
-      "id": "sale_10",
-      "store_id": "store_1",
-      "user_id": "user_2",
-      "product_name": "Cavo Lightning",
-      "category": "Accessori",
-      "quantity": 5,
-      "unit_price": 29.00,
-      "total_amount": 145.00,
-      "sale_date": "2024-12-19T15:20:00Z",
-      "payment_method": "cash",
-      "created_at": "2024-12-19T15:20:00Z"
-    },
-    {
-      "id": "sale_11",
-      "store_id": "store_2",
-      "user_id": "user_4",
-      "product_name": "Dell XPS 13",
-      "category": "Laptop",
-      "quantity": 1,
-      "unit_price": 1199.00,
-      "total_amount": 1199.00,
-      "sale_date": "2024-12-18T10:00:00Z",
-      "payment_method": "digital",
-      "created_at": "2024-12-18T10:00:00Z"
-    },
-    {
-      "id": "sale_12",
-      "store_id": "store_3",
-      "user_id": "user_5",
-      "product_name": "Samsung Galaxy Watch 6",
-      "category": "Smartwatch",
-      "quantity": 1,
-      "unit_price": 329.00,
-      "total_amount": 329.00,
-      "sale_date": "2024-12-18T12:15:00Z",
-      "payment_method": "card",
-      "created_at": "2024-12-18T12:15:00Z"
-    },
-    {
-      "id": "sale_13",
-      "store_id": "store_4",
-      "user_id": "user_8",
-      "product_name": "iPhone 14 Pro",
-      "category": "Smartphone",
-      "quantity": 1,
-      "unit_price": 1099.00,
-      "total_amount": 1099.00,
-      "sale_date": "2024-12-21T10:30:00Z",
-      "payment_method": "card",
-      "created_at": "2024-12-21T10:30:00Z"
-    },
-    {
-      "id": "sale_14",
-      "store_id": "store_4",
-      "user_id": "user_6",
-      "product_name": "AirPods Max",
-      "category": "Accessori",
-      "quantity": 1,
-      "unit_price": 599.00,
-      "total_amount": 599.00,
-      "sale_date": "2024-12-21T14:20:00Z",
-      "payment_method": "digital",
-      "created_at": "2024-12-21T14:20:00Z"
-    },
-    {
-      "id": "sale_15",
-      "store_id": "store_5",
-      "user_id": "user_9",
-      "product_name": "MacBook Pro M3",
-      "category": "Laptop",
-      "quantity": 1,
-      "unit_price": 1999.00,
-      "total_amount": 1999.00,
-      "sale_date": "2024-12-21T16:45:00Z",
-      "payment_method": "card",
-      "created_at": "2024-12-21T16:45:00Z"
-    },
-    {
-      "id": "sale_16",
-      "store_id": "store_5",
-      "user_id": "user_7",
-      "product_name": "iPad Pro 12.9",
-      "category": "Tablet",
-      "quantity": 1,
-      "unit_price": 1199.00,
-      "total_amount": 1199.00,
-      "sale_date": "2024-12-21T18:10:00Z",
-      "payment_method": "digital",
-      "created_at": "2024-12-21T18:10:00Z"
-    },
-    {
-      "id": "sale_17",
-      "store_id": "store_1",
-      "user_id": "user_10",
-      "product_name": "Samsung Galaxy S24 Ultra",
-      "category": "Smartphone",
-      "quantity": 1,
-      "unit_price": 1299.00,
-      "total_amount": 1299.00,
-      "sale_date": "2024-12-22T11:00:00Z",
-      "payment_method": "card",
-      "created_at": "2024-12-22T11:00:00Z"
-    },
-    {
-      "id": "sale_18",
-      "store_id": "store_2",
-      "user_id": "user_3",
-      "product_name": "Apple Watch Ultra 2",
-      "category": "Smartwatch",
-      "quantity": 1,
-      "unit_price": 899.00,
-      "total_amount": 899.00,
-      "sale_date": "2024-12-22T13:30:00Z",
-      "payment_method": "digital",
-      "created_at": "2024-12-22T13:30:00Z"
     }
   ],
   "shifts": [
@@ -724,6 +488,198 @@ const demoDatabase = {
       "note": "Turno weekend forza lavoro",
       "created_at": "2024-12-14T19:00:00Z",
       "updated_at": "2024-12-14T19:00:00Z"
+    },
+    {
+      "id": "shift_14",
+      "store_id": "store_1",
+      "user_id": "user_1",
+      "title": "Turno Mattina - Mario Rossi",
+      "start_at": "2024-12-26T09:00:00Z",
+      "end_at": "2024-12-26T13:00:00Z",
+      "published": true,
+      "note": "Turno mattina",
+      "created_at": "2024-12-26T08:00:00Z",
+      "updated_at": "2024-12-26T08:00:00Z"
+    },
+    {
+      "id": "shift_15",
+      "store_id": "store_1",
+      "user_id": "user_2",
+      "title": "Turno Pomeriggio - Anna Bianchi",
+      "start_at": "2024-12-26T14:00:00Z",
+      "end_at": "2024-12-26T18:00:00Z",
+      "published": true,
+      "note": "Turno pomeriggio",
+      "created_at": "2024-12-26T08:00:00Z",
+      "updated_at": "2024-12-26T08:00:00Z"
+    },
+    {
+      "id": "shift_16",
+      "store_id": "store_2",
+      "user_id": "user_3",
+      "title": "Turno Sera - Luca Verdi",
+      "start_at": "2024-12-26T18:00:00Z",
+      "end_at": "2024-12-26T22:00:00Z",
+      "published": true,
+      "note": "Turno sera",
+      "created_at": "2024-12-26T08:00:00Z",
+      "updated_at": "2024-12-26T08:00:00Z"
+    },
+    {
+      "id": "shift_17",
+      "store_id": "store_3",
+      "user_id": "user_5",
+      "title": "Turno Supporto - Marco Blu",
+      "start_at": "2024-12-26T10:00:00Z",
+      "end_at": "2024-12-26T14:00:00Z",
+      "published": true,
+      "note": "Turno supporto",
+      "created_at": "2024-12-26T08:00:00Z",
+      "updated_at": "2024-12-26T08:00:00Z"
+    },
+    {
+      "id": "shift_18",
+      "store_id": "store_1",
+      "user_id": "user_1",
+      "title": "Turno Mattina - Mario Rossi",
+      "start_at": "2024-12-27T09:00:00Z",
+      "end_at": "2024-12-27T13:00:00Z",
+      "published": true,
+      "note": "Turno mattina",
+      "created_at": "2024-12-27T08:00:00Z",
+      "updated_at": "2024-12-27T08:00:00Z"
+    },
+    {
+      "id": "shift_19",
+      "store_id": "store_2",
+      "user_id": "user_4",
+      "title": "Turno Gestione - Giulia Neri",
+      "start_at": "2024-12-27T10:00:00Z",
+      "end_at": "2024-12-27T18:00:00Z",
+      "published": true,
+      "note": "Turno gestione",
+      "created_at": "2024-12-27T08:00:00Z",
+      "updated_at": "2024-12-27T08:00:00Z"
+    },
+    {
+      "id": "shift_20",
+      "store_id": "store_3",
+      "user_id": "user_5",
+      "title": "Turno Supporto - Marco Blu",
+      "start_at": "2024-12-28T09:00:00Z",
+      "end_at": "2024-12-28T17:00:00Z",
+      "published": true,
+      "note": "Turno supporto weekend",
+      "created_at": "2024-12-28T08:00:00Z",
+      "updated_at": "2024-12-28T08:00:00Z"
+    },
+    {
+      "id": "shift_21",
+      "store_id": "store_1",
+      "user_id": "user_1",
+      "title": "Turno Mattina - Mario Rossi",
+      "start_at": "2024-12-29T09:00:00Z",
+      "end_at": "2024-12-29T13:00:00Z",
+      "published": true,
+      "note": "Turno mattina",
+      "created_at": "2024-12-29T08:00:00Z",
+      "updated_at": "2024-12-29T08:00:00Z"
+    },
+    {
+      "id": "shift_22",
+      "store_id": "store_2",
+      "user_id": "user_4",
+      "title": "Turno Gestione - Giulia Neri",
+      "start_at": "2024-12-29T10:00:00Z",
+      "end_at": "2024-12-29T18:00:00Z",
+      "published": true,
+      "note": "Turno gestione",
+      "created_at": "2024-12-29T08:00:00Z",
+      "updated_at": "2024-12-29T08:00:00Z"
+    },
+    {
+      "id": "shift_23",
+      "store_id": "store_4",
+      "user_id": "user_6",
+      "title": "Turno Manager - Francesco Bianchi",
+      "start_at": "2024-12-26T08:00:00Z",
+      "end_at": "2024-12-26T16:00:00Z",
+      "published": true,
+      "note": "Turno manager",
+      "created_at": "2024-12-26T08:00:00Z",
+      "updated_at": "2024-12-26T08:00:00Z"
+    },
+    {
+      "id": "shift_24",
+      "store_id": "store_4",
+      "user_id": "user_7",
+      "title": "Turno Staff - Alessandro Verde",
+      "start_at": "2024-12-26T16:00:00Z",
+      "end_at": "2024-12-26T20:00:00Z",
+      "published": true,
+      "note": "Turno staff",
+      "created_at": "2024-12-26T08:00:00Z",
+      "updated_at": "2024-12-26T08:00:00Z"
+    },
+    {
+      "id": "shift_25",
+      "store_id": "store_5",
+      "user_id": "user_8",
+      "title": "Turno Manager - Sofia Rossi",
+      "start_at": "2024-12-27T09:00:00Z",
+      "end_at": "2024-12-27T17:00:00Z",
+      "published": true,
+      "note": "Turno manager",
+      "created_at": "2024-12-27T08:00:00Z",
+      "updated_at": "2024-12-27T08:00:00Z"
+    },
+    {
+      "id": "shift_26",
+      "store_id": "store_5",
+      "user_id": "user_9",
+      "title": "Turno Staff - Chiara Gialli",
+      "start_at": "2024-12-27T17:00:00Z",
+      "end_at": "2024-12-27T21:00:00Z",
+      "published": true,
+      "note": "Turno staff",
+      "created_at": "2024-12-27T08:00:00Z",
+      "updated_at": "2024-12-27T08:00:00Z"
+    },
+    {
+      "id": "shift_27",
+      "store_id": "store_1",
+      "user_id": "user_2",
+      "title": "Turno Manager - Anna Bianchi",
+      "start_at": "2024-12-30T10:00:00Z",
+      "end_at": "2024-12-30T18:00:00Z",
+      "published": true,
+      "note": "Turno manager",
+      "created_at": "2024-12-30T08:00:00Z",
+      "updated_at": "2024-12-30T08:00:00Z"
+    },
+    {
+      "id": "shift_28",
+      "store_id": "store_2",
+      "user_id": "user_3",
+      "title": "Turno Staff - Luca Verdi",
+      "start_at": "2024-12-30T14:00:00Z",
+      "end_at": "2024-12-30T22:00:00Z",
+      "published": true,
+      "note": "Turno staff",
+      "created_at": "2024-12-30T08:00:00Z",
+      "updated_at": "2024-12-30T08:00:00Z"
+    },
+    {
+      "id": "shift_29",
+      "store_id": "store_3",
+      "user_id": "user_5",
+      "title": "Turno Supporto - Marco Blu",
+      "start_at": "2024-12-31T09:00:00Z",
+      "end_at": "2024-12-31T17:00:00Z",
+      "published": true,
+      "note": "Turno supporto",
+      "created_at": "2024-12-31T08:00:00Z",
+      "updated_at": "2024-12-31T08:00:00Z"
     }
   ],
   "sales": [
@@ -737,7 +693,7 @@ const demoDatabase = {
       "unit_price": 1199.00,
       "total_amount": 1199.00,
       "sale_date": "2024-12-20T10:30:00Z",
-      "payment_method": "card",
+      "payment_method": "card" as const,
       "created_at": "2024-12-20T10:30:00Z"
     },
     {
@@ -750,7 +706,7 @@ const demoDatabase = {
       "unit_price": 1099.00,
       "total_amount": 1099.00,
       "sale_date": "2024-12-20T09:15:00Z",
-      "payment_method": "digital",
+      "payment_method": "digital" as const,
       "created_at": "2024-12-20T09:15:00Z"
     },
     {
@@ -763,7 +719,7 @@ const demoDatabase = {
       "unit_price": 2199.00,
       "total_amount": 2199.00,
       "sale_date": "2024-12-19T14:20:00Z",
-      "payment_method": "card",
+      "payment_method": "card" as const,
       "created_at": "2024-12-19T14:20:00Z"
     },
     {
@@ -776,7 +732,7 @@ const demoDatabase = {
       "unit_price": 599.00,
       "total_amount": 1198.00,
       "sale_date": "2024-12-19T11:45:00Z",
-      "payment_method": "cash",
+      "payment_method": "cash" as const,
       "created_at": "2024-12-19T11:45:00Z"
     },
     {
@@ -789,7 +745,7 @@ const demoDatabase = {
       "unit_price": 249.00,
       "total_amount": 747.00,
       "sale_date": "2024-12-18T16:30:00Z",
-      "payment_method": "card",
+      "payment_method": "card" as const,
       "created_at": "2024-12-18T16:30:00Z"
     }
   ]
@@ -810,7 +766,24 @@ export interface DemoStore {
   name: string;
   address: string;
   region: string;
+  city: string;
+  postal_code: string;
+  phone: string;
+  email: string;
   manager: string;
+  status: string;
+  opening_hours: {
+    monday: string;
+    tuesday: string;
+    wednesday: string;
+    thursday: string;
+    friday: string;
+    saturday: string;
+    sunday: string;
+  };
+  services: string[];
+  square_meters: number;
+  employees_count: number;
   created_at: string;
 }
 
@@ -818,8 +791,8 @@ export interface DemoUser {
   id: string;
   name: string;
   email: string;
-  role: 'manager' | 'staff' | 'viewer' | 'workforce' | 'dipendente' | 'agente';
-  store_id: string;
+  role: 'manager' | 'staff' | 'viewer' | 'workforce' | 'dipendente' | 'agente' | 'admin';
+  store_id: string | null;
   team: string;
   created_at: string;
 }
@@ -941,10 +914,11 @@ class DemoDataService {
     return this.data.stores.find(store => store.id === id);
   }
 
-  addStore(store: Omit<DemoStore, 'id'>): DemoStore {
+  addStore(store: Omit<DemoStore, 'id' | 'created_at'>): DemoStore {
     const newStore: DemoStore = {
       ...store,
-      id: `store_${Date.now()}`
+      id: `store_${Date.now()}`,
+      created_at: new Date().toISOString()
     };
     
     this.data.stores.push(newStore);
@@ -995,10 +969,11 @@ class DemoDataService {
     return this.data.users.filter(user => user.team === teamId);
   }
 
-  addUser(user: Omit<DemoUser, 'id'>): DemoUser {
+  addUser(user: Omit<DemoUser, 'id' | 'created_at'>): DemoUser {
     const newUser: DemoUser = {
       ...user,
-      id: `user_${Date.now()}`
+      id: `user_${Date.now()}`,
+      created_at: new Date().toISOString()
     };
     
     this.data.users.push(newUser);
@@ -1046,12 +1021,12 @@ class DemoDataService {
       
       // Validate required fields
       if (!name?.trim()) {
-        errors.push(`Riga ${rowNumber}: Nome è obbligatorio`);
+        errors.push(`Riga ${rowNumber}: Nome Ã¨ obbligatorio`);
         return;
       }
       
       if (!email?.trim()) {
-        errors.push(`Riga ${rowNumber}: Email è obbligatoria`);
+        errors.push(`Riga ${rowNumber}: Email Ã¨ obbligatoria`);
         return;
       }
       
@@ -1061,7 +1036,7 @@ class DemoDataService {
       }
       
       if (!role?.trim()) {
-        errors.push(`Riga ${rowNumber}: Ruolo è obbligatorio`);
+        errors.push(`Riga ${rowNumber}: Ruolo Ã¨ obbligatorio`);
         return;
       }
       
@@ -1072,13 +1047,13 @@ class DemoDataService {
       }
       
       if (!password?.trim()) {
-        errors.push(`Riga ${rowNumber}: Password è obbligatoria`);
+        errors.push(`Riga ${rowNumber}: Password Ã¨ obbligatoria`);
         return;
       }
 
       // Check for duplicate email
       if (this.data.users.some(user => user.email.toLowerCase() === email.trim().toLowerCase())) {
-        errors.push(`Riga ${rowNumber}: Email già esistente: ${email}`);
+        errors.push(`Riga ${rowNumber}: Email giÃ  esistente: ${email}`);
         return;
       }
 
@@ -1093,7 +1068,7 @@ class DemoDataService {
         email: email.trim(),
         role: role.trim().toLowerCase() as 'admin' | 'manager' | 'staff' | 'workforce' | 'dipendente' | 'agente',
         store_id: null,
-        team: null,
+        team: "team_general",
         created_at: new Date().toISOString()
       });
     });
@@ -1264,6 +1239,26 @@ class DemoDataService {
 
   getTeamById(id: string): DemoTeam | undefined {
     return this.data.teams.find(team => team.id === id);
+  }
+
+  getTeamsByStore(storeId: string): DemoTeam[] {
+    // Get unique teams from users assigned to this store
+    const storeUsers = this.data.users.filter(user => user.store_id === storeId);
+    const teamIds = [...new Set(storeUsers.map(user => user.team).filter(Boolean))];
+    
+    return this.data.teams.filter(team => teamIds.includes(team.id));
+  }
+
+  getRolesByStore(storeId: string): string[] {
+    // Get unique roles from users assigned to this store
+    const storeUsers = this.data.users.filter(user => user.store_id === storeId);
+    return [...new Set(storeUsers.map(user => user.role))];
+  }
+
+  getRolesByTeam(teamId: string): string[] {
+    // Get unique roles from users assigned to this team
+    const teamUsers = this.data.users.filter(user => user.team === teamId);
+    return [...new Set(teamUsers.map(user => user.role))];
   }
 
   // Shifts
@@ -1752,6 +1747,92 @@ class DemoDataService {
     }
 
     return csv;
+  }
+
+  // Store Opening Hours Management for Admin Calendar
+  getStoreOpeningHours(storeId: string, date: Date): { open: boolean; openTime?: string; closeTime?: string } {
+    const store = this.getStoreById(storeId);
+    if (!store || !store.opening_hours) {
+      return { open: false };
+    }
+
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const dayOfWeek = dayNames[date.getDay()] as keyof typeof store.opening_hours;
+    const hours = store.opening_hours[dayOfWeek];
+    
+    if (!hours || hours === 'closed') {
+      return { open: false };
+    }
+
+    const [openTime, closeTime] = hours.split('-');
+    return { open: true, openTime, closeTime };
+  }
+
+  getStoresOpenOnDate(date: Date): Array<{ store: DemoStore; openTime: string; closeTime: string }> {
+    const openStores: Array<{ store: DemoStore; openTime: string; closeTime: string }> = [];
+    
+    this.data.stores.forEach(store => {
+      const hours = this.getStoreOpeningHours(store.id, date);
+      if (hours.open && hours.openTime && hours.closeTime) {
+        openStores.push({
+          store,
+          openTime: hours.openTime,
+          closeTime: hours.closeTime
+        });
+      }
+    });
+
+    return openStores;
+  }
+
+  getStoreShiftsForDate(storeId: string, date: Date): DemoShiftWithDetails[] {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    return this.getShiftsWithDetails().filter(shift => {
+      const shiftDate = new Date(shift.start_at);
+      return shift.store_id === storeId && 
+             shiftDate >= startOfDay && 
+             shiftDate <= endOfDay;
+    });
+  }
+
+  getStoreShiftsTimeline(storeId: string, date: Date): Array<{
+    user: DemoUser;
+    shift: DemoShiftWithDetails;
+    startTime: string;
+    endTime: string;
+    duration: string;
+  }> {
+    const shifts = this.getStoreShiftsForDate(storeId, date);
+    
+    return shifts.map(shift => {
+      const startDate = new Date(shift.start_at);
+      const endDate = new Date(shift.end_at);
+      
+      const startTime = startDate.toLocaleTimeString('it-IT', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+      
+      const endTime = endDate.toLocaleTimeString('it-IT', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+      
+      const duration = `${shift.hours}h`;
+      
+      return {
+        user: shift.user,
+        shift,
+        startTime,
+        endTime,
+        duration
+      };
+    }).sort((a, b) => a.startTime.localeCompare(b.startTime));
   }
 }
 

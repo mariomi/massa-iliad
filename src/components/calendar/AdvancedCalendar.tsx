@@ -8,6 +8,7 @@ import { Calendar as CalendarIcon, Clock, Users, Filter, Plus } from "lucide-rea
 import { useMe } from "@/lib/auth/useMe";
 import { canEditPlanner } from "@/lib/auth/rbac";
 import { demoDataService, DemoShiftWithDetails } from "@/lib/demo-data/demo-service";
+import { AdminStoreCalendar } from "./AdminStoreCalendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 // Custom styles for clean calendar appearance
@@ -658,10 +659,10 @@ export interface ShiftEvent extends Event {
 }
 
 export interface CalendarFilters {
-  stores: string[];
-  teams: string[];
-  persons: string[];
-  roles: string[];
+  store: string | null;
+  team: string | null;
+  person: string | null;
+  role: string | null;
   period: {
     from: Date;
     to: Date;
@@ -731,10 +732,10 @@ export function AdvancedCalendar({
 
         // Get filtered shifts from demo data
         let filterOptions = {
-          stores: filters.stores.length > 0 ? filters.stores : undefined,
-          teams: filters.teams.length > 0 ? filters.teams : undefined,
-          persons: filters.persons.length > 0 ? filters.persons : undefined,
-          roles: filters.roles.length > 0 ? filters.roles : undefined,
+          stores: filters.store ? [filters.store] : undefined,
+          teams: filters.team ? [filters.team] : undefined,
+          persons: filters.person ? [filters.person] : undefined,
+          roles: filters.role ? [filters.role] : undefined,
           period: { from: start, to: end }
         };
 
@@ -846,6 +847,11 @@ export function AdvancedCalendar({
       })
       .reduce((total, event) => total + (event.resource.hours || 0), 0);
   }, [events, date]);
+
+  // Se l'utente è admin, mostra il calendario dei negozi aperti
+  if (me?.role === "admin") {
+    return <AdminStoreCalendar onShowFilters={onShowFilters} refreshTrigger={refreshTrigger} />;
+  }
 
   return (
     <div className="space-y-6">
