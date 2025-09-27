@@ -249,7 +249,7 @@ const demoDatabase = {
       "name": "Forza Lavoro Demo",
       "email": "workforce@demo.com",
       "role": "workforce" as const,
-      "store_id": null,
+      "store_id": "store_1",
       "team": "team_workforce",
       "created_at": "2024-01-25T08:00:00Z"
     }
@@ -491,6 +491,126 @@ const demoDatabase = {
     },
     {
       "id": "shift_14",
+      "store_id": "store_1",
+      "user_id": "workforce_user",
+      "title": "Turno Mattina - Forza Lavoro Demo",
+      "start_at": "2024-12-26T09:00:00Z",
+      "end_at": "2024-12-26T13:00:00Z",
+      "published": true,
+      "note": "Turno mattutino supporto vendite",
+      "created_at": "2024-12-14T19:00:00Z",
+      "updated_at": "2024-12-14T19:00:00Z"
+    },
+    {
+      "id": "shift_15",
+      "store_id": "store_1",
+      "user_id": "workforce_user",
+      "title": "Turno Pomeriggio - Forza Lavoro Demo",
+      "start_at": "2024-12-27T14:00:00Z",
+      "end_at": "2024-12-27T18:00:00Z",
+      "published": true,
+      "note": "Turno pomeridiano assistenza clienti",
+      "created_at": "2024-12-14T19:00:00Z",
+      "updated_at": "2024-12-14T19:00:00Z"
+    },
+    {
+      "id": "shift_16",
+      "store_id": "store_2",
+      "user_id": "workforce_user",
+      "title": "Turno Completo - Forza Lavoro Demo",
+      "start_at": "2024-12-28T09:00:00Z",
+      "end_at": "2024-12-28T17:00:00Z",
+      "published": true,
+      "note": "Turno completo weekend",
+      "created_at": "2024-12-14T19:00:00Z",
+      "updated_at": "2024-12-14T19:00:00Z"
+    },
+    {
+      "id": "shift_17",
+      "store_id": "store_1",
+      "user_id": "workforce_user",
+      "title": "Turno Mattina - Forza Lavoro Demo",
+      "start_at": "2024-12-29T08:00:00Z",
+      "end_at": "2024-12-29T12:00:00Z",
+      "published": true,
+      "note": "Turno mattutino pre-festività",
+      "created_at": "2024-12-14T19:00:00Z",
+      "updated_at": "2024-12-14T19:00:00Z"
+    },
+    {
+      "id": "shift_18",
+      "store_id": "store_2",
+      "user_id": "workforce_user",
+      "title": "Turno Pomeriggio - Forza Lavoro Demo",
+      "start_at": "2024-12-30T15:00:00Z",
+      "end_at": "2024-12-30T19:00:00Z",
+      "published": true,
+      "note": "Turno pomeridiano fine anno",
+      "created_at": "2024-12-14T19:00:00Z",
+      "updated_at": "2024-12-14T19:00:00Z"
+    },
+    {
+      "id": "shift_20",
+      "store_id": "store_1",
+      "user_id": "workforce_user",
+      "title": "Turno Mattina - Forza Lavoro Demo",
+      "start_at": "2025-09-28T09:00:00Z",
+      "end_at": "2025-09-28T13:00:00Z",
+      "published": true,
+      "note": "Turno mattutino domani",
+      "created_at": "2025-09-27T19:00:00Z",
+      "updated_at": "2025-09-27T19:00:00Z"
+    },
+    {
+      "id": "shift_21",
+      "store_id": "store_1",
+      "user_id": "workforce_user",
+      "title": "Turno Pomeriggio - Forza Lavoro Demo",
+      "start_at": "2025-09-29T14:00:00Z",
+      "end_at": "2025-09-29T18:00:00Z",
+      "published": true,
+      "note": "Turno pomeridiano dopodomani",
+      "created_at": "2025-09-27T19:00:00Z",
+      "updated_at": "2025-09-27T19:00:00Z"
+    },
+    {
+      "id": "shift_22",
+      "store_id": "store_1",
+      "user_id": "workforce_user",
+      "title": "Turno Completo - Forza Lavoro Demo",
+      "start_at": "2025-09-30T09:00:00Z",
+      "end_at": "2025-09-30T17:00:00Z",
+      "published": true,
+      "note": "Turno completo fine settembre",
+      "created_at": "2025-09-27T19:00:00Z",
+      "updated_at": "2025-09-27T19:00:00Z"
+    },
+    {
+      "id": "shift_23",
+      "store_id": "store_1",
+      "user_id": "workforce_user",
+      "title": "Turno Mattina - Forza Lavoro Demo",
+      "start_at": "2025-10-01T08:00:00Z",
+      "end_at": "2025-10-01T12:00:00Z",
+      "published": true,
+      "note": "Turno mattutino inizio ottobre",
+      "created_at": "2025-09-27T19:00:00Z",
+      "updated_at": "2025-09-27T19:00:00Z"
+    },
+    {
+      "id": "shift_24",
+      "store_id": "store_1",
+      "user_id": "workforce_user",
+      "title": "Turno Pomeriggio - Forza Lavoro Demo",
+      "start_at": "2025-10-02T15:00:00Z",
+      "end_at": "2025-10-02T19:00:00Z",
+      "published": true,
+      "note": "Turno pomeridiano ottobre",
+      "created_at": "2025-09-27T19:00:00Z",
+      "updated_at": "2025-09-27T19:00:00Z"
+    },
+    {
+      "id": "shift_19",
       "store_id": "store_1",
       "user_id": "user_1",
       "title": "Turno Mattina - Mario Rossi",
@@ -893,6 +1013,18 @@ class DemoDataService {
     } catch (error) {
       console.error('Error saving to localStorage:', error);
     }
+  }
+
+  // Method to reset data to initial state (useful for debugging)
+  resetToInitialData(): void {
+    this.data = { ...demoDatabase };
+    this.saveToStorage();
+    console.log('🔄 Demo data reset to initial state');
+  }
+
+  // Public method to force save data to localStorage
+  forceSaveToStorage(): void {
+    this.saveToStorage();
   }
 
   // Reset to initial demo dataset (useful after edits during dev)

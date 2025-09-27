@@ -20,7 +20,7 @@ const customCalendarStyles = `
 
   .rbc-header {
     background: #f9fafb;
-    border-bottom: 2px solid #e5e7eb;
+    box-shadow: inset 0 0.3px 0 0 rgba(229, 231, 235, 0.06), inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06);
     font-weight: 600;
     padding: 10px 6px;
     font-size: 14px;
@@ -29,7 +29,7 @@ const customCalendarStyles = `
 
   .dark .rbc-header {
     background: #1f2937 !important;
-    border-bottom: 2px solid #374151 !important;
+    box-shadow: inset 0 0.3px 0 0 rgba(55, 65, 81, 0.06), inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
     color: #f9fafb !important;
   }
 
@@ -43,7 +43,7 @@ const customCalendarStyles = `
 
   .rbc-date-cell {
     background: #ffffff;
-    border: 1px solid #e5e7eb;
+    box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.08);
     padding: 4px;
     transition: background-color 0.2s;
     color: #111827;
@@ -51,7 +51,7 @@ const customCalendarStyles = `
 
   .dark .rbc-date-cell {
     background: #111827 !important;
-    border: 1px solid #374151 !important;
+    box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.08) !important;
     color: #f9fafb !important;
   }
 
@@ -99,12 +99,77 @@ const customCalendarStyles = `
 
   .rbc-time-gutter {
     background: #f9fafb;
-    border-right: 1px solid #e5e7eb;
+    box-shadow: inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06);
   }
 
   .dark .rbc-time-gutter {
     background: #1f2937 !important;
-    border-right: 1px solid #374151 !important;
+    box-shadow: inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
+  }
+
+  /* Week and Day view specific improvements - Ultra thin using minimal shadows */
+  .rbc-time-view .rbc-time-content > * + * > * {
+    box-shadow: inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06) !important;
+  }
+
+  .dark .rbc-time-view .rbc-time-content > * + * > * {
+    box-shadow: inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
+  }
+
+  .rbc-time-slot {
+    box-shadow: inset 0 0.3px 0 0 rgba(229, 231, 235, 0.04) !important;
+  }
+
+  .dark .rbc-time-slot {
+    box-shadow: inset 0 0.3px 0 0 rgba(55, 65, 81, 0.04) !important;
+  }
+
+  .rbc-day-slot {
+    box-shadow: inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06) !important;
+  }
+
+  .dark .rbc-day-slot {
+    box-shadow: inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
+  }
+
+  /* Force remove all borders from week view - Ultra aggressive */
+  .rbc-time-view * {
+    border: none !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-color: transparent !important;
+  }
+
+  .rbc-time-view .rbc-time-content {
+    border: none !important;
+  }
+
+  .rbc-time-view .rbc-time-content > * {
+    border: none !important;
+  }
+
+  .rbc-time-view .rbc-time-content > * > * {
+    border: none !important;
+  }
+
+  .rbc-time-view .rbc-time-content .rbc-day-slot {
+    border: none !important;
+    border-right: none !important;
+    border-left: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+  }
+
+  .rbc-time-view .rbc-time-content .rbc-timeslot-group {
+    border: none !important;
+  }
+
+  .rbc-time-view .rbc-time-content .rbc-timeslot-group .rbc-time-slot {
+    border: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
   }
 
   .rbc-day-bg {
@@ -125,13 +190,29 @@ const customCalendarStyles = `
 
   .rbc-agenda-table {
     background: #ffffff;
-    border: 1px solid #e5e7eb;
+    box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.06);
     border-radius: 8px;
   }
 
   .dark .rbc-agenda-table {
     background: #111827 !important;
-    border: 1px solid #374151 !important;
+    box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.06) !important;
+  }
+
+  .rbc-agenda-table tbody tr {
+    box-shadow: inset 0 0.3px 0 0 rgba(229, 231, 235, 0.06) !important;
+  }
+
+  .dark .rbc-agenda-table tbody tr {
+    box-shadow: inset 0 0.3px 0 0 rgba(55, 65, 81, 0.06) !important;
+  }
+
+  .rbc-agenda-table tbody tr td {
+    box-shadow: inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06) !important;
+  }
+
+  .dark .rbc-agenda-table tbody tr td {
+    box-shadow: inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
   }
 
   .rbc-agenda-view table {

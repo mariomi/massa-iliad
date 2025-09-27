@@ -6,6 +6,45 @@ body {
   @apply text-neutral-900 dark:text-neutral-100; 
 }
 
+/* Global border improvements for cleaner UI */
+* {
+  border-color: rgb(229 231 235 / 0.5);
+}
+
+.dark * {
+  border-color: rgb(55 65 81 / 0.6);
+}
+
+/* Card improvements */
+.card {
+  border-width: 1px;
+  border-color: rgb(229 231 235 / 0.3);
+}
+
+.dark .card {
+  border-color: rgb(55 65 81 / 0.4);
+}
+
+/* Input and form improvements */
+input, textarea, select {
+  border-width: 1px;
+  border-color: rgb(229 231 235 / 0.5);
+}
+
+.dark input, .dark textarea, .dark select {
+  border-color: rgb(55 65 81 / 0.6);
+}
+
+/* Button improvements */
+button {
+  border-width: 1px;
+  border-color: rgb(229 231 235 / 0.3);
+}
+
+.dark button {
+  border-color: rgb(55 65 81 / 0.4);
+}
+
 body {
   background: radial-gradient(1200px 600px at 20% -10%, rgba(99,102,241,0.15), transparent 60%),
               radial-gradient(800px 500px at 80% 0%, rgba(16,185,129,0.12), transparent 60%),
@@ -24,11 +63,11 @@ body {
 }
 
 .rbc-event { 
-  @apply rounded-md border border-neutral-200 dark:border-gray-600 !important; 
+  @apply rounded-md border border-neutral-200 dark:border-gray-700 !important; 
 }
 
 .rbc-toolbar button { 
-  @apply rounded-lg px-3 py-1.5 border border-neutral-200 dark:border-gray-600 hover:bg-neutral-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-800; 
+  @apply rounded-lg px-3 py-1.5 border border-neutral-200 dark:border-gray-700 hover:bg-neutral-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-800; 
 }
 
 .rbc-toolbar button.rbc-active { 
@@ -83,13 +122,22 @@ body {
   @apply bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg dark:shadow-gray-950/30;
 }
 
-/* Calendar cell styles */
+/* Calendar cell styles - Ultra thin lines using minimal shadows */
 .rbc-month-row {
-  @apply border-gray-200 dark:border-gray-700;
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.08) !important;
+}
+
+.dark .rbc-month-row {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.08) !important;
 }
 
 .rbc-date-cell {
   @apply text-gray-900 dark:text-gray-100;
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.08) !important;
+}
+
+.dark .rbc-date-cell {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.08) !important;
 }
 
 .rbc-off-range-bg {
@@ -100,9 +148,278 @@ body {
   @apply text-gray-400 dark:text-gray-500;
 }
 
+/* Week view specific improvements - Ultra thin using minimal shadows */
+.rbc-time-view {
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-time-view {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-time-content {
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-time-content {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-time-header {
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-time-header {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-time-header-content {
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-time-header-content {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-time-slot {
+  box-shadow: inset 0 0.3px 0 0 rgba(229, 231, 235, 0.04) !important;
+}
+
+.dark .rbc-time-slot {
+  box-shadow: inset 0 0.3px 0 0 rgba(55, 65, 81, 0.04) !important;
+}
+
+.rbc-timeslot-group {
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-timeslot-group {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-day-slot {
+  box-shadow: inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-day-slot {
+  box-shadow: inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-time-gutter {
+  box-shadow: inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-time-gutter {
+  box-shadow: inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
+}
+
+/* Month view improvements - Ultra thin using minimal shadows */
+.rbc-month-view {
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-month-view {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-header {
+  box-shadow: inset 0 0.3px 0 0 rgba(229, 231, 235, 0.06), inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-header {
+  box-shadow: inset 0 0.3px 0 0 rgba(55, 65, 81, 0.06), inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-row {
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-row {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-row-segment {
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-row-segment {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.06) !important;
+}
+
+/* Day view improvements - Ultra thin using minimal shadows */
+.rbc-day-view {
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-day-view {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-time-view .rbc-header {
+  box-shadow: inset 0 0.3px 0 0 rgba(229, 231, 235, 0.06), inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-time-view .rbc-header {
+  box-shadow: inset 0 0.3px 0 0 rgba(55, 65, 81, 0.06), inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
+}
+
+/* Agenda view improvements - Ultra thin using minimal shadows */
+.rbc-agenda-view {
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-agenda-view {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-agenda-table {
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-agenda-table {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-agenda-table tbody tr {
+  box-shadow: inset 0 0.3px 0 0 rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-agenda-table tbody tr {
+  box-shadow: inset 0 0.3px 0 0 rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-agenda-table tbody tr td {
+  box-shadow: inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-agenda-table tbody tr td {
+  box-shadow: inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
+}
+
 /* Calendar event text */
 .rbc-event-content {
   @apply text-white dark:text-white;
+}
+
+/* Ultra-specific calendar line improvements - Ultra thin using minimal shadows */
+.rbc-month-view .rbc-date-cell,
+.rbc-month-view .rbc-row,
+.rbc-time-view,
+.rbc-agenda-view {
+  box-shadow: inset 0 0 0 0.3px rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-month-view .rbc-date-cell,
+.dark .rbc-month-view .rbc-row,
+.dark .rbc-time-view,
+.dark .rbc-agenda-view {
+  box-shadow: inset 0 0 0 0.3px rgba(55, 65, 81, 0.06) !important;
+}
+
+/* Specific week view line improvements - Ultra thin using minimal shadows */
+.rbc-time-view .rbc-time-content > * + * > * {
+  box-shadow: inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-time-view .rbc-time-content > * + * > * {
+  box-shadow: inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
+}
+
+/* Time slot separators - Ultra thin using minimal shadows */
+.rbc-time-view .rbc-time-slot {
+  box-shadow: inset 0 0.3px 0 0 rgba(229, 231, 235, 0.04) !important;
+}
+
+.dark .rbc-time-view .rbc-time-slot {
+  box-shadow: inset 0 0.3px 0 0 rgba(55, 65, 81, 0.04) !important;
+}
+
+/* Month view grid lines - Ultra thin using minimal shadows */
+.rbc-month-view .rbc-row .rbc-date-cell {
+  box-shadow: inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06), inset 0 -0.3px 0 0 rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-month-view .rbc-row .rbc-date-cell {
+  box-shadow: inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06), inset 0 -0.3px 0 0 rgba(55, 65, 81, 0.06) !important;
+}
+
+/* Header separators - Ultra thin using minimal shadows */
+.rbc-time-view .rbc-header {
+  box-shadow: inset 0 0.3px 0 0 rgba(229, 231, 235, 0.06), inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-time-view .rbc-header {
+  box-shadow: inset 0 0.3px 0 0 rgba(55, 65, 81, 0.06), inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
+}
+
+/* Additional week view specific overrides - Ultra thin */
+.rbc-time-view .rbc-time-content {
+  border: none !important;
+}
+
+.rbc-time-view .rbc-time-content > * {
+  border: none !important;
+}
+
+.rbc-time-view .rbc-time-content > * > * {
+  border: none !important;
+}
+
+.rbc-time-view .rbc-time-content > * > * > * {
+  border: none !important;
+}
+
+.rbc-time-view .rbc-time-content .rbc-day-slot {
+  border: none !important;
+  border-right: none !important;
+  border-left: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+.rbc-time-view .rbc-time-content .rbc-timeslot-group {
+  border: none !important;
+}
+
+.rbc-time-view .rbc-time-content .rbc-timeslot-group .rbc-time-slot {
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+/* Force remove all borders from week view */
+.rbc-time-view * {
+  border: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+}
+
+/* Re-apply only our minimal shadows */
+.rbc-time-view .rbc-time-content > * + * > * {
+  box-shadow: inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-time-view .rbc-time-content > * + * > * {
+  box-shadow: inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
+}
+
+.rbc-time-view .rbc-time-slot {
+  box-shadow: inset 0 0.3px 0 0 rgba(229, 231, 235, 0.04) !important;
+}
+
+.dark .rbc-time-view .rbc-time-slot {
+  box-shadow: inset 0 0.3px 0 0 rgba(55, 65, 81, 0.04) !important;
+}
+
+.rbc-time-view .rbc-header {
+  box-shadow: inset 0 0.3px 0 0 rgba(229, 231, 235, 0.06), inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06) !important;
+}
+
+.dark .rbc-time-view .rbc-header {
+  box-shadow: inset 0 0.3px 0 0 rgba(55, 65, 81, 0.06), inset -0.3px 0 0 0 rgba(55, 65, 81, 0.06) !important;
 }
 
 /* Calendar toolbar */
