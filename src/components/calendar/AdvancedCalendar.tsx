@@ -756,6 +756,7 @@ interface AdvancedCalendarProps {
   onShiftCreate?: (slot: SlotInfo) => void;
   onShiftEdit?: (event: ShiftEvent) => void;
   onShiftDelete?: (event: ShiftEvent) => void;
+  onShiftDetails?: (event: ShiftEvent) => void;
   onShowFilters?: () => void;
   refreshTrigger?: number;
 }
@@ -766,39 +767,32 @@ export function AdvancedCalendar({
   onShiftCreate, 
   onShiftEdit, 
   onShiftDelete,
+  onShiftDetails,
   onShowFilters,
   refreshTrigger
 }: AdvancedCalendarProps) {
   const { me } = useMe();
   const [events, setEvents] = useState<ShiftEvent[]>([]);
   const [view, setView] = useState<View>("month");
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(() => {
+    // Ensure we start with current month
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
   const [loading, setLoading] = useState(false);
 
   const canEdit = canEditPlanner(me?.role ?? "user", null);
 
   // Helper to compute visible range based on current view/date
+  // Always load a wider range to ensure all views show the same events
   const getVisibleRange = (currentDate: Date, currentView: View) => {
     const d = new Date(currentDate);
-    if (currentView === "month") {
-      const start = new Date(d.getFullYear(), d.getMonth(), 1, 0, 0, 0, 0);
-      const end = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59, 999);
-      return { start, end };
-    }
-    if (currentView === "week" || currentView === "agenda") {
-      const jsDay = d.getDay(); // 0=Sun..6=Sat
-      const mondayOffset = (jsDay + 6) % 7; // number of days since Monday
-      const start = new Date(d);
-      start.setDate(d.getDate() - mondayOffset);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(start);
-      end.setDate(start.getDate() + 6);
-      end.setHours(23, 59, 59, 999);
-      return { start, end };
-    }
-    // day
-    const start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
-    const end = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
+    
+    // Load 3 months of data to ensure all views show the same events
+    // This prevents React Big Calendar from filtering events based on view
+    const start = new Date(d.getFullYear(), d.getMonth() - 1, 1, 0, 0, 0, 0);
+    const end = new Date(d.getFullYear(), d.getMonth() + 2, 0, 23, 59, 59, 999);
+    
     return { start, end };
   };
 
@@ -851,6 +845,7 @@ export function AdvancedCalendar({
         }));
 
         setEvents(calendarEvents);
+        console.log(`Loaded ${calendarEvents.length} events for view: ${view}, date: ${date.toISOString()}`);
       } catch (error) {
         console.error("Error loading events:", error);
         setEvents([]);
@@ -869,8 +864,13 @@ export function AdvancedCalendar({
   };
 
   const handleSelectEvent = (event: ShiftEvent) => {
+    // If user can edit and onShiftEdit is provided, use edit functionality
     if (canEdit && onShiftEdit) {
       onShiftEdit(event);
+    } 
+    // Otherwise, if onShiftDetails is provided, show details
+    else if (onShiftDetails) {
+      onShiftDetails(event);
     }
   };
 
@@ -946,7 +946,12 @@ export function AdvancedCalendar({
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <CalendarIcon size={24} className="text-blue-600" />
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Calendario Turni</h1>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Calendario Turni</h1>
+              <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                {dayjs(date).locale('it').format('MMMM YYYY')}
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-1">
@@ -988,9 +993,8 @@ export function AdvancedCalendar({
       {/* Controlli navigazione e vista */}
       <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
         {/* Controlli navigazione */}
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
+        <div className="flex items-center gap-1">
+          <button
             onClick={() => {
               const newDate = new Date(date);
               if (view === "month") {
@@ -1002,23 +1006,14 @@ export function AdvancedCalendar({
               }
               setDate(newDate);
             }}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm"
+            className="flex items-center justify-center w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
           >
-            <span className="text-lg">⬅️</span>
-            <span className="hidden sm:inline">Precedente</span>
-          </Button>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15,18 9,12 15,6"></polyline>
+            </svg>
+          </button>
 
-          <Button
-            variant="outline"
-            onClick={() => setDate(new Date())}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm"
-          >
-            <span className="text-sm">📅</span>
-            <span className="hidden sm:inline">Oggi</span>
-          </Button>
-
-          <Button
-            variant="outline"
+          <button
             onClick={() => {
               const newDate = new Date(date);
               if (view === "month") {
@@ -1030,46 +1025,46 @@ export function AdvancedCalendar({
               }
               setDate(newDate);
             }}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm"
+            className="flex items-center justify-center w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
           >
-            <span className="hidden sm:inline">Successivo</span>
-            <span className="text-lg">➡️</span>
-          </Button>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9,18 15,12 9,6"></polyline>
+            </svg>
+          </button>
         </div>
 
         {/* Selettore vista */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:inline">Vista:</span>
-          <div className="flex items-center gap-1">
-            <Button
-              variant={view === "month" ? "default" : "outline"}
-              onClick={() => setView("month")}
-              className="text-xs px-3 py-1.5"
-            >
-              📅 Mese
-            </Button>
-            <Button
-              variant={view === "week" ? "default" : "outline"}
-              onClick={() => setView("week")}
-              className="text-xs px-3 py-1.5"
-            >
-              📊 Settimana
-            </Button>
-            <Button
-              variant={view === "day" ? "default" : "outline"}
-              onClick={() => setView("day")}
-              className="text-xs px-3 py-1.5"
-            >
-              📆 Giorno
-            </Button>
-            <Button
-              variant={view === "agenda" ? "default" : "outline"}
-              onClick={() => setView("agenda")}
-              className="text-xs px-3 py-1.5"
-            >
-              📋 Lista
-            </Button>
-          </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setView("month")}
+            className={`px-3 py-1.5 text-sm rounded transition-colors ${
+              view === "month" 
+                ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900" 
+                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+            }`}
+          >
+            Mese
+          </button>
+          <button
+            onClick={() => setView("week")}
+            className={`px-3 py-1.5 text-sm rounded transition-colors ${
+              view === "week" 
+                ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900" 
+                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+            }`}
+          >
+            Settimana
+          </button>
+          <button
+            onClick={() => setView("day")}
+            className={`px-3 py-1.5 text-sm rounded transition-colors ${
+              view === "day" 
+                ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900" 
+                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+            }`}
+          >
+            Giorno
+          </button>
         </div>
       </div>
 
@@ -1090,7 +1085,7 @@ export function AdvancedCalendar({
           onSelectSlot={handleSelectSlot}
           onSelectEvent={handleSelectEvent}
           eventPropGetter={eventStyleGetter}
-          views={["month", "week", "day", "agenda"]}
+          views={["month", "week", "day"]}
           defaultView="month"
           style={{
             height: "70vh",
@@ -1102,6 +1097,7 @@ export function AdvancedCalendar({
           showMultiDayTimes={true}
           popup={true}
           popupOffset={{ x: 30, y: 20 }}
+          doShowMoreDrillDown={false}
           components={{
             event: ({ event }) => {
               const title = event?.title ?? "";
@@ -1246,35 +1242,6 @@ export function AdvancedCalendar({
         />
       </div>
 
-      {/* Legenda semplificata */}
-      <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-        <div className="flex items-center gap-4 text-sm text-gray-900 dark:text-gray-100 flex-wrap">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded" style={{backgroundColor: "#065f46"}}></div>
-            <span>Staff</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded" style={{backgroundColor: "#1e3a8a"}}></div>
-            <span>Manager</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded" style={{backgroundColor: "#581c87"}}></div>
-            <span>Forza Lavoro</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded" style={{backgroundColor: "#7c2d12"}}></div>
-            <span>Dipendente</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded" style={{backgroundColor: "#be185d"}}></div>
-            <span>Agente</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded" style={{backgroundColor: "#92400e"}}></div>
-            <span>Bozza</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

@@ -11,12 +11,15 @@ import { demoDataService } from "@/lib/demo-data/demo-service";
 const AdvancedCalendar = lazy(() => import("@/components/calendar/AdvancedCalendar").then(module => ({ default: module.AdvancedCalendar })));
 const CalendarFiltersPanel = lazy(() => import("@/components/calendar/CalendarFilters").then(module => ({ default: module.CalendarFiltersPanel })));
 const ShiftModal = lazy(() => import("@/components/calendar/ShiftModal").then(module => ({ default: module.ShiftModal })));
+const ShiftDetailsModal = lazy(() => import("@/components/calendar/ShiftDetailsModal").then(module => ({ default: module.ShiftDetailsModal })));
 
 export default function HoursReport() {
   const { me } = useMe();
   const [showFilters, setShowFilters] = useState(false);
   const [showShiftModal, setShowShiftModal] = useState(false);
+  const [showShiftDetailsModal, setShowShiftDetailsModal] = useState(false);
   const [editingShift, setEditingShift] = useState<ShiftEvent | null>(null);
+  const [selectedShift, setSelectedShift] = useState<ShiftEvent | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   
@@ -48,6 +51,11 @@ export default function HoursReport() {
     setEditingShift(shift);
     setIsEditMode(true);
     setShowShiftModal(true);
+  };
+
+  const handleShiftDetails = (shift: ShiftEvent) => {
+    setSelectedShift(shift);
+    setShowShiftDetailsModal(true);
   };
 
   const handleShiftSave = (shift: Partial<ShiftEvent>) => {
@@ -120,6 +128,7 @@ export default function HoursReport() {
           onShiftCreate={canEdit ? handleShiftCreate : undefined}
           onShiftEdit={canEdit ? handleShiftEdit : undefined}
           onShiftDelete={canEdit ? handleShiftDelete : undefined}
+          onShiftDetails={handleShiftDetails}
           onShowFilters={me?.role !== "workforce" ? () => setShowFilters(true) : undefined}
           refreshTrigger={refreshTrigger}
         />
@@ -144,6 +153,16 @@ export default function HoursReport() {
             onDelete={canEdit ? handleShiftDelete : undefined}
             shift={editingShift}
             isEdit={isEditMode}
+          />
+        </Suspense>
+      )}
+
+      {showShiftDetailsModal && (
+        <Suspense fallback={<LoadingSpinner size="md" className="h-32" />}>
+          <ShiftDetailsModal
+            isOpen={showShiftDetailsModal}
+            onClose={() => setShowShiftDetailsModal(false)}
+            shift={selectedShift}
           />
         </Suspense>
       )}
