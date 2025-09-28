@@ -775,9 +775,8 @@ export function AdvancedCalendar({
   const [events, setEvents] = useState<ShiftEvent[]>([]);
   const [view, setView] = useState<View>("month");
   const [date, setDate] = useState(() => {
-    // Ensure we start with current month
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), 1);
+    // Start with current date to show today's week/day
+    return new Date();
   });
   const [loading, setLoading] = useState(false);
 
@@ -845,7 +844,6 @@ export function AdvancedCalendar({
         }));
 
         setEvents(calendarEvents);
-        console.log(`Loaded ${calendarEvents.length} events for view: ${view}, date: ${date.toISOString()}`);
       } catch (error) {
         console.error("Error loading events:", error);
         setEvents([]);

@@ -3,8 +3,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X, MapPin, Clock, Calendar, Building, User } from "lucide-react";
 import { ShiftEvent } from "./AdvancedCalendar";
-import { format } from "date-fns";
-import { it } from "date-fns/locale/it";
+import dayjs from "dayjs";
+import "dayjs/locale/it";
 import { demoDataService } from "@/lib/demo-data/demo-service";
 
 interface ShiftDetailsModalProps {
@@ -24,11 +24,11 @@ export function ShiftDetailsModal({
   const store = demoDataService.getStoreById(shift.resource.storeId);
 
   const formatTime = (date: Date) => {
-    return format(date, "HH:mm", { locale: it });
+    return dayjs(date).locale('it').format("HH:mm");
   };
 
   const formatDate = (date: Date) => {
-    return format(date, "EEEE, d MMMM yyyy", { locale: it });
+    return dayjs(date).locale('it').format("dddd, D MMMM YYYY");
   };
 
   const formatDuration = (start: Date, end: Date) => {
