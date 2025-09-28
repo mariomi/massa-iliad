@@ -1,5 +1,5 @@
 "use client";
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, useCallback } from "react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { CalendarFilters, ShiftEvent } from "@/components/calendar/AdvancedCalendar";
@@ -34,9 +34,9 @@ export default function HoursReport() {
 
   const canEdit = canEditPlanner(me?.role ?? "user", null);
 
-  const handleFiltersChange = (newFilters: CalendarFilters) => {
+  const handleFiltersChange = useCallback((newFilters: CalendarFilters) => {
     setFilters({ ...newFilters });
-  };
+  }, []);
 
   const handleShiftCreate = (slot: any) => {
     setEditingShift(null);

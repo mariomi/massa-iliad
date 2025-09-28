@@ -37,6 +37,39 @@ export function CalendarFiltersPanel({ filters, onFiltersChange, onClose }: Cale
   const allTeams = demoDataService.getTeams();
   const allPersons = demoDataService.getUsers();
 
+  // Sync local filters with props when they change
+  useEffect(() => {
+    setLocalFilters(filters);
+    
+    // Sync local selection states with filters
+    if (filters.store) {
+      const store = stores.find(s => s.id === filters.store);
+      setSelectedStore(store || null);
+      setStoreSearchValue(store?.name || "");
+    } else {
+      setSelectedStore(null);
+      setStoreSearchValue("");
+    }
+    
+    if (filters.team) {
+      const team = allTeams.find(t => t.id === filters.team);
+      setSelectedTeam(team || null);
+    } else {
+      setSelectedTeam(null);
+    }
+    
+    if (filters.person) {
+      const person = allPersons.find(p => p.id === filters.person);
+      setSelectedPerson(person || null);
+      setPersonSearchValue(person?.name || "");
+    } else {
+      setSelectedPerson(null);
+      setPersonSearchValue("");
+    }
+    
+    setSelectedRole(filters.role);
+  }, [filters, stores, allTeams, allPersons]);
+
   // Convert stores to autocomplete options
   const storeOptions = useMemo(() => 
     stores.map(store => ({
@@ -104,32 +137,33 @@ export function CalendarFiltersPanel({ filters, onFiltersChange, onClose }: Cale
     if (selectedTeam && !selectedStore) return false;
     if (selectedRole && !selectedStore && !selectedTeam) return false;
     
-    return true;
-  }, [selectedStore, selectedTeam, selectedRole]);
+    // At least one filter must be selected to apply
+    const hasAnyFilter = selectedStore || selectedTeam || selectedPerson || selectedRole;
+    
+    return hasAnyFilter;
+  }, [selectedStore, selectedTeam, selectedPerson, selectedRole]);
 
   // Handle store selection
   const handleStoreSelect = (option: { id: string; label: string; subtitle?: string } | null) => {
     if (option) {
       const store = demoDataService.getStoreById(option.id);
       setSelectedStore(store || null);
-      setLocalFilters(prev => ({ ...prev, store: option.id }));
+      setLocalFilters(prev => ({ ...prev, store: option.id, team: null, role: null, person: null }));
       
       // Clear dependent selections
       setSelectedTeam(null);
       setSelectedRole(null);
       setSelectedPerson(null);
       setPersonSearchValue("");
-      setLocalFilters(prev => ({ ...prev, team: null, role: null, person: null }));
     } else {
       setSelectedStore(null);
-      setLocalFilters(prev => ({ ...prev, store: null }));
+      setLocalFilters(prev => ({ ...prev, store: null, team: null, role: null, person: null }));
       
       // Clear dependent selections
       setSelectedTeam(null);
       setSelectedRole(null);
       setSelectedPerson(null);
       setPersonSearchValue("");
-      setLocalFilters(prev => ({ ...prev, team: null, role: null, person: null }));
     }
   };
 
@@ -172,6 +206,13 @@ export function CalendarFiltersPanel({ filters, onFiltersChange, onClose }: Cale
       }
     }));
   };
+
+  // Auto-apply filters when they change (real-time updates)
+  useEffect(() => {
+    if (canApplyFilters) {
+      onFiltersChange(localFilters);
+    }
+  }, [localFilters, canApplyFilters, onFiltersChange]);
 
   // Handle apply filters
   const handleApply = () => {

@@ -821,8 +821,12 @@ export function AdvancedCalendar({
         };
 
         // If user is workforce, dipendente, or agente, only show their own shifts
+        // BUT only if no explicit filters are set (store, team, person, role)
         if ((me?.role === "workforce" || me?.role === "dipendente" || me?.role === "agente") && me?.id) {
-          filterOptions.persons = [me.id];
+          const hasExplicitFilters = filters.store || filters.team || filters.person || filters.role;
+          if (!hasExplicitFilters) {
+            filterOptions.persons = [me.id];
+          }
         }
 
         const filteredShifts = demoDataService.filterShifts(filterOptions);
@@ -933,6 +937,7 @@ export function AdvancedCalendar({
   if (me?.role === "admin") {
     return <AdminStoreCalendar onShowFilters={onShowFilters} refreshTrigger={refreshTrigger} />;
   }
+
 
   return (
     <div className="space-y-6">
@@ -1073,6 +1078,7 @@ export function AdvancedCalendar({
         '--rbc-border-color': '#374151'
       } as React.CSSProperties}>
         <Calendar
+          key={`calendar-${filters.store || 'all'}-${filters.team || 'all'}-${filters.person || 'all'}-${filters.role || 'all'}`}
           culture="it"
           localizer={localizer}
           events={events}

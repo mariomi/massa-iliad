@@ -1421,14 +1421,20 @@ class DemoDataService {
       const team = this.getTeamById(user?.team || '') || { id: "unknown", name: "Senza team", description: "" };
       const hours = (new Date(shift.end_at).getTime() - new Date(shift.start_at).getTime()) / (1000 * 60 * 60);
 
+      // Skip shifts with missing store or user data
+      if (!store || !user) {
+        console.warn(`Skipping shift ${shift.id}: missing store (${shift.store_id}) or user (${shift.user_id})`);
+        return null;
+      }
+
       return {
         ...shift,
-        store: store!,
-        user: user!,
+        store,
+        user,
         team,
         hours
       };
-    });
+    }).filter((shift): shift is DemoShiftWithDetails => shift !== null);
   }
 
   getShiftById(id: string): DemoShiftWithDetails | undefined {
@@ -1437,14 +1443,20 @@ class DemoDataService {
 
     const store = this.getStoreById(shift.store_id);
     const user = this.getUserById(shift.user_id);
-    const team = this.getTeamById(user?.team || '');
+    const team = this.getTeamById(user?.team || '') || { id: "unknown", name: "Senza team", description: "" };
     const hours = (new Date(shift.end_at).getTime() - new Date(shift.start_at).getTime()) / (1000 * 60 * 60);
+
+    // Return undefined if store or user is missing
+    if (!store || !user) {
+      console.warn(`Cannot get shift ${id}: missing store (${shift.store_id}) or user (${shift.user_id})`);
+      return undefined;
+    }
 
     return {
       ...shift,
-      store: store!,
-      user: user!,
-      team: team!,
+      store,
+      user,
+      team,
       hours
     };
   }
