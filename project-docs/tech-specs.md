@@ -202,3 +202,4 @@ AUTH_SECRET=
 - **Data**: Demo data service per sviluppo
 - **Navigation**: Pulsanti minimal con frecce SVG
 - **Event Loading**: Carica sempre 3 mesi di dati per garantire coerenza tra tutte le viste
+- **Event Colors**: Tutti i turni sono blu (pubblicati: blu standard, bozze: blu scuro)

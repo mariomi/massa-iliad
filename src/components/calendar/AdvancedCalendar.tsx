@@ -876,31 +876,17 @@ export function AdvancedCalendar({
 
   const eventStyleGetter = (event: ShiftEvent) => {
     const isPublished = event.resource.published;
-    const isManager = event.resource.role === "manager";
-    const isWorkforce = event.resource.role === "workforce";
-    const isDipendente = event.resource.role === "dipendente";
-    const isAgente = event.resource.role === "agente";
     
     let backgroundColor, borderColor;
     
     if (!isPublished) {
-      backgroundColor = "#92400e"; // Giallo scuro per dark mode
-      borderColor = "#f59e0b";
-    } else if (isManager) {
-      backgroundColor = "#1e3a8a"; // Blu scuro
+      // Bozze: blu più scuro
+      backgroundColor = "#1e3a8a";
       borderColor = "#3b82f6";
-    } else if (isWorkforce) {
-      backgroundColor = "#581c87"; // Viola scuro
-      borderColor = "#8b5cf6";
-    } else if (isDipendente) {
-      backgroundColor = "#7c2d12"; // Arancione scuro
-      borderColor = "#ea580c";
-    } else if (isAgente) {
-      backgroundColor = "#be185d"; // Rosa scuro
-      borderColor = "#ec4899";
     } else {
-      backgroundColor = "#065f46"; // Verde scuro
-      borderColor = "#10b981";
+      // Tutti i turni pubblicati: blu standard
+      backgroundColor = "#2563eb";
+      borderColor = "#3b82f6";
     }
     
     return {
