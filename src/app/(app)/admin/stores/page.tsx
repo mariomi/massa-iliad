@@ -50,6 +50,7 @@ export default function AdminStoresPage() {
   const [stores, setStores] = useState<StoreWithStats[]>([]);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [editingStore, setEditingStore] = useState<StoreWithStats | null>(null);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -113,32 +114,59 @@ export default function AdminStoresPage() {
     setLoading(true);
     
     try {
-      // Create new store using demo service
-      const newStore = demoDataService.addStore({
-        name: formData.name,
-        address: formData.address,
-        region: formData.region,
-        city: formData.city,
-        postal_code: formData.postal_code,
-        phone: formData.phone,
-        email: formData.email,
-        manager: formData.manager,
-        status: formData.status as "active" | "inactive" | "maintenance",
-        opening_hours: {
-          monday: "09:00-19:00",
-          tuesday: "09:00-19:00",
-          wednesday: "09:00-19:00",
-          thursday: "09:00-19:00",
-          friday: "09:00-19:00",
-          saturday: "09:00-18:00",
-          sunday: "10:00-17:00"
-        },
-        services: formData.services,
-        square_meters: formData.square_meters,
-        employees_count: formData.employees_count
-      });
+      if (editingStore) {
+        // Update existing store
+        const updatedStore = demoDataService.updateStore(editingStore.id, {
+          name: formData.name,
+          address: formData.address,
+          region: formData.region,
+          city: formData.city,
+          postal_code: formData.postal_code,
+          phone: formData.phone,
+          email: formData.email,
+          manager: formData.manager,
+          status: formData.status as "active" | "inactive" | "maintenance",
+          services: formData.services,
+          square_meters: formData.square_meters,
+          employees_count: formData.employees_count
+        });
+        
+        if (updatedStore) {
+          alert(`Negozio "${updatedStore.name}" aggiornato con successo!`);
+          setEditingStore(null);
+        } else {
+          alert('Errore durante l\'aggiornamento del negozio');
+        }
+      } else {
+        // Create new store using demo service
+        const newStore = demoDataService.addStore({
+          name: formData.name,
+          address: formData.address,
+          region: formData.region,
+          city: formData.city,
+          postal_code: formData.postal_code,
+          phone: formData.phone,
+          email: formData.email,
+          manager: formData.manager,
+          status: formData.status as "active" | "inactive" | "maintenance",
+          opening_hours: {
+            monday: "09:00-19:00",
+            tuesday: "09:00-19:00",
+            wednesday: "09:00-19:00",
+            thursday: "09:00-19:00",
+            friday: "09:00-19:00",
+            saturday: "09:00-18:00",
+            sunday: "10:00-17:00"
+          },
+          services: formData.services,
+          square_meters: formData.square_meters,
+          employees_count: formData.employees_count
+        });
+        
+        alert(`Negozio "${newStore.name}" creato con successo!`);
+      }
       
-      alert(`Negozio "${newStore.name}" creato con successo!`);
+      // Reset form and reload data
       setFormData({
         name: "",
         address: "",
@@ -156,11 +184,71 @@ export default function AdminStoresPage() {
       setShowForm(false);
       loadStoresData();
     } catch (error) {
-      console.error('Error creating store:', error);
-      alert('Errore nella creazione del negozio');
+      console.error('Error saving store:', error);
+      alert('Errore nel salvataggio del negozio');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditStore = (store: StoreWithStats) => {
+    setEditingStore(store);
+    setFormData({
+      name: store.name,
+      address: store.address,
+      region: store.region,
+      city: store.city,
+      postal_code: store.postal_code,
+      phone: store.phone,
+      email: store.email,
+      manager: store.manager,
+      status: store.status,
+      square_meters: store.square_meters,
+      employees_count: store.employees_count,
+      services: store.services
+    });
+    setShowForm(true);
+  };
+
+  const handleDeleteStore = async (storeId: string) => {
+    if (!confirm('Sei sicuro di voler eliminare questo negozio? Questa azione non può essere annullata.')) {
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const success = demoDataService.deleteStore(storeId);
+      if (success) {
+        alert('Negozio eliminato con successo!');
+        loadStoresData();
+      } else {
+        alert('Errore durante l\'eliminazione del negozio');
+      }
+    } catch (error) {
+      console.error('Error deleting store:', error);
+      alert('Errore durante l\'eliminazione del negozio');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingStore(null);
+    setShowForm(false);
+    setFormData({
+      name: "",
+      address: "",
+      region: "Lombardia",
+      city: "Milano",
+      postal_code: "",
+      phone: "",
+      email: "",
+      manager: "",
+      status: "active",
+      square_meters: 100,
+      employees_count: 5,
+      services: ["Vendita", "Assistenza", "Ricarica"]
+    });
   };
 
   const formatCurrency = (amount: number) => {
@@ -231,9 +319,12 @@ export default function AdminStoresPage() {
       {showForm && (
         <Card>
           <CardHeader>
-            <CardTitle>Nuovo Negozio</CardTitle>
+            <CardTitle>{editingStore ? 'Modifica Negozio' : 'Nuovo Negozio'}</CardTitle>
             <CardDescription>
-              Compila i dettagli per creare un nuovo punto vendita
+              {editingStore 
+                ? `Modifica i dettagli del negozio "${editingStore.name}"`
+                : 'Compila i dettagli per creare un nuovo punto vendita'
+              }
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -354,9 +445,12 @@ export default function AdminStoresPage() {
 
               <div className="flex gap-4">
                 <Button type="submit" disabled={loading}>
-                  {loading ? 'Creando...' : 'Crea Negozio'}
+                  {loading 
+                    ? (editingStore ? 'Aggiornando...' : 'Creando...') 
+                    : (editingStore ? 'Aggiorna Negozio' : 'Crea Negozio')
+                  }
                 </Button>
-                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
+                <Button type="button" variant="outline" onClick={handleCancelEdit}>
                   Annulla
                 </Button>
               </div>
@@ -380,10 +474,21 @@ export default function AdminStoresPage() {
                     </div>
                   </Badge>
                   <div className="flex gap-1">
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleEditStore(store)}
+                      title="Modifica negozio"
+                    >
                       <Edit className="h-3 w-3" />
                     </Button>
-                    <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="text-red-600 hover:text-red-700"
+                      onClick={() => handleDeleteStore(store.id)}
+                      title="Elimina negozio"
+                    >
                       <Trash2 className="h-3 w-3" />
                     </Button>
                   </div>
