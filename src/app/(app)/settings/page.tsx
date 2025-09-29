@@ -1,6 +1,5 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+"use client";
+import { useState } from 'react';
 import { useMe } from '@/lib/auth/useMe';
 import { useTheme } from '@/lib/contexts/ThemeContext';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -15,8 +14,7 @@ import {
   Bell, 
   Shield, 
   Palette,
-  Monitor,
-  Smartphone
+  Monitor
 } from 'lucide-react';
 
 export default function SettingsPage() {

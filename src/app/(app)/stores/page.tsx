@@ -51,6 +51,22 @@ export default function StoresPage() {
     }
   }, [loading, me]);
 
+  // Real-time updates across tabs/windows
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'iliad_demo_last_update') {
+        loadStoresData();
+      }
+    };
+    const onCustom = () => loadStoresData();
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('iliad-demo:update', onCustom as EventListener);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('iliad-demo:update', onCustom as EventListener);
+    };
+  }, []);
+
   const loadStoresData = () => {
     try {
       if (!me) return;
@@ -58,11 +74,15 @@ export default function StoresPage() {
       // Get all stores where the user is assigned
       const allStores = demoDataService.getAllStores();
       const allUsers = demoDataService.getUsers();
+      const allShifts = demoDataService.getShifts();
       
       const userStores = allStores.filter(store => {
-        // Check if user is assigned to this store
+        // 1) Assigned to this store
         const storeUsers = allUsers.filter(user => user.store_id === store.id);
-        return storeUsers.some(user => user.id === me.id);
+        const isAssigned = storeUsers.some(user => user.id === me.id);
+        // 2) Has any shift in this store (past or future)
+        const hasShiftsHere = allShifts.some(shift => shift.store_id === store.id && shift.user_id === me.id);
+        return isAssigned || hasShiftsHere;
       });
       
       // Enrich stores with manager names, user role, and upcoming shifts
@@ -75,16 +95,14 @@ export default function StoresPage() {
         );
         
         // Get upcoming shifts for this user in this store
-        const allShifts = demoDataService.getShifts();
         const userShifts = allShifts.filter(shift => 
           shift.store_id === store.id && 
           shift.user_id === me.id
         );
+        const now = new Date();
         const upcomingShifts = userShifts
-          .filter(shift => 
-            new Date(shift.start_at) >= new Date() &&
-            shift.published
-          )
+          // include shifts that haven't ended yet (ongoing or future), regardless of published
+          .filter(shift => new Date(shift.end_at) >= now)
           .sort((a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime())
           .slice(0, 3); // Show only next 3 shifts
         
@@ -259,11 +277,16 @@ export default function StoresPage() {
                             {shift.title}
                           </Badge>
                         </div>
-                        {shift.note && (
-                          <p className="text-xs text-blue-600 dark:text-blue-400">
-                            {shift.note}
-                          </p>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {!shift.published && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300">Bozza</span>
+                          )}
+                          {shift.note && (
+                            <p className="text-xs text-blue-600 dark:text-blue-400">
+                              {shift.note}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     ))
                   ) : (

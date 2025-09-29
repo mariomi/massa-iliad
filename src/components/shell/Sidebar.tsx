@@ -46,8 +46,12 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
     if (i.adminOnly) return false;
     if (i.workforceOnly) return isWorkforce;
     if (isWorkforce) {
-      // Workforce can only see dashboard, stores, reports/hours, and timesheet
-      return i.href === "/dashboard" || i.href === "/stores" || i.href === "/reports/hours" || i.href === "/reports/timesheet";
+      // Workforce can see dashboard, stores, reports/hours, timesheet, and settings
+      return i.href === "/dashboard" 
+        || i.href === "/stores" 
+        || i.href === "/reports/hours" 
+        || i.href === "/reports/timesheet"
+        || i.href === "/settings";
     }
     if (isAdmin) {
       // Admin doesn't see "Punti vendita" since they have "Stores" with CRUD operations

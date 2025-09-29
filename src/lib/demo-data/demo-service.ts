@@ -915,6 +915,7 @@ export interface DemoUser {
   store_id: string | null;
   team: string;
   created_at: string;
+  password?: string;
 }
 
 export interface DemoTeam {
@@ -934,6 +935,15 @@ export interface DemoShift {
   note: string;
   created_at: string;
   updated_at: string;
+}
+
+export type RecurrencePattern = 'none' | 'daily' | 'weekly';
+export interface RecurrenceOptions {
+  pattern: RecurrencePattern;
+  // Repeat until this ISO date (inclusive). If not provided and endOfMonth is true, repeats to end of month.
+  until?: string; // ISO string date/time
+  // If true, repeat occurrences until the end of the month of the start date
+  endOfMonth?: boolean;
 }
 
 export interface DemoShiftWithDetails extends DemoShift {
@@ -979,6 +989,41 @@ class DemoDataService {
     if (!this.data.sales) {
       this.data.sales = [];
     }
+
+    // Normalize duplicate sale IDs (possible from older versions)
+    try {
+      const seen = new Set<string>();
+      this.data.sales.forEach(sale => {
+        if (seen.has(sale.id)) {
+          sale.id = `sale_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+        }
+        seen.add(sale.id);
+      });
+    } catch {}
+
+    // Default known demo passwords (do not override if already set)
+    try {
+      const wf = this.data.users.find(u => u.email?.toLowerCase() === 'workforce@demo.com' || u.id === 'workforce_user');
+      if (wf) {
+        wf.password = 'test'; // enforce demo-known password
+      }
+    } catch {}
+
+    // Migrate legacy password store (if present) into current users
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('demo_user_passwords') : null;
+      if (raw) {
+        const map = JSON.parse(raw) as Record<string, string>;
+        this.data.users.forEach(user => {
+          if (!user.password) {
+            const byEmail = user.email ? map[user.email.toLowerCase()] : undefined;
+            const byId = map[user.id];
+            if (byEmail) user.password = byEmail;
+            else if (byId) user.password = byId;
+          }
+        });
+      }
+    } catch {}
   }
 
   private loadFromStorage(): DemoDatabase | null {
@@ -1010,8 +1055,19 @@ class DemoDataService {
     
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+      // Mark a heartbeat for cross-tab listeners
+      localStorage.setItem('iliad_demo_last_update', Date.now().toString());
     } catch (error) {
       console.error('Error saving to localStorage:', error);
+    }
+  }
+
+  private notifyChange(entity: 'shift' | 'store' | 'user' | 'sales', action: 'create' | 'update' | 'delete', payload?: any) {
+    if (typeof window !== 'undefined') {
+      try {
+        const detail = { entity, action, at: Date.now(), id: payload?.id };
+        window.dispatchEvent(new CustomEvent('iliad-demo:update', { detail }));
+      } catch {}
     }
   }
 
@@ -1055,6 +1111,7 @@ class DemoDataService {
     
     this.data.stores.push(newStore);
     this.saveToStorage();
+    this.notifyChange('store', 'create', newStore);
     return newStore;
   }
 
@@ -1064,6 +1121,7 @@ class DemoDataService {
     
     this.data.stores[storeIndex] = { ...this.data.stores[storeIndex], ...updates };
     this.saveToStorage();
+    this.notifyChange('store', 'update', this.data.stores[storeIndex]);
     return this.data.stores[storeIndex];
   }
 
@@ -1071,8 +1129,9 @@ class DemoDataService {
     const storeIndex = this.data.stores.findIndex(store => store.id === id);
     if (storeIndex === -1) return false;
     
-    this.data.stores.splice(storeIndex, 1);
+    const deleted = this.data.stores.splice(storeIndex, 1)[0];
     this.saveToStorage();
+    this.notifyChange('store', 'delete', deleted);
     return true;
   }
 
@@ -1110,6 +1169,7 @@ class DemoDataService {
     
     this.data.users.push(newUser);
     this.saveToStorage();
+    this.notifyChange('user', 'create', newUser);
     return newUser;
   }
 
@@ -1119,6 +1179,7 @@ class DemoDataService {
     
     this.data.users[userIndex] = { ...this.data.users[userIndex], ...updates };
     this.saveToStorage();
+    this.notifyChange('user', 'update', this.data.users[userIndex]);
     return this.data.users[userIndex];
   }
 
@@ -1126,8 +1187,9 @@ class DemoDataService {
     const userIndex = this.data.users.findIndex(user => user.id === id);
     if (userIndex === -1) return false;
     
-    this.data.users.splice(userIndex, 1);
+    const deleted = this.data.users.splice(userIndex, 1)[0];
     this.saveToStorage();
+    this.notifyChange('user', 'delete', deleted);
     return true;
   }
 
@@ -1201,7 +1263,8 @@ class DemoDataService {
         role: role.trim().toLowerCase() as 'admin' | 'manager' | 'staff' | 'workforce' | 'dipendente' | 'agente',
         store_id: null,
         team: "team_general",
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        password: password.trim()
       });
     });
 
@@ -1239,11 +1302,50 @@ class DemoDataService {
     const createdUsers: DemoUser[] = [];
     
     users.forEach(user => {
-      const newUser = this.addUser(user);
+      const newUser = this.addUser(user as any);
+      const providedPwd = (user as any).password as string | undefined;
+      if (providedPwd && providedPwd.trim()) {
+        this.setUserPassword(newUser.id, providedPwd.trim());
+      }
       createdUsers.push(newUser);
     });
     
     return createdUsers;
+  }
+
+  // Password helpers (demo-only)
+  ensureUserPassword(userId: string): string {
+    const user = this.getUserById(userId);
+    if (!user) throw new Error('User not found');
+    if (!user.password) {
+      user.password = this.generateSecurePassword();
+      this.saveToStorage();
+      this.notifyChange('user', 'update', user);
+    }
+    return user.password!;
+  }
+
+  setUserPassword(userId: string, password: string): boolean {
+    const user = this.getUserById(userId);
+    if (!user) return false;
+    user.password = password;
+    this.saveToStorage();
+    this.notifyChange('user', 'update', user);
+    return true;
+  }
+
+  getUserPassword(userId: string): string | null {
+    const user = this.getUserById(userId);
+    return user?.password || null;
+  }
+
+  generateSecurePassword(): string {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*()_+';
+    let pwd = '';
+    for (let i = 0; i < 14; i++) {
+      pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return pwd;
   }
 
   generateCSVTemplate(): string {
@@ -1472,7 +1574,57 @@ class DemoDataService {
 
     this.data.shifts.push(newShift);
     this.saveToStorage();
+    this.notifyChange('shift', 'create', newShift);
     return newShift;
+  }
+
+  /**
+   * Create a series of shifts based on a recurrence rule.
+   * - pattern: daily or weekly
+   * - until: ISO date limit (inclusive)
+   * - endOfMonth: if true, repeats until the last day of the start month
+   */
+  createShiftSeries(
+    base: Omit<DemoShift, 'id' | 'created_at' | 'updated_at'>,
+    recurrence?: RecurrenceOptions
+  ): DemoShift[] {
+    if (!recurrence || recurrence.pattern === 'none') {
+      return [this.createShift(base)];
+    }
+
+    const created: DemoShift[] = [];
+    const baseStart = new Date(base.start_at);
+    const baseEnd = new Date(base.end_at);
+    if (isNaN(baseStart.getTime()) || isNaN(baseEnd.getTime())) {
+      return [this.createShift(base)];
+    }
+
+    // Determine series end
+    let seriesEnd: Date;
+    if (recurrence.until) {
+      seriesEnd = new Date(recurrence.until);
+    } else if (recurrence.endOfMonth) {
+      seriesEnd = new Date(baseStart.getFullYear(), baseStart.getMonth() + 1, 0, 23, 59, 59, 999);
+    } else {
+      // Default: only one occurrence
+      return [this.createShift(base)];
+    }
+
+    const stepDays = recurrence.pattern === 'daily' ? 1 : 7;
+
+    // Generate occurrences including the first one
+    for (let dStart = new Date(baseStart); dStart <= seriesEnd; dStart.setDate(dStart.getDate() + stepDays)) {
+      const durationMs = baseEnd.getTime() - baseStart.getTime();
+      const dEnd = new Date(dStart.getTime() + durationMs);
+      const occurrence = this.createShift({
+        ...base,
+        start_at: dStart.toISOString(),
+        end_at: dEnd.toISOString()
+      });
+      created.push(occurrence);
+    }
+
+    return created;
   }
 
   updateShift(id: string, updates: Partial<Omit<DemoShift, 'id' | 'created_at'>>): DemoShift | null {
@@ -1486,6 +1638,7 @@ class DemoDataService {
     };
 
     this.saveToStorage();
+    this.notifyChange('shift', 'update', this.data.shifts[shiftIndex]);
     return this.data.shifts[shiftIndex];
   }
 
@@ -1493,8 +1646,9 @@ class DemoDataService {
     const shiftIndex = this.data.shifts.findIndex(shift => shift.id === id);
     if (shiftIndex === -1) return false;
 
-    this.data.shifts.splice(shiftIndex, 1);
+    const deleted = this.data.shifts.splice(shiftIndex, 1)[0];
     this.saveToStorage();
+    this.notifyChange('shift', 'delete', deleted);
     return true;
   }
 
@@ -1590,7 +1744,7 @@ class DemoDataService {
   addSale(sale: Omit<DemoSale, 'id' | 'created_at'>): DemoSale {
     const newSale: DemoSale = {
       ...sale,
-      id: `sale_${Date.now()}`,
+      id: `sale_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
       created_at: new Date().toISOString()
     };
     
@@ -1601,6 +1755,70 @@ class DemoDataService {
     this.data.sales.push(newSale);
     this.saveToStorage();
     return newSale;
+  }
+
+  // CSV import for sales: header
+  // store_id,user_email,product_name,category,quantity,unit_price,total_amount,sale_date,payment_method
+  parseSalesCSV(csv: string): { sales: Omit<DemoSale, 'id' | 'created_at'>[]; errors: string[] } {
+    const lines = csv.split(/\r?\n/).filter(l => l.trim().length > 0);
+    const errors: string[] = [];
+    if (lines.length === 0) return { sales: [], errors: ["File CSV vuoto"] };
+    const header = lines[0].split(',').map(s => s.trim().toLowerCase());
+    const required = ["store_id","user_email","product_name","category","quantity","unit_price","total_amount","sale_date","payment_method"];
+    const missing = required.filter(r => !header.includes(r));
+    if (missing.length > 0) {
+      errors.push(`Colonne mancanti: ${missing.join(', ')}`);
+      return { sales: [], errors };
+    }
+    const idx = (name: string) => header.indexOf(name);
+    const sales: Omit<DemoSale, 'id' | 'created_at'>[] = [];
+    for (let i = 1; i < lines.length; i++) {
+      const rowNum = i + 1;
+      const cols = this.parseCSVLine(lines[i]);
+      if (cols.length < header.length) { errors.push(`Riga ${rowNum}: colonne insufficienti`); continue; }
+      const store_id = cols[idx('store_id')]?.trim();
+      const user_email = cols[idx('user_email')]?.trim();
+      const product_name = cols[idx('product_name')]?.trim();
+      const category = cols[idx('category')]?.trim();
+      const quantity = Number(cols[idx('quantity')]);
+      const unit_price = Number(cols[idx('unit_price')]);
+      const total_amount = Number(cols[idx('total_amount')]);
+      const sale_date = cols[idx('sale_date')]?.trim();
+      const payment_method = cols[idx('payment_method')]?.trim().toLowerCase() as DemoSale['payment_method'];
+
+      if (!store_id || !user_email || !product_name || !category || !sale_date || !payment_method) {
+        errors.push(`Riga ${rowNum}: campi obbligatori mancanti`);
+        continue;
+      }
+      const user = this.data.users.find(u => u.email.toLowerCase() === user_email.toLowerCase());
+      if (!user) { errors.push(`Riga ${rowNum}: utente non trovato (${user_email})`); continue; }
+      if (!['cash','card','digital'].includes(payment_method)) { errors.push(`Riga ${rowNum}: metodo pagamento invalido (${payment_method})`); continue; }
+      const dateOk = !isNaN(new Date(sale_date).getTime());
+      if (!dateOk) { errors.push(`Riga ${rowNum}: data non valida (${sale_date})`); continue; }
+      if (Number.isNaN(quantity) || Number.isNaN(unit_price) || Number.isNaN(total_amount)) {
+        errors.push(`Riga ${rowNum}: quantità/prezzo/non valido`);
+        continue;
+      }
+      sales.push({
+        store_id,
+        user_id: user.id,
+        product_name,
+        category,
+        quantity,
+        unit_price,
+        total_amount,
+        sale_date,
+        payment_method
+      });
+    }
+    return { sales, errors };
+  }
+
+  importSalesCSV(csv: string): { created: DemoSale[]; errors: string[] } {
+    const { sales, errors } = this.parseSalesCSV(csv);
+    const created: DemoSale[] = [];
+    sales.forEach(s => created.push(this.addSale(s)));
+    return { created, errors };
   }
 
   getSalesStats(period?: { from: Date; to: Date }): SalesStats {

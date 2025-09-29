@@ -5,7 +5,7 @@ import { Calendar as BigCalendar, View, momentLocalizer } from 'react-big-calend
 import moment from 'moment-timezone';
 import 'moment/locale/it';
 import { Button } from "@/components/ui/button";
-import { Calendar as CalendarIcon, Clock, Store, Users, X } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, Store, Users, X, Plus } from "lucide-react";
 import { demoDataService, DemoStore, DemoUser, DemoShiftWithDetails } from "@/lib/demo-data/demo-service";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
@@ -30,6 +30,7 @@ interface StoreEvent {
 interface AdminStoreCalendarProps {
   onShowFilters?: () => void;
   refreshTrigger?: number;
+  onCreateShift?: () => void;
 }
 
 interface SelectedStoreData {
@@ -44,12 +45,29 @@ interface SelectedStoreData {
   }>;
 }
 
-export function AdminStoreCalendar({ onShowFilters, refreshTrigger }: AdminStoreCalendarProps) {
+export function AdminStoreCalendar({ onShowFilters, refreshTrigger, onCreateShift }: AdminStoreCalendarProps) {
   const [events, setEvents] = useState<StoreEvent[]>([]);
   const [view, setView] = useState<View>("month");
   const [date, setDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [selectedStore, setSelectedStore] = useState<SelectedStoreData | null>(null);
+
+  // Real-time updates across tabs/windows
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'iliad_demo_last_update') {
+        // force a lightweight state toggle to trigger re-load effect
+        setDate(new Date(date));
+      }
+    };
+    const onCustom = () => setDate(new Date(date));
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('iliad-demo:update', onCustom as EventListener);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('iliad-demo:update', onCustom as EventListener);
+    };
+  }, [date]);
 
   // Force month view on mount
   useEffect(() => {
@@ -172,6 +190,16 @@ export function AdminStoreCalendar({ onShowFilters, refreshTrigger }: AdminStore
         </div>
         
         <div className="flex items-center space-x-4">
+          {onCreateShift && (
+            <Button 
+              onClick={onCreateShift}
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Nuovo Turno
+            </Button>
+          )}
           {onShowFilters && (
             <Button 
               onClick={onShowFilters}

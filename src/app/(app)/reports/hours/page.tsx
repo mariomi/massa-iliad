@@ -1,5 +1,5 @@
 "use client";
-import { useState, lazy, Suspense, useCallback } from "react";
+import { useState, useEffect, lazy, Suspense, useCallback } from "react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { CalendarFilters, ShiftEvent } from "@/components/calendar/AdvancedCalendar";
@@ -37,6 +37,22 @@ export default function HoursReport() {
 
   const canEdit = canEditPlanner(me?.role ?? "user", null);
 
+  // Real-time updates across tabs/windows
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'iliad_demo_last_update') {
+        setRefreshTrigger(prev => prev + 1);
+      }
+    };
+    const onCustom = () => setRefreshTrigger(prev => prev + 1);
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('iliad-demo:update', onCustom as EventListener);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('iliad-demo:update', onCustom as EventListener);
+    };
+  }, []);
+
   const handleFiltersChange = useCallback((newFilters: CalendarFilters) => {
     setFilters({ ...newFilters });
   }, []);
@@ -58,7 +74,7 @@ export default function HoursReport() {
     setShowShiftDetailsModal(true);
   };
 
-  const handleShiftSave = (shift: Partial<ShiftEvent>) => {
+  const handleShiftSave = (shift: Partial<ShiftEvent>, recurrence?: { pattern: 'none' | 'daily' | 'weekly'; until?: string; endOfMonth?: boolean }) => {
     try {
       if (isEditMode && editingShift) {
         // Update existing shift
@@ -77,8 +93,8 @@ export default function HoursReport() {
           setRefreshTrigger(prev => prev + 1);
         }
       } else {
-        // Create new shift
-        const newShift = demoDataService.createShift({
+        // Create new shift or series
+        const base = {
           store_id: shift.resource?.storeId || "",
           user_id: shift.resource?.userId || "",
           title: shift.title || "",
@@ -86,9 +102,12 @@ export default function HoursReport() {
           end_at: shift.end?.toISOString() || new Date().toISOString(),
           published: shift.resource?.published ?? false,
           note: shift.resource?.note || ""
-        });
-        
-        console.log("Shift created:", newShift);
+        };
+        if (recurrence && recurrence.pattern && recurrence.pattern !== 'none') {
+          demoDataService.createShiftSeries(base, recurrence);
+        } else {
+          demoDataService.createShift(base);
+        }
         setRefreshTrigger(prev => prev + 1);
       }
     } catch (error) {

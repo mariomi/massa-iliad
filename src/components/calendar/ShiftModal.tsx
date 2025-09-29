@@ -6,12 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save, Trash2 } from "lucide-react";
 import { ShiftEvent } from "./AdvancedCalendar";
-import { demoDataService } from "@/lib/demo-data/demo-service";
+import { demoDataService, RecurrenceOptions } from "@/lib/demo-data/demo-service";
 
 interface ShiftModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (shift: Partial<ShiftEvent>) => void;
+  onSave: (shift: Partial<ShiftEvent>, recurrence?: RecurrenceOptions) => void;
   onDelete?: (shiftId: string) => void;
   shift?: ShiftEvent | null;
   isEdit?: boolean;
@@ -35,6 +35,10 @@ export function ShiftModal({
     published: false
   });
 
+  const [recurrence, setRecurrence] = useState<{ pattern: 'none' | 'daily' | 'weekly'; mode: 'none' | 'endOfMonth' | 'until'; until: string }>(
+    { pattern: 'none', mode: 'none', until: '' }
+  );
+
   // Get data from demo service
   const stores = demoDataService.getStores();
   const users = demoDataService.getUsers();
@@ -50,6 +54,7 @@ export function ShiftModal({
         note: shift.resource.note || "",
         published: shift.resource.published
       });
+      setRecurrence({ pattern: 'none', mode: 'none', until: '' });
     } else {
       // Reset form for new shift
       const now = new Date();
@@ -65,6 +70,7 @@ export function ShiftModal({
         note: "",
         published: false
       });
+      setRecurrence({ pattern: 'none', mode: 'none', until: '' });
     }
   }, [shift, isEdit]);
 
@@ -91,7 +97,18 @@ export function ShiftModal({
       }
     };
 
-    onSave(shiftData);
+    let recurrenceOptions: RecurrenceOptions | undefined = undefined;
+    if (!isEdit && recurrence.pattern !== 'none') {
+      if (recurrence.mode === 'endOfMonth') {
+        recurrenceOptions = { pattern: recurrence.pattern, endOfMonth: true };
+      } else if (recurrence.mode === 'until' && recurrence.until) {
+        // Convert local datetime to ISO
+        const untilISO = new Date(recurrence.until).toISOString();
+        recurrenceOptions = { pattern: recurrence.pattern, until: untilISO };
+      }
+    }
+
+    onSave(shiftData, recurrenceOptions);
     onClose();
   };
 
@@ -194,6 +211,49 @@ export function ShiftModal({
                 className="h-12 text-lg"
               />
             </div>
+
+            {/* Recurrence */}
+            {!isEdit && (
+              <div className="space-y-4">
+                <Label className="text-lg font-medium">Ripetizione</Label>
+                <div className="grid grid-cols-3 gap-4 items-end">
+                  <div className="col-span-1">
+                    <select
+                      value={recurrence.pattern}
+                      onChange={(e) => setRecurrence(prev => ({ ...prev, pattern: e.target.value as any }))}
+                      className="w-full p-3 border border-neutral-300 rounded-lg h-12 text-lg"
+                    >
+                      <option value="none">Nessuna</option>
+                      <option value="daily">Giornaliera</option>
+                      <option value="weekly">Settimanale</option>
+                    </select>
+                  </div>
+                  {recurrence.pattern !== 'none' && (
+                    <>
+                      <div className="col-span-1">
+                        <select
+                          value={recurrence.mode}
+                          onChange={(e) => setRecurrence(prev => ({ ...prev, mode: e.target.value as any }))}
+                          className="w-full p-3 border border-neutral-300 rounded-lg h-12 text-lg"
+                        >
+                          <option value="endOfMonth">Fino a fine mese</option>
+                          <option value="until">Fino a data</option>
+                        </select>
+                      </div>
+                      <div className="col-span-1">
+                        <Input
+                          type="datetime-local"
+                          value={recurrence.until}
+                          onChange={(e) => setRecurrence(prev => ({ ...prev, until: e.target.value }))}
+                          className="h-12 text-lg"
+                          disabled={recurrence.mode !== 'until'}
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center gap-3">
               <input

@@ -55,7 +55,7 @@ export async function middleware(req: Request) {
 
   // Enforce workforce-only access to shifts and time pages
   if (jwt?.role === "workforce") {
-    const allowedPaths = ["/home", "/dashboard", "/stores", "/reports/hours"];
+    const allowedPaths = ["/home", "/dashboard", "/stores", "/reports/hours", "/settings"];
     const isShiftOrTimePage = url.pathname.includes("/planner") || url.pathname.includes("/time");
     const isAllowedPath = allowedPaths.some(path => url.pathname.startsWith(path)) || isShiftOrTimePage;
     

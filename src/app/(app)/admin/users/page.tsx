@@ -9,6 +9,7 @@ import { Upload, Download, FileText, AlertCircle, CheckCircle } from "lucide-rea
 
 export default function AdminUsersPage() {
   const [rows, setRows] = useState<DemoUser[]>([]);
+  const [visiblePwdUserId, setVisiblePwdUserId] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -24,6 +25,8 @@ export default function AdminUsersPage() {
 
   const load = () => {
     const users = demoDataService.getAllUsers();
+    // Ensure each user has a password for admin visibility
+    // Non generare password automatiche: mostra sempre quelle presenti nel DB
     setRows(users);
   };
   
@@ -45,6 +48,10 @@ export default function AdminUsersPage() {
         hire_date: new Date().toISOString(),
         status: "active"
       });
+      // Persist the password provided in the form
+      if (password && password.trim()) {
+        demoDataService.setUserPassword(newUser.id, password.trim());
+      }
       
       alert(`Utente "${newUser.name}" creato con successo!`);
       setEmail(""); 
@@ -216,8 +223,12 @@ export default function AdminUsersPage() {
                     <div className="font-medium">{u.name}</div>
                     <div className="text-xs text-neutral-500">{u.email}</div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="uppercase text-xs px-2 py-1 rounded-md bg-neutral-100 border">{u.role}</div>
+                <div className="flex items-center gap-2">
+                  <div className="uppercase text-xs px-2 py-1 rounded-md bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700">{u.role}</div>
+                  <button
+                    onClick={() => setVisiblePwdUserId(visiblePwdUserId === u.id ? null : u.id)}
+                    className="text-xs px-2 py-1 rounded-md border hover:bg-neutral-50"
+                  >{visiblePwdUserId === u.id ? 'Nascondi' : 'Mostra password'}</button>
                     {u.email && (
                       <button
                         onClick={() => {
@@ -231,6 +242,21 @@ export default function AdminUsersPage() {
                   </div>
                 </div>
                 <div className="pl-2 pb-2 text-xs text-neutral-500">Landing consigliata: {u.role === 'admin' ? '/admin/stores' : (u.role === 'manager' ? '/stores/[storeId]/planner' : (u.role === 'dipendente' || u.role === 'agente' ? '/stores/[storeId]/sales' : '/stores/[storeId]/time'))}</div>
+                {visiblePwdUserId === u.id && (
+                  <div className="pl-2 pb-3">
+                    <div className="inline-flex items-center gap-2 text-xs px-2 py-1 rounded bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700">
+                      <span className="opacity-60">Password:</span>
+                      <span className="font-mono select-all">{demoDataService.getUserPassword(u.id) ?? '—'}</span>
+                      <button
+                        onClick={() => {
+                          const pwd = demoDataService.getUserPassword(u.id) ?? '';
+                          if (pwd) navigator.clipboard.writeText(pwd);
+                        }}
+                        className="ml-2 px-1 py-0.5 rounded border text-[10px] hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >Copia</button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
             {rows.length === 0 && <div className="text-sm text-neutral-500">Nessun utente</div>}

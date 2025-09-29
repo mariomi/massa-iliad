@@ -919,7 +919,11 @@ export function AdvancedCalendar({
 
   // Se l'utente è admin, mostra il calendario dei negozi aperti
   if (me?.role === "admin") {
-    return <AdminStoreCalendar onShowFilters={onShowFilters} refreshTrigger={refreshTrigger} />;
+    return <AdminStoreCalendar 
+      onShowFilters={onShowFilters} 
+      refreshTrigger={refreshTrigger}
+      onCreateShift={() => onShiftCreate && onShiftCreate({ start: new Date(), end: new Date(), slots: [new Date()], action: 'select' })}
+    />;
   }
 
 

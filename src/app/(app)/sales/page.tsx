@@ -37,6 +37,8 @@ export default function SalesPage() {
   const [sales, setSales] = useState<DemoSale[]>([]);
   const [stats, setStats] = useState<SalesStats | null>(null);
   const [loadingData, setLoadingData] = useState(true);
+  const [csvPreview, setCsvPreview] = useState<{ rows: number; errors: string[] } | null>(null);
+  const [importing, setImporting] = useState(false);
 
   useEffect(() => {
     if (!loading && me && isInitialized) {
@@ -128,6 +130,29 @@ export default function SalesPage() {
     });
   };
 
+  // CSV helpers
+  const [lastCsvText, setLastCsvText] = useState<string | null>(null);
+  function parseAndPreviewCSV(text: string) {
+    setLastCsvText(text);
+    const { sales, errors } = demoDataService!.parseSalesCSV(text);
+    return { rows: sales.length, errors };
+  }
+  async function confirmImportCSV() {
+    if (!lastCsvText || !demoDataService) return;
+    setImporting(true);
+    try {
+      const { created, errors } = demoDataService.importSalesCSV(lastCsvText);
+      setCsvPreview(null);
+      setLastCsvText(null);
+      loadSalesData(true);
+      alert(`Import completato: ${created.length} vendite create${errors.length ? `, ${errors.length} avvisi` : ''}.`);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setImporting(false);
+    }
+  }
+
   const getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
       case 'smartphone':
@@ -142,6 +167,19 @@ export default function SalesPage() {
         return <Package className="h-4 w-4" />;
     }
   };
+
+  // Provide a downloadable CSV template and sample
+  const sampleCsv = `store_id,user_email,product_name,category,quantity,unit_price,total_amount,sale_date,payment_method
+store_1,mario.rossi@demo.com,iPhone 15 Pro,smartphone,1,1199,1199,${new Date().toISOString()},card
+store_1,anna.bianchi@demo.com,AirPods Pro,accessori,2,249,498,${new Date().toISOString()},card
+store_2,luca.verdi@demo.com,MacBook Air 13,laptop,1,1299,1299,${new Date().toISOString()},card
+store_2,giulia.neri@demo.com,iPad Air,tablet,1,599,599,${new Date().toISOString()},digital
+store_3,marco.blu@demo.com,Apple Watch Series 9,smartwatch,1,459,459,${new Date().toISOString()},card
+store_3,workforce@demo.com,Cover iPhone,accessori,3,29,87,${new Date().toISOString()},cash
+store_1,workforce@demo.com,PowerBank 20k,accessori,1,49,49,${new Date().toISOString()},cash
+store_4,francesco.bianchi@demo.com,Galaxy S24,smartphone,1,1099,1099,${new Date().toISOString()},card
+store_5,sofia.rossi@demo.com,Mouse MX Master,accessori,2,99,198,${new Date().toISOString()},digital
+store_5,chiara.gialli@demo.com,Notebook 15,laptop,1,899,899,${new Date().toISOString()},card`;
 
   const getPaymentMethodColor = (method: string) => {
     switch (method) {
@@ -241,6 +279,37 @@ export default function SalesPage() {
           <Plus className="h-4 w-4" />
           Nuova Vendita
         </Button>
+        <label className="inline-flex items-center gap-2 px-3 py-2 border rounded-lg cursor-pointer hover:bg-neutral-50 dark:hover:bg-gray-800 text-sm">
+          <input
+            type="file"
+            accept=".csv"
+            className="hidden"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              const text = await file.text();
+              const { rows, errors } = parseAndPreviewCSV(text);
+              setCsvPreview({ rows, errors });
+            }}
+          />
+          Importa CSV
+        </label>
+        <Button
+          variant="outline"
+          onClick={() => {
+            const blob = new Blob([sampleCsv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'vendite_sample.csv';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+          }}
+        >
+          Scarica CSV di esempio
+        </Button>
         <Button 
           variant="outline" 
           onClick={() => loadSalesData(true)} 
@@ -252,6 +321,26 @@ export default function SalesPage() {
         </Button>
       </div>
 
+      {csvPreview && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Anteprima Import CSV</CardTitle>
+            <CardDescription>
+              {csvPreview.rows} righe pronte all'import. {csvPreview.errors.length > 0 ? `${csvPreview.errors.length} avvisi/errori` : 'Nessun errore'}.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex items-center gap-3">
+            <Button
+              disabled={importing}
+              onClick={confirmImportCSV}
+            >
+              Conferma Import
+            </Button>
+            <Button variant="outline" onClick={() => setCsvPreview(null)}>Annulla</Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Sales List */}
       <Card>
         <CardHeader>
@@ -262,12 +351,12 @@ export default function SalesPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {sales.slice(0, 10).map((sale) => {
+            {sales.slice(0, 10).map((sale, idx) => {
               const store = demoDataService.getStoreById(sale.store_id);
               const user = demoDataService.getUserById(sale.user_id);
               
               return (
-                <div key={sale.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                <div key={`${sale.id}-${sale.created_at ?? idx}`} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                       {getCategoryIcon(sale.category)}
