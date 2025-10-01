@@ -60,7 +60,6 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
     return true;
   });
   const admin = items.filter(i => i.adminOnly);
-  const [adminOpen, setAdminOpen] = useState(true);
 
   return (
     <motion.aside
@@ -82,20 +81,12 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
 
         {isAdmin && (
           <div className="mt-2">
-            <button onClick={() => setAdminOpen(v=>!v)} className="w-full flex items-center justify-between px-3 py-2 text-xs uppercase tracking-wide text-neutral-500 dark:text-gray-400">
-              <span>Admin</span>
-              <span>{adminOpen ? "▴" : "▾"}</span>
-            </button>
-            {adminOpen && (
-              <div className="space-y-1">
-                {admin.map((it) => (
-                  <Link key={it.href} href={it.href} className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200">
-                    {it.icon}
-                    <motion.span animate={{ opacity: open ? 1 : 0 }} className="text-sm">{it.label}</motion.span>
-                  </Link>
-                ))}
-              </div>
-            )}
+            {admin.map((it) => (
+              <Link key={it.href} href={it.href} className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200">
+                {it.icon}
+                <motion.span animate={{ opacity: open ? 1 : 0 }} className="text-sm">{it.label}</motion.span>
+              </Link>
+            ))}
           </div>
         )}
       </nav>

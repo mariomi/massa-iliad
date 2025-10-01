@@ -294,31 +294,6 @@ store_5,chiara.gialli@demo.com,Duplicato SIM,sim,1,7.99,7.99,2025-10-01T15:00:00
           />
           Importa CSV
         </label>
-        <Button
-          variant="outline"
-          onClick={() => {
-            const blob = new Blob([sampleCsv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'vendite_sample.csv';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            URL.revokeObjectURL(url);
-          }}
-        >
-          Scarica CSV di esempio
-        </Button>
-        <Button 
-          variant="outline" 
-          onClick={() => loadSalesData(true)} 
-          disabled={loadingData}
-          className="flex items-center gap-2"
-        >
-          <RefreshCw className={`h-4 w-4 ${loadingData ? 'animate-spin' : ''}`} />
-          {loadingData ? 'Aggiornando...' : 'Aggiorna Dati'}
-        </Button>
       </div>
 
       {csvPreview && (
