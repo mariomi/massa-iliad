@@ -91,8 +91,7 @@ export default function AdminStoresPage() {
         return {
           ...store,
           managerName: manager?.name || 'Manager sconosciuto',
-          totalSales: storeSales?.sales || 0,
-          totalRevenue: storeSales?.revenue || 0
+          totalSales: storeSales?.sales || 0
         };
       });
       
@@ -251,12 +250,7 @@ export default function AdminStoresPage() {
     });
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('it-IT', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(amount);
-  };
+  // Ricavi non visualizzati per richiesta: lasciamo helper inutilizzato rimosso
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -541,15 +535,11 @@ export default function AdminStoresPage() {
                 </div>
               </div>
 
-              {/* Sales Stats */}
+              {/* Sales Stats (solo numero vendite, niente ricavi) */}
               <div className="grid grid-cols-2 gap-4 pt-2 border-t">
                 <div>
                   <p className="text-sm font-medium">Vendite</p>
                   <p className="text-lg font-bold text-blue-600">{store.totalSales}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Ricavi</p>
-                  <p className="text-lg font-bold text-green-600">{formatCurrency(store.totalRevenue)}</p>
                 </div>
               </div>
 

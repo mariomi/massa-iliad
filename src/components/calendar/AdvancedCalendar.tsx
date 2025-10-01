@@ -824,8 +824,13 @@ export function AdvancedCalendar({
 
         const filteredShifts = demoDataService.filterShifts(filterOptions);
 
+        // Defensive guard: enforce store filter on final dataset
+        const finalShifts = filters.store
+          ? filteredShifts.filter(shift => shift.store_id === filters.store)
+          : filteredShifts;
+
         // Convert to calendar events
-        const calendarEvents: ShiftEvent[] = filteredShifts.map(shift => ({
+        const calendarEvents: ShiftEvent[] = finalShifts.map(shift => ({
           id: shift.id,
           title: shift.title,
           start: new Date(shift.start_at),
@@ -917,12 +922,14 @@ export function AdvancedCalendar({
       .reduce((total, event) => total + (event.resource.hours || 0), 0);
   }, [events, date]);
 
-  // Se l'utente è admin, mostra il calendario dei negozi aperti
-  if (me?.role === "admin") {
+  // Se l'utente è admin e NON ha filtri specifici su persona/team/ruolo,
+  // mostra il calendario dei negozi aperti. Altrimenti usa il calendario turni filtrabile.
+  if (me?.role === "admin" && !filters.person && !filters.team && !filters.role) {
     return <AdminStoreCalendar 
       onShowFilters={onShowFilters} 
       refreshTrigger={refreshTrigger}
       onCreateShift={() => onShiftCreate && onShiftCreate({ start: new Date(), end: new Date(), slots: [new Date()], action: 'select' })}
+      activeStoreId={filters.store || null}
     />;
   }
 

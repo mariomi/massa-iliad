@@ -207,12 +207,30 @@ export function CalendarFiltersPanel({ filters, onFiltersChange, onClose }: Cale
     }));
   };
 
-  // Auto-apply filters when they change (real-time updates)
+  // Auto-apply filters when they change (real-time updates), but avoid loops
+  const shallowEqual = (a: CalendarFilters, b: CalendarFilters) => {
+    const sameStore = a.store === b.store;
+    const sameTeam = a.team === b.team;
+    const samePerson = a.person === b.person;
+    const sameRole = a.role === b.role;
+    const samePeriod = (!!a.period === !!b.period) && (!a.period || (
+      a.period.from.getTime() === b.period!.from.getTime() &&
+      a.period.to.getTime() === b.period!.to.getTime()
+    ));
+    return sameStore && sameTeam && samePerson && sameRole && samePeriod;
+  };
+
   useEffect(() => {
-    if (canApplyFilters) {
-      onFiltersChange(localFilters);
+    if (!canApplyFilters) return;
+    // Preserve store from parent if provided; otherwise use local
+    const nextFilters: CalendarFilters = {
+      ...localFilters,
+      store: filters.store ?? localFilters.store
+    };
+    if (!shallowEqual(filters, nextFilters)) {
+      onFiltersChange(nextFilters);
     }
-  }, [localFilters, canApplyFilters, onFiltersChange]);
+  }, [localFilters, canApplyFilters, onFiltersChange, filters]);
 
   // Handle apply filters
   const handleApply = () => {

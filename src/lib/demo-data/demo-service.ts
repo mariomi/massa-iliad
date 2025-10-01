@@ -1001,6 +1001,51 @@ class DemoDataService {
       });
     } catch {}
 
+    // Replace legacy electronics-like sales with Iliad-specific items (one-time migration)
+    try {
+      const legacyCategories = new Set(['smartphone','laptop','tablet','smartwatch','accessori']);
+      const hasLegacy = (this.data.sales || []).some(s => legacyCategories.has(String(s.category).toLowerCase()));
+      if (hasLegacy) {
+        const today = new Date('2025-10-01T10:00:00Z');
+        const iso = (h: number, m: number = 0) => new Date(new Date(today).setUTCHours(h, m, 0, 0)).toISOString();
+        const pick = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
+        const stores = this.data.stores.map(s => s.id);
+        const users = this.data.users.filter(u => u.role !== 'admin');
+        const findUserByStore = (storeId: string) => pick(users.filter(u => u.store_id === storeId))?.id || pick(users)?.id || 'user_1';
+
+        const iliadSales: DemoSale[] = [
+          { product_name: 'Attivazione SIM', category: 'sim', quantity: 1, unit_price: 9.99, total_amount: 9.99, payment_method: 'card' },
+          { product_name: 'Portabilità in Entrata', category: 'portabilita', quantity: 1, unit_price: 0, total_amount: 0, payment_method: 'digital' },
+          { product_name: 'Ricarica 10€', category: 'ricarica', quantity: 1, unit_price: 10, total_amount: 10, payment_method: 'cash' },
+          { product_name: 'Offerta Mobile 150 Giga', category: 'offerta_mobile', quantity: 1, unit_price: 9.99, total_amount: 9.99, payment_method: 'card' },
+          { product_name: 'Iliadbox Fibra - Attivazione', category: 'fibra', quantity: 1, unit_price: 39.99, total_amount: 39.99, payment_method: 'card' },
+          { product_name: 'Iliadbox Fibra - Canone Mensile', category: 'fibra_canone', quantity: 1, unit_price: 19.99, total_amount: 19.99, payment_method: 'digital' },
+          { product_name: 'eSIM - Attivazione', category: 'esim', quantity: 1, unit_price: 9.99, total_amount: 9.99, payment_method: 'card' },
+          { product_name: 'Ricarica 20€', category: 'ricarica', quantity: 1, unit_price: 20, total_amount: 20, payment_method: 'cash' },
+          { product_name: 'Cambio Offerta', category: 'servizio', quantity: 1, unit_price: 0, total_amount: 0, payment_method: 'digital' },
+          { product_name: 'Duplicato SIM', category: 'sim', quantity: 1, unit_price: 7.99, total_amount: 7.99, payment_method: 'card' }
+        ].map((base, idx) => {
+          const store_id = pick(stores);
+          return {
+            id: `sale_${Date.now()}_${Math.random().toString(36).substr(2,6)}`,
+            store_id,
+            user_id: findUserByStore(store_id),
+            product_name: base.product_name,
+            category: base.category,
+            quantity: base.quantity,
+            unit_price: base.unit_price,
+            total_amount: base.total_amount,
+            sale_date: iso(9 + (idx % 6), (idx * 7) % 60),
+            payment_method: base.payment_method as 'cash' | 'card' | 'digital',
+            created_at: new Date().toISOString()
+          };
+        });
+
+        this.data.sales = iliadSales;
+        this.saveToStorage();
+      }
+    } catch {}
+
     // Default known demo passwords (do not override if already set)
     try {
       const wf = this.data.users.find(u => u.email?.toLowerCase() === 'workforce@demo.com' || u.id === 'workforce_user');

@@ -12,9 +12,11 @@ const AdvancedCalendar = lazy(() => import("@/components/calendar/AdvancedCalend
 const CalendarFiltersPanel = lazy(() => import("@/components/calendar/CalendarFilters").then(module => ({ default: module.CalendarFiltersPanel })));
 const ShiftModal = lazy(() => import("@/components/calendar/ShiftModal").then(module => ({ default: module.ShiftModal })));
 const ShiftDetailsModal = lazy(() => import("@/components/calendar/ShiftDetailsModal").then(module => ({ default: module.ShiftDetailsModal })));
+const StoreSelectionModal = lazy(() => import("@/components/calendar/StoreSelectionModal").then(module => ({ default: module.StoreSelectionModal })));
 
 export default function HoursReport() {
   const { me } = useMe();
+  const [showStoreSelection, setShowStoreSelection] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [showShiftModal, setShowShiftModal] = useState(false);
   const [showShiftDetailsModal, setShowShiftDetailsModal] = useState(false);
@@ -22,6 +24,7 @@ export default function HoursReport() {
   const [selectedShift, setSelectedShift] = useState<ShiftEvent | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [storeFilterTrigger, setStoreFilterTrigger] = useState(0);
   
   const [filters, setFilters] = useState<CalendarFilters>({
     store: null,
@@ -53,9 +56,30 @@ export default function HoursReport() {
     };
   }, []);
 
+  const filtersAreEqual = (a: CalendarFilters, b: CalendarFilters) => {
+    const sameStore = a.store === b.store;
+    const sameTeam = a.team === b.team;
+    const samePerson = a.person === b.person;
+    const sameRole = a.role === b.role;
+    const samePeriod = (!!a.period === !!b.period) && (!a.period || (
+      a.period.from.getTime() === b.period!.from.getTime() &&
+      a.period.to.getTime() === b.period!.to.getTime()
+    ));
+    return sameStore && sameTeam && samePerson && sameRole && samePeriod;
+  };
+
   const handleFiltersChange = useCallback((newFilters: CalendarFilters) => {
-    setFilters({ ...newFilters });
+    setFilters(prev => (filtersAreEqual(prev, newFilters) ? prev : { ...newFilters }));
   }, []);
+
+  const handleStoreSelect = (storeId: string) => {
+    setFilters(prev => ({
+      ...prev,
+      store: storeId || null
+    }));
+    setStoreFilterTrigger(prev => prev + 1);
+    setShowStoreSelection(false);
+  };
 
   const handleShiftCreate = (slot: any) => {
     setEditingShift(null);
@@ -140,18 +164,48 @@ export default function HoursReport() {
         desc="Calendario avanzato per la gestione dei turni e il conteggio delle ore" 
       />
       
-      <Suspense fallback={<LoadingSpinner size="lg" className="h-96" />}>
-        <AdvancedCalendar
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          onShiftCreate={canEdit ? handleShiftCreate : undefined}
-          onShiftEdit={canEdit ? handleShiftEdit : undefined}
-          onShiftDelete={canEdit ? handleShiftDelete : undefined}
-          onShiftDetails={handleShiftDetails}
-          onShowFilters={me?.role !== "workforce" ? () => setShowFilters(true) : undefined}
-          refreshTrigger={refreshTrigger}
-        />
-      </Suspense>
+      {showStoreSelection && (
+        <Suspense fallback={<LoadingSpinner size="md" className="h-32" />}>
+          <StoreSelectionModal
+            isOpen={showStoreSelection}
+            onStoreSelect={handleStoreSelect}
+            onClose={() => setShowStoreSelection(false)}
+          />
+        </Suspense>
+      )}
+      
+      {!showStoreSelection && (
+        <>
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                Negozio selezionato: 
+              </span>
+              <span className="font-medium">
+                {filters.store ? demoDataService.getStoreById(filters.store)?.name : 'Tutti i negozi'}
+              </span>
+            </div>
+            <button
+              onClick={() => setShowStoreSelection(true)}
+              className="px-3 py-1 text-sm bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/50 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 rounded-md transition-colors"
+            >
+              Cambia Negozio
+            </button>
+          </div>
+          <Suspense fallback={<LoadingSpinner size="lg" className="h-96" />}>
+            <AdvancedCalendar
+              filters={filters}
+              onFiltersChange={handleFiltersChange}
+              onShiftCreate={canEdit ? handleShiftCreate : undefined}
+              onShiftEdit={canEdit ? handleShiftEdit : undefined}
+              onShiftDelete={canEdit ? handleShiftDelete : undefined}
+              onShiftDetails={handleShiftDetails}
+              onShowFilters={me?.role !== "workforce" ? () => setShowFilters(true) : undefined}
+              refreshTrigger={refreshTrigger + storeFilterTrigger}
+            />
+          </Suspense>
+        </>
+      )}
 
       {showFilters && me?.role !== "workforce" && (
         <Suspense fallback={<LoadingSpinner size="md" className="h-32" />}>

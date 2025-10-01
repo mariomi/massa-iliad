@@ -31,6 +31,7 @@ interface AdminStoreCalendarProps {
   onShowFilters?: () => void;
   refreshTrigger?: number;
   onCreateShift?: () => void;
+  activeStoreId?: string | null;
 }
 
 interface SelectedStoreData {
@@ -45,7 +46,7 @@ interface SelectedStoreData {
   }>;
 }
 
-export function AdminStoreCalendar({ onShowFilters, refreshTrigger, onCreateShift }: AdminStoreCalendarProps) {
+export function AdminStoreCalendar({ onShowFilters, refreshTrigger, onCreateShift, activeStoreId }: AdminStoreCalendarProps) {
   const [events, setEvents] = useState<StoreEvent[]>([]);
   const [view, setView] = useState<View>("month");
   const [date, setDate] = useState(new Date());
@@ -103,7 +104,10 @@ export function AdminStoreCalendar({ onShowFilters, refreshTrigger, onCreateShif
         // Generate events for each day in the visible range
         const currentDate = new Date(viewStart);
         while (currentDate <= viewEnd) {
-          const openStores = demoDataService.getStoresOpenOnDate(currentDate);
+          let openStores = demoDataService.getStoresOpenOnDate(currentDate);
+          if (activeStoreId) {
+            openStores = openStores.filter(({ store }) => store.id === activeStoreId);
+          }
           
           openStores.forEach(({ store, openTime, closeTime }) => {
             const [openHour, openMinute] = openTime.split(':').map(Number);
@@ -142,7 +146,7 @@ export function AdminStoreCalendar({ onShowFilters, refreshTrigger, onCreateShif
     };
 
     loadStoreEvents();
-  }, [refreshTrigger, date, view]);
+  }, [refreshTrigger, date, view, activeStoreId]);
 
   const handleSelectEvent = (event: StoreEvent) => {
     const store = demoDataService.getStoreById(event.resource.storeId);

@@ -170,16 +170,16 @@ export default function SalesPage() {
 
   // Provide a downloadable CSV template and sample
   const sampleCsv = `store_id,user_email,product_name,category,quantity,unit_price,total_amount,sale_date,payment_method
-store_1,mario.rossi@demo.com,iPhone 15 Pro,smartphone,1,1199,1199,${new Date().toISOString()},card
-store_1,anna.bianchi@demo.com,AirPods Pro,accessori,2,249,498,${new Date().toISOString()},card
-store_2,luca.verdi@demo.com,MacBook Air 13,laptop,1,1299,1299,${new Date().toISOString()},card
-store_2,giulia.neri@demo.com,iPad Air,tablet,1,599,599,${new Date().toISOString()},digital
-store_3,marco.blu@demo.com,Apple Watch Series 9,smartwatch,1,459,459,${new Date().toISOString()},card
-store_3,workforce@demo.com,Cover iPhone,accessori,3,29,87,${new Date().toISOString()},cash
-store_1,workforce@demo.com,PowerBank 20k,accessori,1,49,49,${new Date().toISOString()},cash
-store_4,francesco.bianchi@demo.com,Galaxy S24,smartphone,1,1099,1099,${new Date().toISOString()},card
-store_5,sofia.rossi@demo.com,Mouse MX Master,accessori,2,99,198,${new Date().toISOString()},digital
-store_5,chiara.gialli@demo.com,Notebook 15,laptop,1,899,899,${new Date().toISOString()},card`;
+store_1,mario.rossi@demo.com,Attivazione SIM,sim,1,9.99,9.99,2025-10-01T08:30:00Z,card
+store_1,anna.bianchi@demo.com,Portabilità in Entrata,portabilita,1,0,0,2025-10-01T09:10:00Z,digital
+store_2,luca.verdi@demo.com,Ricarica 10€,ricarica,1,10,10,2025-10-01T10:05:00Z,cash
+store_2,giulia.neri@demo.com,Offerta Mobile 150 Giga,offerta_mobile,1,9.99,9.99,2025-10-01T10:40:00Z,card
+store_3,marco.blu@demo.com,Iliadbox Fibra - Attivazione,fibra,1,39.99,39.99,2025-10-01T11:15:00Z,card
+store_3,workforce@demo.com,Iliadbox Fibra - Canone Mensile,fibra_canone,1,19.99,19.99,2025-10-01T12:00:00Z,digital
+store_1,workforce@demo.com,eSIM - Attivazione,esim,1,9.99,9.99,2025-10-01T12:35:00Z,card
+store_4,francesco.bianchi@demo.com,Ricarica 20€,ricarica,1,20,20,2025-10-01T13:20:00Z,cash
+store_5,sofia.rossi@demo.com,Cambio Offerta,servizio,1,0,0,2025-10-01T14:05:00Z,digital
+store_5,chiara.gialli@demo.com,Duplicato SIM,sim,1,7.99,7.99,2025-10-01T15:00:00Z,card`;
 
   const getPaymentMethodColor = (method: string) => {
     switch (method) {
