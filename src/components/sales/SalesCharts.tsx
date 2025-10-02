@@ -53,9 +53,9 @@ export const SalesCharts = memo(function SalesCharts({ stats, refreshTrigger }: 
     }
   };
 
-  const maxCategoryRevenue = Math.max(...Object.values(stats.salesByCategory));
-  const maxStoreRevenue = Math.max(...Object.values(stats.salesByStore).map(s => s.revenue));
-  const maxPaymentRevenue = Math.max(...Object.values(stats.salesByPaymentMethod));
+  const maxCategoryQuantity = Math.max(...Object.values(stats.salesByCategory));
+  const maxStoreQuantity = Math.max(...Object.values(stats.salesByStore).map(s => s.revenue));
+  const maxPaymentQuantity = Math.max(...Object.values(stats.salesByPaymentMethod));
 
   return (
     <div className="space-y-6">
@@ -70,14 +70,14 @@ export const SalesCharts = memo(function SalesCharts({ stats, refreshTrigger }: 
               <BarChart3 className="h-5 w-5" />
               Vendite per Categoria
             </CardTitle>
-            <CardDescription>Ricavi per categoria di prodotto</CardDescription>
+            <CardDescription>Quantità vendute per categoria di prodotto</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {Object.entries(stats.salesByCategory)
                 .sort(([,a], [,b]) => b - a)
-                .map(([category, revenue], index) => {
-                  const percentage = (revenue / maxCategoryRevenue) * 100;
+                .map(([category, quantity], index) => {
+                  const percentage = (quantity / maxCategoryQuantity) * 100;
                   return (
                     <div key={category} className="space-y-2">
                       <div className="flex items-center justify-between">
@@ -85,7 +85,7 @@ export const SalesCharts = memo(function SalesCharts({ stats, refreshTrigger }: 
                           <Package className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                           <span className="font-medium text-gray-900 dark:text-gray-100">{category}</span>
                         </div>
-                        <span className="font-bold text-gray-900 dark:text-gray-100">{formatCurrency(revenue)}</span>
+                        <span className="font-bold text-gray-900 dark:text-gray-100">{quantity} pz</span>
                       </div>
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div 
@@ -116,10 +116,10 @@ export const SalesCharts = memo(function SalesCharts({ stats, refreshTrigger }: 
           <div className="space-y-4">
             {Object.entries(stats.salesByPaymentMethod)
               .sort(([,a], [,b]) => b - a)
-              .map(([method, amount], index) => {
-                const percentage = (amount / maxPaymentRevenue) * 100;
-                const totalRevenue = Object.values(stats.salesByPaymentMethod).reduce((a, b) => a + b, 0);
-                const methodPercentage = (amount / totalRevenue) * 100;
+              .map(([method, quantity], index) => {
+                const percentage = (quantity / maxPaymentQuantity) * 100;
+                const totalQuantity = Object.values(stats.salesByPaymentMethod).reduce((a, b) => a + b, 0);
+                const methodPercentage = (quantity / totalQuantity) * 100;
                 
                 return (
                   <div key={method} className="space-y-2">
@@ -129,7 +129,7 @@ export const SalesCharts = memo(function SalesCharts({ stats, refreshTrigger }: 
                         <span className="font-medium capitalize text-gray-900 dark:text-gray-100">{method}</span>
                       </div>
                       <div className="text-right">
-                        <div className="font-bold text-gray-900 dark:text-gray-100">{formatCurrency(amount)}</div>
+                        <div className="font-bold text-gray-900 dark:text-gray-100">{quantity} pz</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400">{methodPercentage.toFixed(1)}%</div>
                       </div>
                     </div>

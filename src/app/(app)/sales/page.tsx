@@ -218,14 +218,14 @@ store_5,chiara.gialli@demo.com,Duplicato SIM,sim,1,7.99,7.99,2025-10-01T15:00:00
 
       {/* Stats Cards */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Vendite Totali</CardTitle>
-              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xs md:text-sm font-medium">Vendite Totali</CardTitle>
+              <ShoppingCart className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalSales}</div>
+              <div className="text-lg md:text-2xl font-bold">{stats.totalSales}</div>
               <p className="text-xs text-muted-foreground">
                 Transazioni completate
               </p>
@@ -234,26 +234,26 @@ store_5,chiara.gialli@demo.com,Duplicato SIM,sim,1,7.99,7.99,2025-10-01T15:00:00
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Ricavi Totali</CardTitle>
-              <Euro className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xs md:text-sm font-medium">Quantità Totale</CardTitle>
+              <Package className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(stats.totalRevenue)}</div>
+              <div className="text-lg md:text-2xl font-bold">{stats.totalSales}</div>
               <p className="text-xs text-muted-foreground">
-                Fatturato complessivo
+                Prodotti venduti
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Valore Medio</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xs md:text-sm font-medium">Media per Transazione</CardTitle>
+              <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(stats.averageOrderValue)}</div>
+              <div className="text-lg md:text-2xl font-bold">{stats.totalSales > 0 ? (stats.totalSales / stats.totalSales).toFixed(1) : 0}</div>
               <p className="text-xs text-muted-foreground">
-                Per transazione
+                Quantità media
               </p>
             </CardContent>
           </Card>
@@ -274,10 +274,11 @@ store_5,chiara.gialli@demo.com,Duplicato SIM,sim,1,7.99,7.99,2025-10-01T15:00:00
       )}
 
       {/* Action Buttons */}
-      <div className="flex gap-4">
-        <Button onClick={() => router.push('/sales/new')} className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+        <Button onClick={() => router.push('/sales/new')} className="flex items-center gap-2 text-sm">
           <Plus className="h-4 w-4" />
-          Nuova Vendita
+          <span className="hidden sm:inline">Nuova Vendita</span>
+          <span className="sm:hidden">Nuova</span>
         </Button>
         <label className="inline-flex items-center gap-2 px-3 py-2 border rounded-lg cursor-pointer hover:bg-neutral-50 dark:hover:bg-gray-800 text-sm">
           <input
@@ -292,7 +293,8 @@ store_5,chiara.gialli@demo.com,Duplicato SIM,sim,1,7.99,7.99,2025-10-01T15:00:00
               setCsvPreview({ rows, errors });
             }}
           />
-          Importa CSV
+          <span className="hidden sm:inline">Importa CSV</span>
+          <span className="sm:hidden">Importa</span>
         </label>
       </div>
 
@@ -304,14 +306,15 @@ store_5,chiara.gialli@demo.com,Duplicato SIM,sim,1,7.99,7.99,2025-10-01T15:00:00
               {csvPreview.rows} righe pronte all'import. {csvPreview.errors.length > 0 ? `${csvPreview.errors.length} avvisi/errori` : 'Nessun errore'}.
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex items-center gap-3">
+          <CardContent className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
             <Button
               disabled={importing}
               onClick={confirmImportCSV}
+              className="text-sm"
             >
               Conferma Import
             </Button>
-            <Button variant="outline" onClick={() => setCsvPreview(null)}>Annulla</Button>
+            <Button variant="outline" onClick={() => setCsvPreview(null)} className="text-sm">Annulla</Button>
           </CardContent>
         </Card>
       )}
@@ -331,31 +334,31 @@ store_5,chiara.gialli@demo.com,Duplicato SIM,sim,1,7.99,7.99,2025-10-01T15:00:00
               const user = demoDataService.getUserById(sale.user_id);
               
               return (
-                <div key={`${sale.id}-${sale.created_at ?? idx}`} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                  <div className="flex items-center gap-4">
+                <div key={`${sale.id}-${sale.created_at ?? idx}`} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 md:p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors gap-3">
+                  <div className="flex items-start gap-3">
                     <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                       {getCategoryIcon(sale.category)}
                     </div>
-                    <div>
-                      <h3 className="font-medium text-gray-900 dark:text-gray-100">{sale.product_name}</h3>
-                      <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm md:text-base truncate">{sale.product_name}</h3>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-1">
                         <span className="flex items-center gap-1">
                           <Store className="h-3 w-3" />
-                          {store?.name || 'Store Unknown'}
+                          <span className="truncate">{store?.name || 'Store Unknown'}</span>
                         </span>
-                        <span>📍 {store?.address || 'Indirizzo sconosciuto'}</span>
+                        <span className="hidden sm:inline">📍 {store?.address || 'Indirizzo sconosciuto'}</span>
                         <span>👤 {user?.name || 'Unknown'}</span>
                         <span>📦 Qty: {sale.quantity}</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-4">
                     <Badge className={getPaymentMethodColor(sale.payment_method)}>
                       {sale.payment_method.toUpperCase()}
                     </Badge>
                     <div className="text-right">
-                      <div className="font-bold text-lg text-gray-900 dark:text-gray-100">{formatCurrency(sale.total_amount)}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">{formatDate(sale.sale_date)}</div>
+                      <div className="font-bold text-sm md:text-lg text-gray-900 dark:text-gray-100">Qty: {sale.quantity}</div>
+                      <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400">{formatDate(sale.sale_date)}</div>
                     </div>
                   </div>
                 </div>

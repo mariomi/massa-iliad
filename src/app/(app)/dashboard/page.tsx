@@ -109,50 +109,50 @@ export default function Dashboard() {
   }, [me, selected?.id, upcomingShifts.length, refreshTick]);
 
   const headerRight = selected ? (
-    <div className="flex gap-2">
-      <Link href={`/stores/${selected.id}/planner`} className="px-3 py-2 border rounded-lg hover:bg-neutral-50 text-sm">Planner</Link>
-      <Link href={`/stores/${selected.id}/sales`} className="px-3 py-2 border rounded-lg hover:bg-neutral-50 text-sm">Vendite</Link>
-      <Link href={`/stores/${selected.id}/time`} className="px-3 py-2 border rounded-lg hover:bg-neutral-50 text-sm">Presenze</Link>
+    <div className="flex flex-wrap gap-1 md:gap-2">
+      <Link href={`/stores/${selected.id}/planner`} className="px-2 py-1 md:px-3 md:py-2 border rounded-lg hover:bg-neutral-50 text-xs md:text-sm">Planner</Link>
+      <Link href={`/stores/${selected.id}/sales`} className="px-2 py-1 md:px-3 md:py-2 border rounded-lg hover:bg-neutral-50 text-xs md:text-sm">Vendite</Link>
+      <Link href={`/stores/${selected.id}/time`} className="px-2 py-1 md:px-3 md:py-2 border rounded-lg hover:bg-neutral-50 text-xs md:text-sm">Presenze</Link>
     </div>
   ) : undefined;
 
   return (
     <>
       <PageHeader title="Dashboard" desc={me?.role === 'admin' ? 'Panoramica organizzativa' : 'Panoramica personale'} right={headerRight} />
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4">
         {kpis.cards.map((c, i) => (
           <KpiCard key={i} title={c.title} value={c.value} />
         ))}
       </div>
 
-      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2 mt-6">
-        <Card className="p-4">
-          <h3 className="font-semibold mb-2">{me?.role === 'admin' ? 'Prossimi turni (tutti)' : 'I miei prossimi turni'}</h3>
+      <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-2 mt-4 md:mt-6">
+        <Card className="p-3 md:p-4">
+          <h3 className="font-semibold mb-2 text-sm md:text-base">{me?.role === 'admin' ? 'Prossimi turni (tutti)' : 'I miei prossimi turni'}</h3>
           <AnimatedList>
             {upcomingShifts.map(s => (
               <AnimatedItem key={s.id}>
-                <div className="text-sm p-3 rounded-lg border flex items-center justify-between">
+                <div className="text-xs md:text-sm p-2 md:p-3 rounded-lg border flex flex-col md:flex-row md:items-center md:justify-between gap-1 md:gap-0">
                   <span className="truncate">{new Date(s.start_at).toLocaleString()} → {new Date(s.end_at).toLocaleString()}</span>
-                  <span className="ml-2 text-xs opacity-70">{s.store_id}</span>
+                  <span className="text-xs opacity-70">{s.store_id}</span>
                 </div>
               </AnimatedItem>
             ))}
-            {upcomingShifts.length === 0 && <div className="text-sm text-neutral-500">Nessun turno</div>}
+            {upcomingShifts.length === 0 && <div className="text-xs md:text-sm text-neutral-500">Nessun turno</div>}
           </AnimatedList>
         </Card>
 
-        <Card className="p-4">
-          <h3 className="font-semibold mb-2">{me?.role === 'admin' ? 'Ultime vendite' : 'Le mie ultime vendite'}</h3>
+        <Card className="p-3 md:p-4">
+          <h3 className="font-semibold mb-2 text-sm md:text-base">{me?.role === 'admin' ? 'Ultime vendite' : 'Le mie ultime vendite'}</h3>
           <AnimatedList>
             {recentSales.map(v => (
               <AnimatedItem key={v.id}>
-                <div className="text-sm p-3 rounded-lg border flex items-center justify-between">
+                <div className="text-xs md:text-sm p-2 md:p-3 rounded-lg border flex flex-col md:flex-row md:items-center md:justify-between gap-1 md:gap-0">
                   <span>{new Date(v.sale_date).toLocaleString()}</span>
-                  <span className="ml-2 text-xs opacity-70">{v.store_id}</span>
+                  <span className="text-xs opacity-70">{v.store_id}</span>
                 </div>
               </AnimatedItem>
             ))}
-            {recentSales.length === 0 && <div className="text-sm text-neutral-500">Nessuna vendita</div>}
+            {recentSales.length === 0 && <div className="text-xs md:text-sm text-neutral-500">Nessuna vendita</div>}
           </AnimatedList>
         </Card>
       </div>

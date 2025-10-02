@@ -266,40 +266,40 @@ export function CalendarFiltersPanel({ filters, onFiltersChange, onClose }: Cale
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
       <Card className="w-full max-w-4xl max-h-[95vh] overflow-y-auto">
-        <div className="p-8">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <Filter size={28} />
-              <h2 className="text-2xl font-semibold">Filtri Calendario</h2>
+        <div className="p-4 sm:p-8">
+          <div className="flex items-center justify-between mb-4 sm:mb-8">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Filter size={20} className="sm:w-7 sm:h-7" />
+              <h2 className="text-lg sm:text-2xl font-semibold">Filtri Calendario</h2>
             </div>
-            <Button variant="ghost" size="lg" onClick={onClose} className="text-lg">
-              <X size={24} />
+            <Button variant="ghost" size="sm" onClick={onClose} className="text-sm sm:text-lg p-2">
+              <X size={20} className="sm:w-6 sm:h-6" />
             </Button>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Period Filter */}
             <div>
-              <Label className="text-lg font-medium mb-4 block">Periodo</Label>
-              <div className="grid grid-cols-2 gap-4">
+              <Label className="text-base sm:text-lg font-medium mb-2 sm:mb-4 block">Periodo</Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <Label className="text-sm text-neutral-600">Da</Label>
+                  <Label className="text-xs sm:text-sm text-neutral-600">Da</Label>
                   <Input
                     type="datetime-local"
                     value={formatDate(localFilters.period.from)}
                     onChange={(e) => handlePeriodChange('from', e.target.value)}
-                    className="h-12 text-lg"
+                    className="h-10 sm:h-12 text-sm sm:text-lg"
                   />
                 </div>
                 <div>
-                  <Label className="text-sm text-neutral-600">A</Label>
+                  <Label className="text-xs sm:text-sm text-neutral-600">A</Label>
                   <Input
                     type="datetime-local"
                     value={formatDate(localFilters.period.to)}
                     onChange={(e) => handlePeriodChange('to', e.target.value)}
-                    className="h-12 text-lg"
+                    className="h-10 sm:h-12 text-sm sm:text-lg"
                   />
                 </div>
               </div>
@@ -429,18 +429,17 @@ export function CalendarFiltersPanel({ filters, onFiltersChange, onClose }: Cale
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-between mt-8 pt-6 border-t">
-            <Button variant="outline" onClick={handleReset}>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t">
+            <Button variant="outline" onClick={handleReset} className="text-sm w-full sm:w-auto">
               Reset
             </Button>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={onClose} size="lg" className="text-lg px-6 py-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <Button variant="outline" onClick={onClose} className="text-sm px-4 py-2 w-full sm:w-auto">
                 Annulla
               </Button>
               <Button 
                 onClick={handleApply} 
-                size="lg" 
-                className="text-lg px-6 py-3"
+                className="text-sm px-4 py-2 w-full sm:w-auto"
                 disabled={!canApplyFilters}
               >
                 Applica Filtri

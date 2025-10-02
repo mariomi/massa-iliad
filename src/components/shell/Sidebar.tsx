@@ -7,8 +7,9 @@ import { motion } from "framer-motion";
 import type { Route } from 'next';
 import { LayoutDashboard, Store, Calendar, Users, Clock, ShoppingCart, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
+import clsx from "clsx";
 
-export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => void; }) {
+export function Sidebar({ open, onToggle, isMobile }: { open: boolean; onToggle: () => void; isMobile?: boolean; }) {
   
   // 2. MODIFICA: Ho cambiato 'JSX.Element' con 'React.ReactNode'.
   // Questo tipo è più flessibile e non dovrebbe causare l'errore del namespace.
@@ -63,8 +64,14 @@ export function Sidebar({ open, onToggle }: { open: boolean; onToggle: () => voi
 
   return (
     <motion.aside
-      animate={{ width: open ? 256 : 80 }}
-      className="fixed left-0 top-0 bottom-0 z-40 bg-white dark:bg-gray-900 border-r border-neutral-200 dark:border-gray-800 shadow-sm dark:shadow-gray-950/30 overflow-hidden"
+      animate={{ 
+        width: isMobile ? (open ? 280 : 0) : (open ? 256 : 80),
+        x: isMobile ? (open ? 0 : -280) : 0
+      }}
+      className={clsx(
+        "fixed left-0 top-0 bottom-0 z-40 bg-white dark:bg-gray-900 border-r border-neutral-200 dark:border-gray-800 shadow-sm dark:shadow-gray-950/30 overflow-hidden",
+        isMobile && "md:translate-x-0"
+      )}
       transition={{ type: "spring", stiffness: 220, damping: 24 }}
     >
       <div className="h-16 flex items-center justify-between px-4">

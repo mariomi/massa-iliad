@@ -212,22 +212,22 @@ export default function AdminUsersPage() {
         )}
       </Card>
       
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="p-4">
-          <div className="font-medium mb-2">Elenco</div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card className="p-3 md:p-4">
+          <div className="font-medium mb-2 text-sm md:text-base">Elenco</div>
           <div className="divide-y">
             {rows.map(u => (
               <div key={u.id}>
-                <div className="flex items-center justify-between py-2">
-                  <div>
-                    <div className="font-medium">{u.name}</div>
-                    <div className="text-xs text-neutral-500">{u.email}</div>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 gap-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-sm md:text-base truncate">{u.name}</div>
+                    <div className="text-xs text-neutral-500 truncate">{u.email}</div>
                   </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-1 sm:gap-2">
                   <div className="uppercase text-xs px-2 py-1 rounded-md bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700">{u.role}</div>
                   <button
                     onClick={() => setVisiblePwdUserId(visiblePwdUserId === u.id ? null : u.id)}
-                    className="text-xs px-2 py-1 rounded-md border hover:bg-neutral-50"
+                    className="text-xs px-2 py-1 rounded-md border hover:bg-neutral-50 whitespace-nowrap"
                   >{visiblePwdUserId === u.id ? 'Nascondi' : 'Mostra password'}</button>
                     {u.email && (
                       <button
@@ -236,12 +236,12 @@ export default function AdminUsersPage() {
                           navigator.clipboard.writeText(link);
                           alert("Link di login copiato");
                         }}
-                        className="text-xs px-2 py-1 rounded-md border hover:bg-neutral-50"
+                        className="text-xs px-2 py-1 rounded-md border hover:bg-neutral-50 whitespace-nowrap"
                       >Copia login</button>
                     )}
                   </div>
                 </div>
-                <div className="pl-2 pb-2 text-xs text-neutral-500">Landing consigliata: {u.role === 'admin' ? '/admin/stores' : (u.role === 'manager' ? '/stores/[storeId]/planner' : (u.role === 'dipendente' || u.role === 'agente' ? '/stores/[storeId]/sales' : '/stores/[storeId]/time'))}</div>
+                <div className="pl-2 pb-2 text-xs text-neutral-500 break-words">Landing consigliata: {u.role === 'admin' ? '/admin/stores' : (u.role === 'manager' ? '/stores/[storeId]/planner' : (u.role === 'dipendente' || u.role === 'agente' ? '/stores/[storeId]/sales' : '/stores/[storeId]/time'))}</div>
                 {visiblePwdUserId === u.id && (
                   <div className="pl-2 pb-3">
                     <div className="inline-flex items-center gap-2 text-xs px-2 py-1 rounded bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700">
@@ -262,24 +262,24 @@ export default function AdminUsersPage() {
             {rows.length === 0 && <div className="text-sm text-neutral-500">Nessun utente</div>}
           </div>
         </Card>
-        <Card className="p-4">
-          <div className="font-medium mb-2">Nuovo utente</div>
+        <Card className="p-3 md:p-4">
+          <div className="font-medium mb-2 text-sm md:text-base">Nuovo utente</div>
           <form onSubmit={onCreate} className="space-y-3">
             <div>
-              <label className="text-sm">Nome completo</label>
-              <Input value={fullName} onChange={(e)=>setFullName(e.target.value)} placeholder="(opzionale)" />
+              <label className="text-xs md:text-sm">Nome completo</label>
+              <Input value={fullName} onChange={(e)=>setFullName(e.target.value)} placeholder="(opzionale)" className="text-sm" />
             </div>
             <div>
-              <label className="text-sm">Email</label>
-              <Input value={email} onChange={(e)=>setEmail(e.target.value)} type="email" required />
+              <label className="text-xs md:text-sm">Email</label>
+              <Input value={email} onChange={(e)=>setEmail(e.target.value)} type="email" required className="text-sm" />
             </div>
             <div>
-              <label className="text-sm">Password</label>
-              <Input value={password} onChange={(e)=>setPassword(e.target.value)} type="password" required />
+              <label className="text-xs md:text-sm">Password</label>
+              <Input value={password} onChange={(e)=>setPassword(e.target.value)} type="password" required className="text-sm" />
             </div>
             <div>
-              <label className="text-sm">Ruolo app</label>
-              <select value={role} onChange={(e)=>setRole(e.target.value)} className="border rounded-lg px-2 py-2 text-sm">
+              <label className="text-xs md:text-sm">Ruolo app</label>
+              <select value={role} onChange={(e)=>setRole(e.target.value)} className="border rounded-lg px-2 py-2 text-sm w-full">
                 <option value="staff">staff</option>
                 <option value="manager">manager</option>
                 <option value="admin">admin</option>
@@ -288,7 +288,7 @@ export default function AdminUsersPage() {
                 <option value="agente">agente</option>
               </select>
             </div>
-            <Button type="submit" disabled={loading} className="w-full">{loading ? "Creo..." : "Crea utente"}</Button>
+            <Button type="submit" disabled={loading} className="w-full text-sm">{loading ? "Creo..." : "Crea utente"}</Button>
           </form>
         </Card>
       </div>

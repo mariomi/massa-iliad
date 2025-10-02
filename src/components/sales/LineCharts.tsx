@@ -203,7 +203,7 @@ export const LineCharts = memo(function LineCharts({ refreshTrigger }: LineChart
                 <LineChartIcon className="h-5 w-5" />
                 Vendite per Negozio
               </CardTitle>
-              <CardDescription>Ricavi giornalieri per negozio (ultimi 30 giorni)</CardDescription>
+              <CardDescription>Quantità vendute giornaliere per negozio (ultimi 30 giorni)</CardDescription>
             </div>
             <Button
               variant="outline"
@@ -260,7 +260,7 @@ export const LineCharts = memo(function LineCharts({ refreshTrigger }: LineChart
                     tick={{ fill: getThemeColors().text, fontSize: 12 }}
                     axisLine={{ stroke: getThemeColors().text }}
                     tickLine={{ stroke: getThemeColors().text }}
-                    tickFormatter={(value) => `€${value.toLocaleString('it-IT')}`}
+                    tickFormatter={(value) => `${value} pz`}
                   />
                   <Tooltip 
                     contentStyle={{
@@ -270,7 +270,7 @@ export const LineCharts = memo(function LineCharts({ refreshTrigger }: LineChart
                       color: getThemeColors().text,
                       boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
                     }}
-                    formatter={(value: any) => [`€${value.toLocaleString('it-IT')}`, '']}
+                    formatter={(value: any) => [`${value} pz`, '']}
                   />
                   <Legend 
                     wrapperStyle={{ color: getThemeColors().text }}
@@ -313,7 +313,7 @@ export const LineCharts = memo(function LineCharts({ refreshTrigger }: LineChart
                 <TrendingUp className="h-5 w-5" />
                 Prodotti Top
               </CardTitle>
-              <CardDescription>Ricavi giornalieri per prodotto (ultimi 30 giorni)</CardDescription>
+              <CardDescription>Quantità vendute giornaliere per prodotto (ultimi 30 giorni)</CardDescription>
             </div>
             <Button
               variant="outline"
@@ -370,7 +370,7 @@ export const LineCharts = memo(function LineCharts({ refreshTrigger }: LineChart
                     tick={{ fill: getThemeColors().text, fontSize: 12 }}
                     axisLine={{ stroke: getThemeColors().text }}
                     tickLine={{ stroke: getThemeColors().text }}
-                    tickFormatter={(value) => `€${value.toLocaleString('it-IT')}`}
+                    tickFormatter={(value) => `${value} pz`}
                   />
                   <Tooltip 
                     contentStyle={{
@@ -380,7 +380,7 @@ export const LineCharts = memo(function LineCharts({ refreshTrigger }: LineChart
                       color: getThemeColors().text,
                       boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
                     }}
-                    formatter={(value: any) => [`€${value.toLocaleString('it-IT')}`, '']}
+                    formatter={(value: any) => [`${value} pz`, '']}
                   />
                   <Legend 
                     wrapperStyle={{ color: getThemeColors().text }}

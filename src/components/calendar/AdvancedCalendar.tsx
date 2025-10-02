@@ -22,9 +22,16 @@ const customCalendarStyles = `
     background: #f9fafb;
     box-shadow: inset 0 0.3px 0 0 rgba(229, 231, 235, 0.06), inset -0.3px 0 0 0 rgba(229, 231, 235, 0.06);
     font-weight: 600;
-    padding: 10px 6px;
-    font-size: 14px;
+    padding: 8px 4px;
+    font-size: 12px;
     color: #374151;
+  }
+
+  @media (min-width: 768px) {
+    .rbc-header {
+      padding: 10px 6px;
+      font-size: 14px;
+    }
   }
 
   .dark .rbc-header {
@@ -690,22 +697,86 @@ const customCalendarStyles = `
   /* Responsive design */
   @media (max-width: 768px) {
     .rbc-calendar {
-      font-size: 12px !important;
+      font-size: 10px !important;
+      overflow-x: auto;
     }
 
     .rbc-header {
-      padding: 6px 3px;
-      font-size: 12px;
+      padding: 3px 1px;
+      font-size: 9px;
+      min-width: 35px;
+    }
+
+    .rbc-date-cell {
+      min-width: 35px;
+      min-height: 35px;
+      padding: 2px;
+    }
+
+    .rbc-month-view {
+      min-width: 280px;
+    }
+
+    .rbc-month-row {
+      min-height: 40px;
     }
 
     .rbc-agenda-view th,
     .rbc-agenda-view td {
-      padding: 6px 8px;
+      padding: 3px 4px;
+      font-size: 10px;
     }
 
     .rbc-event {
-      min-height: 30px !important;
-      font-size: 11px !important;
+      min-height: 20px !important;
+      font-size: 8px !important;
+      padding: 1px 2px !important;
+      line-height: 1.2 !important;
+    }
+
+    .rbc-month-view .rbc-event {
+      min-height: 12px !important;
+      font-size: 7px !important;
+      padding: 1px 2px !important;
+      margin: 0.5px !important;
+    }
+
+    .rbc-toolbar {
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px 4px;
+    }
+
+    .rbc-toolbar-label {
+      font-size: 12px;
+      margin: 2px 0;
+      text-align: center;
+    }
+
+    .rbc-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      justify-content: center;
+    }
+
+    .rbc-btn-group button {
+      padding: 3px 6px;
+      font-size: 10px;
+      min-width: 40px;
+    }
+
+    /* Force agenda view on very small screens */
+    @media (max-width: 480px) {
+      .rbc-month-view,
+      .rbc-week-view,
+      .rbc-day-view {
+        display: none !important;
+      }
+      
+      .rbc-agenda-view {
+        display: block !important;
+      }
     }
   }
 `;
@@ -935,20 +1006,20 @@ export function AdvancedCalendar({
 
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header semplificato */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex items-center gap-2 sm:gap-4">
           <div className="flex items-center gap-2">
-            <CalendarIcon size={24} className="text-blue-600" />
+            <CalendarIcon size={20} className="text-blue-600 sm:w-6 sm:h-6" />
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Calendario Turni</h1>
-              <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+              <h1 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Calendario Turni</h1>
+              <p className="text-sm sm:text-lg font-semibold text-blue-600 dark:text-blue-400">
                 {dayjs(date).locale('it').format('MMMM YYYY')}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+          <div className="hidden sm:flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-1">
               <Clock size={16} />
               <span>{weeklyHours.toFixed(1)}h questa settimana</span>
@@ -961,24 +1032,24 @@ export function AdvancedCalendar({
         </div>
 
         {/* Pulsanti semplificati */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Only show filters button for non-workforce, non-dipendente, non-agente users */}
           {me?.role !== "workforce" && me?.role !== "dipendente" && me?.role !== "agente" && (
             <Button
               variant="outline"
               onClick={onShowFilters}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm"
+              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 text-xs sm:text-sm"
             >
-              <Filter size={16} />
+              <Filter size={14} className="sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">Filtri</span>
             </Button>
           )}
           {canEdit && (
             <Button
               onClick={() => onShiftCreate && onShiftCreate({ start: new Date(), end: new Date(), slots: [new Date()], action: 'select' })}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm"
+              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 text-xs sm:text-sm"
             >
-              <Plus size={16} />
+              <Plus size={14} className="sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">Nuovo Turno</span>
             </Button>
           )}
@@ -986,9 +1057,9 @@ export function AdvancedCalendar({
       </div>
 
       {/* Controlli navigazione e vista */}
-      <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
         {/* Controlli navigazione */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center justify-center sm:justify-start gap-1">
           <button
             onClick={() => {
               const newDate = new Date(date);
@@ -1001,9 +1072,9 @@ export function AdvancedCalendar({
               }
               setDate(newDate);
             }}
-            className="flex items-center justify-center w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+            className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" className="sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="15,18 9,12 15,6"></polyline>
             </svg>
           </button>
@@ -1020,19 +1091,19 @@ export function AdvancedCalendar({
               }
               setDate(newDate);
             }}
-            className="flex items-center justify-center w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+            className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" className="sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="9,18 15,12 9,6"></polyline>
             </svg>
           </button>
         </div>
 
         {/* Selettore vista */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center justify-center sm:justify-end gap-1">
           <button
             onClick={() => setView("month")}
-            className={`px-3 py-1.5 text-sm rounded transition-colors ${
+            className={`px-2 sm:px-3 py-1.5 text-xs sm:text-sm rounded transition-colors ${
               view === "month" 
                 ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900" 
                 : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -1042,7 +1113,7 @@ export function AdvancedCalendar({
           </button>
           <button
             onClick={() => setView("week")}
-            className={`px-3 py-1.5 text-sm rounded transition-colors ${
+            className={`px-2 sm:px-3 py-1.5 text-xs sm:text-sm rounded transition-colors ${
               view === "week" 
                 ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900" 
                 : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -1052,7 +1123,7 @@ export function AdvancedCalendar({
           </button>
           <button
             onClick={() => setView("day")}
-            className={`px-3 py-1.5 text-sm rounded transition-colors ${
+            className={`px-2 sm:px-3 py-1.5 text-xs sm:text-sm rounded transition-colors ${
               view === "day" 
                 ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900" 
                 : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -1064,18 +1135,19 @@ export function AdvancedCalendar({
       </div>
 
       {/* Calendar con stile pulito */}
-      <div className="bg-transparent rounded-xl overflow-hidden" style={{
+      <div className="bg-transparent rounded-xl overflow-hidden overflow-x-auto" style={{
         '--rbc-border-color': '#374151'
       } as React.CSSProperties}>
-        <Calendar
-          key={`calendar-${filters.store || 'all'}-${filters.team || 'all'}-${filters.person || 'all'}-${filters.role || 'all'}`}
-          culture="it"
-          localizer={localizer}
-          events={events}
-          date={date}
-          view={view}
-          onView={setView}
-          onNavigate={setDate}
+        <div className="min-w-[320px]">
+          <Calendar
+            key={`calendar-${filters.store || 'all'}-${filters.team || 'all'}-${filters.person || 'all'}-${filters.role || 'all'}`}
+            culture="it"
+            localizer={localizer}
+            events={events}
+            date={date}
+            view={view}
+            onView={setView}
+            onNavigate={setDate}
           selectable={canEdit}
           onSelectSlot={handleSelectSlot}
           onSelectEvent={handleSelectEvent}
@@ -1234,7 +1306,8 @@ export function AdvancedCalendar({
             noEventsInRange: "🎯 Nessun turno programmato in questo periodo",
             showMore: (total) => `📊 +${total} turni aggiuntivi`
           }}
-        />
+          />
+        </div>
       </div>
 
     </div>

@@ -9,6 +9,7 @@ import { demoDataService } from "@/lib/demo-data/demo-service";
 
 // Lazy load heavy components
 const AdvancedCalendar = lazy(() => import("@/components/calendar/AdvancedCalendar").then(module => ({ default: module.AdvancedCalendar })));
+const MobileCalendar = lazy(() => import("@/components/calendar/MobileCalendar").then(module => ({ default: module.MobileCalendar })));
 const CalendarFiltersPanel = lazy(() => import("@/components/calendar/CalendarFilters").then(module => ({ default: module.CalendarFiltersPanel })));
 const ShiftModal = lazy(() => import("@/components/calendar/ShiftModal").then(module => ({ default: module.ShiftModal })));
 const ShiftDetailsModal = lazy(() => import("@/components/calendar/ShiftDetailsModal").then(module => ({ default: module.ShiftDetailsModal })));
@@ -176,33 +177,46 @@ export default function HoursReport() {
       
       {!showStoreSelection && (
         <>
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                 Negozio selezionato: 
               </span>
-              <span className="font-medium">
+              <span className="font-medium text-sm sm:text-base">
                 {filters.store ? demoDataService.getStoreById(filters.store)?.name : 'Tutti i negozi'}
               </span>
             </div>
             <button
               onClick={() => setShowStoreSelection(true)}
-              className="px-3 py-1 text-sm bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/50 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 rounded-md transition-colors"
+              className="px-3 py-1 text-xs sm:text-sm bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/50 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 rounded-md transition-colors self-start sm:self-auto"
             >
               Cambia Negozio
             </button>
           </div>
           <Suspense fallback={<LoadingSpinner size="lg" className="h-96" />}>
-            <AdvancedCalendar
-              filters={filters}
-              onFiltersChange={handleFiltersChange}
-              onShiftCreate={canEdit ? handleShiftCreate : undefined}
-              onShiftEdit={canEdit ? handleShiftEdit : undefined}
-              onShiftDelete={canEdit ? handleShiftDelete : undefined}
-              onShiftDetails={handleShiftDetails}
-              onShowFilters={me?.role !== "workforce" ? () => setShowFilters(true) : undefined}
-              refreshTrigger={refreshTrigger + storeFilterTrigger}
-            />
+            {/* Use MobileCalendar on mobile, AdvancedCalendar on desktop */}
+            <div className="block md:hidden">
+              <MobileCalendar
+                filters={filters}
+                onShiftCreate={canEdit ? handleShiftCreate : undefined}
+                onShiftEdit={canEdit ? handleShiftEdit : undefined}
+                onShiftDelete={canEdit ? handleShiftDelete : undefined}
+                onShiftDetails={handleShiftDetails}
+                refreshTrigger={refreshTrigger + storeFilterTrigger}
+              />
+            </div>
+            <div className="hidden md:block">
+              <AdvancedCalendar
+                filters={filters}
+                onFiltersChange={handleFiltersChange}
+                onShiftCreate={canEdit ? handleShiftCreate : undefined}
+                onShiftEdit={canEdit ? handleShiftEdit : undefined}
+                onShiftDelete={canEdit ? handleShiftDelete : undefined}
+                onShiftDetails={handleShiftDetails}
+                onShowFilters={me?.role !== "workforce" ? () => setShowFilters(true) : undefined}
+                refreshTrigger={refreshTrigger + storeFilterTrigger}
+              />
+            </div>
           </Suspense>
         </>
       )}
