@@ -5,12 +5,12 @@ import { X, MapPin, Clock, Calendar, Building, User } from "lucide-react";
 import { ShiftEvent } from "./AdvancedCalendar";
 import dayjs from "dayjs";
 import "dayjs/locale/it";
-import { demoDataService } from "@/lib/demo-data/demo-service";
+import { demoDataService, DemoShiftWithDetails } from "@/lib/demo-data/demo-service";
 
 interface ShiftDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  shift: ShiftEvent | null;
+  shift: ShiftEvent | DemoShiftWithDetails | null;
 }
 
 export function ShiftDetailsModal({ 
@@ -20,8 +20,22 @@ export function ShiftDetailsModal({
 }: ShiftDetailsModalProps) {
   if (!isOpen || !shift) return null;
 
+  // Handle different data structures (ShiftEvent vs DemoShiftWithDetails)
+  const isShiftEvent = shift.resource && typeof shift.resource === 'object';
+  const isDemoShift = !isShiftEvent && shift.store_name;
+  
   // Get store information from demo data service
-  const store = demoDataService.getStoreById(shift.resource.storeId);
+  const storeId = isShiftEvent ? shift.resource.storeId : (shift as any).store_id;
+  const store = storeId ? demoDataService.getStoreById(storeId) : null;
+
+  // Get data based on structure
+  const startDate = isShiftEvent ? shift.start : new Date((shift as any).start_at);
+  const endDate = isShiftEvent ? shift.end : new Date((shift as any).end_at);
+  const storeName = isShiftEvent ? shift.resource.storeName : (shift as any).store_name;
+  const userName = isShiftEvent ? shift.resource.userName : (shift as any).user_name;
+  const userRole = isShiftEvent ? shift.resource.role : (shift as any).role;
+  const isPublished = isShiftEvent ? shift.resource.published : (shift as any).published;
+  const note = isShiftEvent ? shift.resource.note : (shift as any).note;
 
   const formatTime = (date: Date) => {
     return dayjs(date).locale('it').format("HH:mm");
@@ -70,7 +84,7 @@ export function ShiftDetailsModal({
               </div>
               <div className="flex-1">
                 <h3 className="font-medium text-gray-900 dark:text-white">
-                  {shift.resource.storeName}
+                  {storeName}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-300 flex items-center mt-1">
                   <MapPin className="h-4 w-4 mr-1" />
@@ -89,7 +103,7 @@ export function ShiftDetailsModal({
                   Data
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {formatDate(shift.start)}
+                  {formatDate(startDate)}
                 </p>
               </div>
             </div>
@@ -104,16 +118,16 @@ export function ShiftDetailsModal({
                   Orario
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {formatTime(shift.start)} - {formatTime(shift.end)}
+                  {formatTime(startDate)} - {formatTime(endDate)}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Durata: {formatDuration(shift.start, shift.end)}
+                  Durata: {formatDuration(startDate, endDate)}
                 </p>
               </div>
             </div>
 
             {/* User Information */}
-            {shift.resource.userName && (
+            {userName && (
               <div className="flex items-start space-x-3">
                 <div className="flex-shrink-0">
                   <User className="h-5 w-5 text-orange-600 dark:text-orange-400 mt-0.5" />
@@ -123,11 +137,11 @@ export function ShiftDetailsModal({
                     Persona Assegnata
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-300">
-                    {shift.resource.userName}
+                    {userName}
                   </p>
-                  {shift.resource.role && (
+                  {userRole && (
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Ruolo: {shift.resource.role}
+                      Ruolo: {userRole}
                     </p>
                   )}
                 </div>
@@ -141,23 +155,23 @@ export function ShiftDetailsModal({
                   Stato:
                 </span>
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  shift.resource.published 
+                  isPublished 
                     ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                     : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
                 }`}>
-                  {shift.resource.published ? "Pubblicato" : "Bozza"}
+                  {isPublished ? "Pubblicato" : "Bozza"}
                 </span>
               </div>
             </div>
 
             {/* Note */}
-            {shift.resource.note && (
+            {note && (
               <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
                 <h3 className="font-medium text-gray-900 dark:text-white mb-2">
                   Note
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
-                  {shift.resource.note}
+                  {note}
                 </p>
               </div>
             )}

@@ -17,7 +17,7 @@ const StoreSelectionModal = lazy(() => import("@/components/calendar/StoreSelect
 
 export default function HoursReport() {
   const { me } = useMe();
-  const [showStoreSelection, setShowStoreSelection] = useState(true);
+  const [showStoreSelection, setShowStoreSelection] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showShiftModal, setShowShiftModal] = useState(false);
   const [showShiftDetailsModal, setShowShiftDetailsModal] = useState(false);
@@ -40,6 +40,14 @@ export default function HoursReport() {
   });
 
   const canEdit = canEditPlanner(me?.role ?? "user", null);
+  const isAdmin = me?.role === "admin" || me?.role === "manager";
+
+  // Initialize store selection modal for admin users
+  useEffect(() => {
+    if (isAdmin && !filters.store) {
+      setShowStoreSelection(true);
+    }
+  }, [isAdmin, filters.store]);
 
   // Real-time updates across tabs/windows
   useEffect(() => {
@@ -70,8 +78,11 @@ export default function HoursReport() {
   };
 
   const handleFiltersChange = useCallback((newFilters: CalendarFilters) => {
-    setFilters(prev => (filtersAreEqual(prev, newFilters) ? prev : { ...newFilters }));
-  }, []);
+    // For workforce users, always keep store filter as null to show all stores
+    // For admin/manager users, allow store filtering
+    const updatedFilters = isAdmin ? newFilters : { ...newFilters, store: null };
+    setFilters(prev => (filtersAreEqual(prev, updatedFilters) ? prev : updatedFilters));
+  }, [isAdmin]);
 
   const handleStoreSelect = (storeId: string) => {
     setFilters(prev => ({
@@ -165,7 +176,8 @@ export default function HoursReport() {
         desc="Calendario avanzato per la gestione dei turni e il conteggio delle ore" 
       />
       
-      {showStoreSelection && (
+      {/* Store selection modal - only for admin/manager */}
+      {isAdmin && showStoreSelection && (
         <Suspense fallback={<LoadingSpinner size="md" className="h-32" />}>
           <StoreSelectionModal
             isOpen={showStoreSelection}
@@ -175,25 +187,28 @@ export default function HoursReport() {
         </Suspense>
       )}
       
-      {!showStoreSelection && (
-        <>
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-              <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                Negozio selezionato: 
-              </span>
-              <span className="font-medium text-sm sm:text-base">
-                {filters.store ? demoDataService.getStoreById(filters.store)?.name : 'Tutti i negozi'}
-              </span>
-            </div>
-            <button
-              onClick={() => setShowStoreSelection(true)}
-              className="px-3 py-1 text-xs sm:text-sm bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/50 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 rounded-md transition-colors self-start sm:self-auto"
-            >
-              Cambia Negozio
-            </button>
+      {/* Store filter section - only for admin/manager */}
+      {isAdmin && !showStoreSelection && (
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+            <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+              Negozio selezionato: 
+            </span>
+            <span className="font-medium text-sm sm:text-base">
+              {filters.store ? demoDataService.getStoreById(filters.store)?.name : 'Tutti i negozi'}
+            </span>
           </div>
-          <Suspense fallback={<LoadingSpinner size="lg" className="h-96" />}>
+          <button
+            onClick={() => setShowStoreSelection(true)}
+            className="px-3 py-1 text-xs sm:text-sm bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/50 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 rounded-md transition-colors self-start sm:self-auto"
+          >
+            Cambia Negozio
+          </button>
+        </div>
+      )}
+      
+      <div>
+        <Suspense fallback={<LoadingSpinner size="lg" className="h-96" />}>
             {/* Use MobileCalendar on mobile, AdvancedCalendar on desktop */}
             <div className="block md:hidden">
               <MobileCalendar
@@ -217,9 +232,8 @@ export default function HoursReport() {
                 refreshTrigger={refreshTrigger + storeFilterTrigger}
               />
             </div>
-          </Suspense>
-        </>
-      )}
+        </Suspense>
+      </div>
 
       {showFilters && me?.role !== "workforce" && (
         <Suspense fallback={<LoadingSpinner size="md" className="h-32" />}>
